@@ -2,16 +2,25 @@ import asyncio
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from llama_cpp import Llama
 from typing import Optional, List
+from llama_cpp import Llama
+from motor.motor_asyncio import AsyncIOMotorClient  # 🔥 Conexão com MongoDB
+from datetime import datetime
+from contextlib import asynccontextmanager
 
-# Configuração
-MODEL_PATH = "../../models/Meta-Llama-3-8B-Instruct.Q2_K.gguf"
+# 🔹 Configurações
+MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q2_K.gguf"
 PROMPT_FILE = "polaris_prompt.txt"
+MONGO_URI = "mongodb://admin:adminpassword@mongodb:27017/"
+DATABASE_NAME = "polaris_db"
 
-# Função para ler o arquivo de prompt
+# 🔹 Conexão com MongoDB
+client = AsyncIOMotorClient(MONGO_URI)
+db = client[DATABASE_NAME]
+collection = db["inferences"]
+
+# 🔹 Função para ler o arquivo de prompt
 def read_prompt_file(file_path: str, max_length: int = 500) -> str:
-    """Lê o prompt base do arquivo e limita seu tamanho para evitar estouro de tokens."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             prompt = file.read().strip()
@@ -23,7 +32,7 @@ def read_prompt_file(file_path: str, max_length: int = 500) -> str:
         print(f"❌ Erro ao ler o arquivo {file_path}: {e}")
         return "Você é um assistente de IA útil. Responda com clareza."
 
-# Modelo de dados para API
+# 🔹 Modelo de dados para API
 class InferenceRequest(BaseModel):
     prompt: str
     stop_words: Optional[List[str]] = None
@@ -35,7 +44,7 @@ class InferenceRequest(BaseModel):
     max_tokens: Optional[int] = 512
     session_id: Optional[str] = None
 
-# Criamos uma instância única global para evitar múltiplas cargas do modelo
+# 🔹 Classe Singleton do Modelo
 class LlamaLLM:
     _instance = None
 
@@ -58,23 +67,12 @@ class LlamaLLM:
                 print(f"❌ Erro ao carregar o modelo: {e}")
                 raise HTTPException(status_code=500, detail="Erro ao carregar o modelo Llama")
 
-    async def warmup_model(self):
-        """Executa um warm-up em background após carregar o modelo"""
-        print("🔥 Iniciando warm-up em background...")
-        await asyncio.sleep(1)  # Simula um pequeno atraso antes de rodar o warm-up
-        try:
-            response = self.llm("Qual é a capital da França?", max_tokens=32, temperature=0.7, top_p=1.0, top_k=50)
-            print(f"🔥 Warm-up completo! Resposta: {response['choices'][0]['text'].strip()}")
-        except Exception as e:
-            print(f"⚠️ Erro no warm-up: {e}")
-
     def call(self, user_prompt: str, **kwargs) -> str:
         """Chama o modelo e retorna a resposta"""
         if self.llm is None:
             raise HTTPException(status_code=500, detail="Modelo ainda não carregado!")
 
         try:
-            # 🔥 Agora o prompt sempre inclui o contexto do `polaris_prompt.txt`
             full_prompt = f"{self.prompt_base}\n\nPergunta: {user_prompt}"
             print(f"🔹 Prompt enviado ao modelo:\n{full_prompt}")
 
@@ -89,25 +87,27 @@ class LlamaLLM:
                 presence_penalty=kwargs.get("presence_penalty", 1.5)
             )
 
-            print(f"🔹 Resposta bruta do modelo: {response}")
-
             if "choices" in response and response["choices"]:
                 raw_answer = response["choices"][0]["text"].strip()
             else:
                 raw_answer = "[Erro: Modelo retornou resposta vazia]"
-
-            if raw_answer == "":
-                raw_answer = "[Erro: O modelo não respondeu nada útil]"
-
-            print(f"🔹 Resposta final filtrada: {raw_answer}")
 
             return raw_answer
         except Exception as e:
             print(f"❌ Erro durante a inferência: {e}")
             return "[Erro: Falha na inferência]"
 
-# Instancia a API
-app = FastAPI()
+# 🔹 Gerenciamento de inicialização usando Lifespan
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Carrega o modelo na inicialização da API e fecha conexões no desligamento"""
+    print("🚀 Iniciando a API...")
+    llm.load()
+    yield
+    print("🛑 API sendo desligada...")
+
+# 🔹 Inicializa a API com Lifespan
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -116,18 +116,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Criamos a instância global do modelo, mas **ainda não carregamos ele**
+# 🔹 Instancia o modelo
 llm = LlamaLLM(model_path=MODEL_PATH, prompt_file=PROMPT_FILE)
-
-@app.on_event("startup")
-async def startup_event():
-    """Carrega o modelo apenas uma vez quando a API inicia e executa o warm-up"""
-    llm.load()
-    asyncio.create_task(llm.warmup_model())
 
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
-    """Endpoint para gerar resposta"""
+    """Gera resposta e salva no MongoDB"""
     try:
         answer = llm.call(
             request.prompt,
@@ -138,14 +132,26 @@ async def inference(request: InferenceRequest):
             frequency_penalty=request.frequency_penalty,
             presence_penalty=request.presence_penalty
         )
+
+        # 🔥 Salvando no MongoDB
+        inference_data = {
+            "prompt": request.prompt,
+            "resposta": answer,
+            "timestamp": datetime.utcnow()
+        }
+        await collection.insert_one(inference_data)
+
         return {"resposta": answer}
-    except HTTPException as e:
-        print(f"❌ Erro no endpoint: {e}")
-        raise e
     except Exception as e:
         print(f"❌ Erro inesperado: {e}")
         raise HTTPException(status_code=500, detail="Erro interno na API")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("polaris_api:app", host="0.0.0.0", port=8000, reload=True, workers=1)
+@app.get("/historico/")
+async def get_historico():
+    """Retorna as inferências armazenadas no MongoDB"""
+    try:
+        docs = await collection.find().to_list(100)  # 🔥 Pega até 100 registros
+        return docs
+    except Exception as e:
+        print(f"❌ Erro ao buscar histórico: {e}")
+        raise HTTPException(status_code=500, detail="Erro ao buscar histórico")
