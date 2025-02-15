@@ -43,7 +43,7 @@ DATABASE_NAME = "polaris_db"
 # 🔹 Ajustes de Desempenho para Máquinas Fracas
 NUM_CORES = 8
 MODEL_CONTEXT_SIZE = 512  # 🔥 Para evitar consumo excessivo de RAM
-MODEL_BATCH_SIZE = 16  # 🔥 Ajustado para balancear performance
+MODEL_BATCH_SIZE = 32  # 🔥 Ajustado para balancear performance
 
 # 🔹 Inicializa o banco de dados (opcional)
 client = None
@@ -73,7 +73,7 @@ class InferenceRequest(BaseModel):
     top_k: Optional[int] = 40
     frequency_penalty: Optional[float] = 2.0
     presence_penalty: Optional[float] = 1.5
-    max_tokens: Optional[int] = 512
+    max_tokens: Optional[int] = 64
     session_id: Optional[str] = None
 
 # 🔹 Classe Singleton do Modelo
@@ -100,7 +100,7 @@ class LlamaLLM:
             return "Você é um assistente de IA útil. Responda com clareza."
 
     def load(self):
-        """Carrega o modelo Llama apenas uma vez"""
+        """Carrega o modelo Llama apenas uma vez e faz uma chamada de aquecimento"""
         if self.llm is None:
             try:
                 log_info(f"🔹 Carregando modelo de: {self.model_path}...")
@@ -108,17 +108,23 @@ class LlamaLLM:
                     model_path=self.model_path,
                     verbose=True,
                     n_threads=NUM_CORES,
-                    n_ctx=MODEL_CONTEXT_SIZE,
+                    n_ctx=2048,
                     n_ctx_per_seq=1024,
                     batch_size=MODEL_BATCH_SIZE
                 )
                 log_success("✅ Modelo carregado com sucesso!")
+
+                # 🔥 Chamada de aquecimento
+                log_info("☀️ Esquentando o modelo...")
+                warmup_response = self.call("Acorda Polaris, já amanheceu!")
+                log_success(f"🌞 Polaris acordou! Resposta de aquecimento: {warmup_response}")
+
             except Exception as e:
                 log_error(f"Erro ao carregar o modelo: {e}\n{traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail="Erro ao carregar o modelo Llama")
 
     def call(self, user_prompt: str, **kwargs) -> str:
-        """Chama o modelo e retorna a resposta"""
+        """Chama o modelo e retorna a resposta utilizando os parâmetros do front"""
         if self.llm is None:
             raise HTTPException(status_code=500, detail="Modelo ainda não carregado!")
 
@@ -127,16 +133,18 @@ class LlamaLLM:
             log_info(f"📩 Prompt enviado ao modelo:\n{full_prompt}")
 
             start_time = datetime.now()
+            
             response = self.llm(
                 full_prompt,
-                stop=["Pergunta:", "Pergunte:", "\n```\n"],
-                max_tokens=kwargs.get("max_tokens", 256),
-                temperature=kwargs.get("temperature", 0.3),
-                top_p=kwargs.get("top_p", 0.3),
-                top_k=kwargs.get("top_k", 20),
+                stop=kwargs.get("stop_words", ["Pergunta:", "Pergunte:", "\n```\n"]),
+                max_tokens=kwargs.get("max_tokens", 128),  # Agora usa o valor do front se enviado
+                temperature=kwargs.get("temperature", 0.7),
+                top_p=kwargs.get("top_p", 0.9),
+                top_k=kwargs.get("top_k", 50),
                 frequency_penalty=kwargs.get("frequency_penalty", 1.0),
-                presence_penalty=kwargs.get("presence_penalty", 0.8)
+                presence_penalty=kwargs.get("presence_penalty", 1.2)
             )
+
             elapsed_time = (datetime.now() - start_time).total_seconds()
 
             raw_answer = response["choices"][0]["text"].strip() if response and "choices" in response and response["choices"] else "[Erro: Modelo retornou resposta vazia]"
@@ -172,21 +180,36 @@ llm = LlamaLLM(model_path=MODEL_PATH, prompt_file=PROMPT_FILE)
 
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
-    """Gera resposta e salva no MongoDB (se disponível)"""
+    """Gera resposta e mantém contexto no MongoDB"""
     try:
-        answer = llm.call(request.prompt)
+        session_data = await collection.find_one({"session_id": request.session_id}) if mongo_available else None
+
+        # Resgatar histórico da conversa, se existir
+        history = session_data.get("history", []) if session_data else []
+
+        # Adicionar a pergunta ao histórico
+        history.append({"role": "user", "content": request.prompt})
+
+        # Passar histórico para o modelo
+        context_prompt = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
+
+        answer = llm.call(context_prompt)
+
+        # Adicionar resposta ao histórico
+        history.append({"role": "bot", "content": answer})
 
         if mongo_available:
-            await collection.insert_one({"prompt": request.prompt, "resposta": answer, "timestamp": datetime.utcnow()})
-            log_success("💾 Resposta salva no MongoDB.")
-        else:
-            log_warning("⚠️ Banco de dados indisponível. Resposta não salva.")
+            await collection.update_one(
+                {"session_id": request.session_id},
+                {"$set": {"history": history}},
+                upsert=True
+            )
+            log_success("💾 Histórico da sessão atualizado no MongoDB.")
 
         return {"resposta": answer}
     except Exception as e:
         log_error(f"Erro inesperado: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Erro interno na API")
-        
 
 if __name__ == "__main__":
     log_success("🔥 Iniciando servidor FastAPI...")
