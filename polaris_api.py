@@ -1,42 +1,74 @@
 import asyncio
+import os
+import traceback
+import logging
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
 from llama_cpp import Llama
-from motor.motor_asyncio import AsyncIOMotorClient  # 🔥 Conexão com MongoDB
-from datetime import datetime
+from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
+import uvicorn
+import multiprocessing
 
-# 🔹 Configurações
+# 🔹 Configuração do Logging (Colorido e Organizado)
+class LogColors:
+    INFO = "\033[94m"   # Azul
+    SUCCESS = "\033[92m" # Verde
+    WARNING = "\033[93m" # Amarelo
+    ERROR = "\033[91m"   # Vermelho
+    RESET = "\033[0m"    # Reset de cor
+
+def log_info(message: str):
+    print(f"{LogColors.INFO}🔹 {message}{LogColors.RESET}")
+
+def log_success(message: str):
+    print(f"{LogColors.SUCCESS}✅ {message}{LogColors.RESET}")
+
+def log_warning(message: str):
+    print(f"{LogColors.WARNING}⚠️ {message}{LogColors.RESET}")
+
+def log_error(message: str):
+    print(f"{LogColors.ERROR}❌ {message}{LogColors.RESET}")
+
+# 🔹 Configurações Gerais
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q2_K.gguf"
 PROMPT_FILE = "polaris_prompt.txt"
-MONGO_URI = "mongodb://admin:adminpassword@mongodb:27017/"
+MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
+MONGO_URI = f"mongodb://admin:adminpassword@{MONGO_HOST}:27017/"
 DATABASE_NAME = "polaris_db"
 
-# 🔹 Conexão com MongoDB
-client = AsyncIOMotorClient(MONGO_URI)
-db = client[DATABASE_NAME]
-collection = db["inferences"]
+# 🔹 Ajustes de Desempenho para Máquinas Fracas
+NUM_CORES = 8
+MODEL_CONTEXT_SIZE = 512  # 🔥 Para evitar consumo excessivo de RAM
+MODEL_BATCH_SIZE = 16  # 🔥 Ajustado para balancear performance
 
-# 🔹 Função para ler o arquivo de prompt
-def read_prompt_file(file_path: str, max_length: int = 500) -> str:
+# 🔹 Inicializa o banco de dados (opcional)
+client = None
+collection = None
+mongo_available = False
+
+async def connect_mongo():
+    """Tenta conectar ao MongoDB e atualizar o status global."""
+    global client, collection, mongo_available
+    log_info("🔹 Tentando conectar ao MongoDB...")
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            prompt = file.read().strip()
-            prompt_tokens = prompt.split()
-            if len(prompt_tokens) > max_length:
-                prompt = " ".join(prompt_tokens[:max_length])
-            return prompt
+        client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=3000)
+        await client.server_info()  # Testa conexão
+        collection = client[DATABASE_NAME]["inferences"]
+        mongo_available = True
+        log_success("✅ Conectado ao MongoDB!")
     except Exception as e:
-        print(f"❌ Erro ao ler o arquivo {file_path}: {e}")
-        return "Você é um assistente de IA útil. Responda com clareza."
+        mongo_available = False
+        log_warning(f"⚠️ MongoDB não disponível! Rodando em modo offline. Erro: {e}")
 
 # 🔹 Modelo de dados para API
 class InferenceRequest(BaseModel):
     prompt: str
     stop_words: Optional[List[str]] = None
-    temperature: Optional[float] = 0.3
+    temperature: Optional[float] = 0.9
     top_p: Optional[float] = 0.5
     top_k: Optional[int] = 40
     frequency_penalty: Optional[float] = 2.0
@@ -52,19 +84,37 @@ class LlamaLLM:
         if cls._instance is None:
             cls._instance = super(LlamaLLM, cls).__new__(cls)
             cls._instance.model_path = model_path
-            cls._instance.prompt_base = read_prompt_file(prompt_file)
+            cls._instance.prompt_base = cls.read_prompt(prompt_file)
             cls._instance.llm = None
         return cls._instance
+
+    @staticmethod
+    def read_prompt(file_path: str, max_length: int = 300) -> str:
+        """Lê o arquivo de prompt e limita o tamanho"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                prompt = file.read().strip()
+                return " ".join(prompt.split()[:max_length]) if len(prompt.split()) > max_length else prompt
+        except Exception as e:
+            log_error(f"Erro ao ler o arquivo {file_path}: {e}")
+            return "Você é um assistente de IA útil. Responda com clareza."
 
     def load(self):
         """Carrega o modelo Llama apenas uma vez"""
         if self.llm is None:
             try:
-                print(f"🔄 Carregando modelo de: {self.model_path}...")
-                self.llm = Llama(model_path=self.model_path, verbose=True, n_ctx=8192)
-                print("✅ Modelo carregado com sucesso!")
+                log_info(f"🔹 Carregando modelo de: {self.model_path}...")
+                self.llm = Llama(
+                    model_path=self.model_path,
+                    verbose=True,
+                    n_threads=NUM_CORES,
+                    n_ctx=MODEL_CONTEXT_SIZE,
+                    n_ctx_per_seq=1024,
+                    batch_size=MODEL_BATCH_SIZE
+                )
+                log_success("✅ Modelo carregado com sucesso!")
             except Exception as e:
-                print(f"❌ Erro ao carregar o modelo: {e}")
+                log_error(f"Erro ao carregar o modelo: {e}\n{traceback.format_exc()}")
                 raise HTTPException(status_code=500, detail="Erro ao carregar o modelo Llama")
 
     def call(self, user_prompt: str, **kwargs) -> str:
@@ -74,37 +124,38 @@ class LlamaLLM:
 
         try:
             full_prompt = f"{self.prompt_base}\n\nPergunta: {user_prompt}"
-            print(f"🔹 Prompt enviado ao modelo:\n{full_prompt}")
+            log_info(f"📩 Prompt enviado ao modelo:\n{full_prompt}")
 
+            start_time = datetime.now()
             response = self.llm(
                 full_prompt,
-                stop=["Pergunta:", "Pergunte:"],  
-                max_tokens=kwargs.get("max_tokens", 512),
-                temperature=kwargs.get("temperature", 0.4),
-                top_p=kwargs.get("top_p", 0.5),
-                top_k=kwargs.get("top_k", 40),
-                frequency_penalty=kwargs.get("frequency_penalty", 2.0),
-                presence_penalty=kwargs.get("presence_penalty", 1.5)
+                stop=["Pergunta:", "Pergunte:", "\n```\n"],
+                max_tokens=kwargs.get("max_tokens", 256),
+                temperature=kwargs.get("temperature", 0.3),
+                top_p=kwargs.get("top_p", 0.3),
+                top_k=kwargs.get("top_k", 20),
+                frequency_penalty=kwargs.get("frequency_penalty", 1.0),
+                presence_penalty=kwargs.get("presence_penalty", 0.8)
             )
+            elapsed_time = (datetime.now() - start_time).total_seconds()
 
-            if "choices" in response and response["choices"]:
-                raw_answer = response["choices"][0]["text"].strip()
-            else:
-                raw_answer = "[Erro: Modelo retornou resposta vazia]"
-
+            raw_answer = response["choices"][0]["text"].strip() if response and "choices" in response and response["choices"] else "[Erro: Modelo retornou resposta vazia]"
+            log_success(f"🎯 Resposta do modelo em {elapsed_time:.2f}s: {raw_answer}")
             return raw_answer
         except Exception as e:
-            print(f"❌ Erro durante a inferência: {e}")
+            log_error(f"Erro durante a inferência: {e}\n{traceback.format_exc()}")
             return "[Erro: Falha na inferência]"
 
-# 🔹 Gerenciamento de inicialização usando Lifespan
+# 🔹 Lifespan Handler para Inicialização
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Carrega o modelo na inicialização da API e fecha conexões no desligamento"""
-    print("🚀 Iniciando a API...")
+    """Inicializa a API corretamente e evita DeprecationWarning."""
+    log_info("🚀 Iniciando a API...")
+    await connect_mongo()
     llm.load()
+    log_success("🔥 API pronta para uso!")
     yield
-    print("🛑 API sendo desligada...")
+    log_warning("🛑 API sendo desligada...")
 
 # 🔹 Inicializa a API com Lifespan
 app = FastAPI(lifespan=lifespan)
@@ -121,37 +172,22 @@ llm = LlamaLLM(model_path=MODEL_PATH, prompt_file=PROMPT_FILE)
 
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
-    """Gera resposta e salva no MongoDB"""
+    """Gera resposta e salva no MongoDB (se disponível)"""
     try:
-        answer = llm.call(
-            request.prompt,
-            max_tokens=request.max_tokens,
-            temperature=request.temperature,
-            top_p=request.top_p,
-            top_k=request.top_k,
-            frequency_penalty=request.frequency_penalty,
-            presence_penalty=request.presence_penalty
-        )
+        answer = llm.call(request.prompt)
 
-        # 🔥 Salvando no MongoDB
-        inference_data = {
-            "prompt": request.prompt,
-            "resposta": answer,
-            "timestamp": datetime.utcnow()
-        }
-        await collection.insert_one(inference_data)
+        if mongo_available:
+            await collection.insert_one({"prompt": request.prompt, "resposta": answer, "timestamp": datetime.utcnow()})
+            log_success("💾 Resposta salva no MongoDB.")
+        else:
+            log_warning("⚠️ Banco de dados indisponível. Resposta não salva.")
 
         return {"resposta": answer}
     except Exception as e:
-        print(f"❌ Erro inesperado: {e}")
+        log_error(f"Erro inesperado: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Erro interno na API")
+        
 
-@app.get("/historico/")
-async def get_historico():
-    """Retorna as inferências armazenadas no MongoDB"""
-    try:
-        docs = await collection.find().to_list(100)  # 🔥 Pega até 100 registros
-        return docs
-    except Exception as e:
-        print(f"❌ Erro ao buscar histórico: {e}")
-        raise HTTPException(status_code=500, detail="Erro ao buscar histórico")
+if __name__ == "__main__":
+    log_success("🔥 Iniciando servidor FastAPI...")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
