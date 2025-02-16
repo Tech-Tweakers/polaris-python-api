@@ -34,7 +34,7 @@ def log_error(message: str):
     print(f"{LogColors.ERROR}❌ {message}{LogColors.RESET}")
 
 # 🔹 Configurações Gerais
-MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q2_K.gguf"
+MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 PROMPT_FILE = "polaris_prompt.txt"
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 MONGO_URI = f"mongodb://admin:adminpassword@{MONGO_HOST}:27017/"
@@ -43,7 +43,7 @@ DATABASE_NAME = "polaris_db"
 # 🔹 Ajustes de Desempenho para Máquinas Fracas
 NUM_CORES = 8
 MODEL_CONTEXT_SIZE = 512  # 🔥 Para evitar consumo excessivo de RAM
-MODEL_BATCH_SIZE = 32  # 🔥 Ajustado para balancear performance
+MODEL_BATCH_SIZE = 8  # 🔥 Ajustado para balancear performance
 
 # 🔹 Inicializa o banco de dados (opcional)
 client = None
@@ -106,7 +106,7 @@ class LlamaLLM:
                 log_info(f"🔹 Carregando modelo de: {self.model_path}...")
                 self.llm = Llama(
                     model_path=self.model_path,
-                    verbose=True,
+                    verbose=False,
                     n_threads=NUM_CORES,
                     n_ctx=2048,
                     n_ctx_per_seq=1024,
@@ -116,8 +116,7 @@ class LlamaLLM:
 
                 # 🔥 Chamada de aquecimento
                 log_info("☀️ Esquentando o modelo...")
-                warmup_response = self.call("Acorda Polaris, já amanheceu!")
-                log_success(f"🌞 Polaris acordou! Resposta de aquecimento: {warmup_response}")
+                self.call("Acorda Polaris, já amanheceu!")
 
             except Exception as e:
                 log_error(f"Erro ao carregar o modelo: {e}\n{traceback.format_exc()}")
@@ -129,15 +128,15 @@ class LlamaLLM:
             raise HTTPException(status_code=500, detail="Modelo ainda não carregado!")
 
         try:
-            full_prompt = f"{self.prompt_base}\n\nPergunta: {user_prompt}"
+            full_prompt = f"{self.prompt_base}\n\n{user_prompt}"
             log_info(f"📩 Prompt enviado ao modelo:\n{full_prompt}")
 
             start_time = datetime.now()
             
             response = self.llm(
                 full_prompt,
-                stop=kwargs.get("stop_words", ["Pergunta:", "Pergunte:", "\n```\n"]),
-                max_tokens=kwargs.get("max_tokens", 128),  # Agora usa o valor do front se enviado
+                stop=kwargs.get("stop_words", ["User:", "Pergunta:", "Pergunte:"]),
+                max_tokens=kwargs.get("max_tokens", 1024),  # Agora usa o valor do front se enviado
                 temperature=kwargs.get("temperature", 0.7),
                 top_p=kwargs.get("top_p", 0.9),
                 top_k=kwargs.get("top_k", 50),
@@ -188,15 +187,15 @@ async def inference(request: InferenceRequest):
         history = session_data.get("history", []) if session_data else []
 
         # Adicionar a pergunta ao histórico
-        history.append({"role": "user", "content": request.prompt})
+        history.append({"role": "User", "content": request.prompt})
 
         # Passar histórico para o modelo
-        context_prompt = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in history])
+        context_prompt = "\n".join([f"{msg['content']}" for msg in history])
 
         answer = llm.call(context_prompt)
 
         # Adicionar resposta ao histórico
-        history.append({"role": "bot", "content": answer})
+        history.append({"role": "Polaris", "content": answer})
 
         if mongo_available:
             await collection.update_one(
