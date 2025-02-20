@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+llama-cpp-python
+motor
+sentence-transformers
+faiss-cpu
+numpy
+asyncio
+pymongo
+aiohttp
+httpx

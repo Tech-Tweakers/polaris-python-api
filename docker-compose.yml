@@ -14,7 +14,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - mongo_network
+      - polaris_network
     restart: always
 
   mongo-express:
@@ -30,24 +30,32 @@ services:
     depends_on:
       - mongodb
     networks:
-      - mongo_network
+      - polaris_network
 
   polaris_api:
     build: .
     container_name: polaris_api
+    restart: always
     depends_on:
       - mongodb
     ports:
       - "8000:8000"
     volumes:
-      - /home/atorres/Dev/models:/models  # Monta a pasta local dentro do container
+      - /home/atorres/Dev/models:/models  # Monta os modelos dentro do container
+      - polaris_faiss:/faiss  # Persistência do FAISS
     networks:
-      - mongo_network
+      - polaris_network
+    environment:
+      - FAISS_INDEX_PATH=/faiss/faiss_memory.index
+      - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.Q4_0.gguf
+      - MONGO_URI=mongodb://admin:adminpassword@mongodb:27017/
 
 volumes:
   mongodb_data:
     driver: local
+  polaris_faiss:
+    driver: local
 
 networks:
-  mongo_network:
+  polaris_network:
     driver: bridge
