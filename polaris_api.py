@@ -289,8 +289,6 @@ Usuário: {request.prompt}
 
 Polaris:"""
 
-    log_info(f"📜 Prompt final gerado:\n{full_prompt}")
-
     # 🔹 Gera resposta
     resposta = llm.invoke(full_prompt)
 
