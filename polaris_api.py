@@ -1,5 +1,6 @@
 import asyncio
 import os
+import time
 import traceback
 import logging
 from datetime import datetime
@@ -8,164 +9,272 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
 from llama_cpp import Llama
-from motor.motor_asyncio import AsyncIOMotorClient
-from contextlib import asynccontextmanager
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain.memory import ConversationBufferMemory
+from pymongo import MongoClient
 import uvicorn
-import multiprocessing
 
-# 🔹 Configuração do Logging (Colorido e Organizado)
-class LogColors:
-    INFO = "\033[94m"   # Azul
-    SUCCESS = "\033[92m" # Verde
-    WARNING = "\033[93m" # Amarelo
-    ERROR = "\033[91m"   # Vermelho
-    RESET = "\033[0m"    # Reset de cor
+# 🔹 Configuração do log
+LOG_FILE = "polaris.log"
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
 
-def log_info(message: str):
-    print(f"{LogColors.INFO}🔹 {message}{LogColors.RESET}")
+def log_info(message: str): logging.info(f"🔹 {message}")
+def log_success(message: str): logging.info(f"✅ {message}")
+def log_warning(message: str): logging.warning(f"⚠️ {message}")
+def log_error(message: str): logging.error(f"❌ {message}")
 
-def log_success(message: str):
-    print(f"{LogColors.SUCCESS}✅ {message}{LogColors.RESET}")
-
-def log_warning(message: str):
-    print(f"{LogColors.WARNING}⚠️ {message}{LogColors.RESET}")
-
-def log_error(message: str):
-    print(f"{LogColors.ERROR}❌ {message}{LogColors.RESET}")
-
-# 🔹 Configurações Gerais
+# 🔹 Configuração do modelo
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
-PROMPT_FILE = "polaris_prompt.txt"
-MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
-MONGO_URI = f"mongodb://admin:adminpassword@{MONGO_HOST}:27017/"
-DATABASE_NAME = "polaris_db"
+NUM_CORES = 6
+MODEL_CONTEXT_SIZE = 4096
+MODEL_BATCH_SIZE = 8
 
-# 🔹 Ajustes de Desempenho para Máquinas Fracas
-NUM_CORES = 8
-MODEL_CONTEXT_SIZE = 512  # 🔥 Para evitar consumo excessivo de RAM
-MODEL_BATCH_SIZE = 8  # 🔥 Ajustado para balancear performance
+# 🔹 Conexão com o MongoDB
+MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+client = MongoClient(MONGO_URI)
+db = client["polaris_db"]
+collection = db["user_memory"]
 
-# 🔹 Inicializa o banco de dados (opcional)
-client = None
-collection = None
-mongo_available = False
+# 🔹 Inicializa FastAPI
+app = FastAPI()
 
-async def connect_mongo():
-    """Tenta conectar ao MongoDB e atualizar o status global."""
-    global client, collection, mongo_available
-    log_info("🔹 Tentando conectar ao MongoDB...")
-    try:
-        client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=3000)
-        await client.server_info()  # Testa conexão
-        collection = client[DATABASE_NAME]["inferences"]
-        mongo_available = True
-        log_success("✅ Conectado ao MongoDB!")
-    except Exception as e:
-        mongo_available = False
-        log_warning(f"⚠️ MongoDB não disponível! Rodando em modo offline. Erro: {e}")
+# 🔹 Inicializa LangChain Memory
+log_info("🔹 Configurando memória do LangChain...")
 
-# 🔹 Modelo de dados para API
-class InferenceRequest(BaseModel):
-    prompt: str
-    stop_words: Optional[List[str]] = None
-    temperature: Optional[float] = 0.9
-    top_p: Optional[float] = 0.5
-    top_k: Optional[int] = 40
-    frequency_penalty: Optional[float] = 2.0
-    presence_penalty: Optional[float] = 1.5
-    max_tokens: Optional[int] = 64
-    session_id: Optional[str] = None
+embedder = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
+memory = ConversationBufferMemory(memory_key="history", output_key="output", return_messages=True)
 
-# 🔹 Classe Singleton do Modelo
-class LlamaLLM:
-    _instance = None
-
-    def __new__(cls, model_path: str, prompt_file: str):
-        if cls._instance is None:
-            cls._instance = super(LlamaLLM, cls).__new__(cls)
-            cls._instance.model_path = model_path
-            cls._instance.prompt_base = cls.read_prompt(prompt_file)
-            cls._instance.llm = None
-        return cls._instance
-
-    @staticmethod
-    def read_prompt(file_path: str, max_length: int = 300) -> str:
-        """Lê o arquivo de prompt e limita o tamanho"""
-        try:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                prompt = file.read().strip()
-                return " ".join(prompt.split()[:max_length]) if len(prompt.split()) > max_length else prompt
-        except Exception as e:
-            log_error(f"Erro ao ler o arquivo {file_path}: {e}")
-            return "Você é um assistente de IA útil. Responda com clareza."
+# 🔹 Classe para Llama
+class LlamaRunnable:
+    def __init__(self, model_path: str):
+        self.model_path = model_path
+        self.llm = None
 
     def load(self):
-        """Carrega o modelo Llama apenas uma vez e faz uma chamada de aquecimento"""
-        if self.llm is None:
-            try:
-                log_info(f"🔹 Carregando modelo de: {self.model_path}...")
-                self.llm = Llama(
-                    model_path=self.model_path,
-                    verbose=False,
-                    n_threads=NUM_CORES,
-                    n_ctx=2048,
-                    n_ctx_per_seq=1024,
-                    batch_size=MODEL_BATCH_SIZE
-                )
-                log_success("✅ Modelo carregado com sucesso!")
-
-                # 🔥 Chamada de aquecimento
-                log_info("☀️ Esquentando o modelo...")
-                self.call("Acorda Polaris, já amanheceu!")
-
-            except Exception as e:
-                log_error(f"Erro ao carregar o modelo: {e}\n{traceback.format_exc()}")
-                raise HTTPException(status_code=500, detail="Erro ao carregar o modelo Llama")
-
-    def call(self, user_prompt: str, **kwargs) -> str:
-        """Chama o modelo e retorna a resposta utilizando os parâmetros do front"""
-        if self.llm is None:
-            raise HTTPException(status_code=500, detail="Modelo ainda não carregado!")
-
         try:
-            full_prompt = f"{self.prompt_base}\n\n{user_prompt}"
-            log_info(f"📩 Prompt enviado ao modelo:\n{full_prompt}")
-
-            start_time = datetime.now()
-            
-            response = self.llm(
-                full_prompt,
-                stop=kwargs.get("stop_words", ["User:", "Pergunta:", "Pergunte:"]),
-                max_tokens=kwargs.get("max_tokens", 1024),  # Agora usa o valor do front se enviado
-                temperature=kwargs.get("temperature", 0.7),
-                top_p=kwargs.get("top_p", 0.9),
-                top_k=kwargs.get("top_k", 50),
-                frequency_penalty=kwargs.get("frequency_penalty", 1.0),
-                presence_penalty=kwargs.get("presence_penalty", 1.2)
-            )
-
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-
-            raw_answer = response["choices"][0]["text"].strip() if response and "choices" in response and response["choices"] else "[Erro: Modelo retornou resposta vazia]"
-            log_success(f"🎯 Resposta do modelo em {elapsed_time:.2f}s: {raw_answer}")
-            return raw_answer
+            if self.llm is None:
+                log_info("🔹 Carregando modelo LLaMA...")
+                self.llm = Llama(model_path=self.model_path, n_threads=NUM_CORES, n_ctx=MODEL_CONTEXT_SIZE, batch_size=MODEL_BATCH_SIZE, verbose=False)
+                log_success("✅ Modelo LLaMA carregado com sucesso!")
         except Exception as e:
-            log_error(f"Erro durante a inferência: {e}\n{traceback.format_exc()}")
-            return "[Erro: Falha na inferência]"
+            log_error(f"❌ Erro ao carregar o modelo LLaMA: {str(e)}")
+            raise e
 
-# 🔹 Lifespan Handler para Inicialização
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Inicializa a API corretamente e evita DeprecationWarning."""
-    log_info("🚀 Iniciando a API...")
-    await connect_mongo()
+    def close(self):
+        if self.llm is not None:
+            log_info("🔹 Fechando o modelo LLaMA...")
+            del self.llm
+            self.llm = None
+            log_success("✅ Modelo LLaMA fechado com sucesso!")
+
+    def invoke(self, prompt: str):
+        if self.llm is None:
+            log_error("❌ Erro: Modelo não carregado!")
+            raise HTTPException(status_code=500, detail="Modelo não carregado!")
+
+        log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
+
+        start_time = time.time()
+        response = self.llm(prompt, stop=["\n"], max_tokens=512, echo=False)
+        end_time = time.time()
+
+        elapsed_time = end_time - start_time
+        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
+
+        if "choices" in response and response["choices"]:
+            resposta = response["choices"][0]["text"].strip()
+            log_success(f"✅ Resposta gerada pelo modelo: {resposta}")
+            return resposta
+
+        log_error("❌ Erro: Resposta do modelo vazia ou inválida!")
+        return "Erro ao gerar resposta."
+
+llm = LlamaRunnable(model_path=MODEL_PATH)
+
+@app.on_event("startup")
+async def startup_event():
     llm.load()
-    log_success("🔥 API pronta para uso!")
-    yield
-    log_warning("🛑 API sendo desligada...")
 
-# 🔹 Inicializa a API com Lifespan
-app = FastAPI(lifespan=lifespan)
+@app.on_event("shutdown")
+async def shutdown_event():
+    llm.close()
+
+class InferenceRequest(BaseModel):
+    prompt: str
+    session_id: Optional[str] = "default_session"
+
+# 🔹 Recuperar memórias do MongoDB
+def get_memories():
+    memories = collection.find().sort("timestamp", -1).limit(6)
+    texts = [mem["text"] for mem in memories]
+    log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB.")
+    return texts
+
+# 🔹 Recuperar contexto do ChromaDB
+def get_recent_memories():
+    """Recupera as últimas mensagens armazenadas no LangChain para fornecer contexto recente."""
+    history = memory.load_memory_variables({})["history"]
+
+    if not isinstance(history, list):
+        return []
+
+    recent_memories = "\n".join(
+        [f"Usuário: {msg.content}" if isinstance(msg, HumanMessage) else f"Polaris: {msg.content}" for msg in history]
+    )
+
+    log_info(f"📌 Recuperadas {len(history)} mensagens da memória temporária do LangChain.")
+    return recent_memories
+
+
+def save_to_langchain_memory(user_input, response):
+    """Salva a conversa no cache temporário do LangChain, mantendo um histórico curto."""
+    try:
+        # 🔹 Adiciona a conversa no cache temporário
+        memory.save_context({"input": user_input}, {"output": response})  # Garante que 'output' sempre existe
+
+        # 🔹 Recupera o histórico atualizado
+        history = memory.load_memory_variables({})["history"]
+
+        # 🔹 Se o histórico ultrapassar 10 mensagens, removemos as mais antigas
+        if len(history) > 6:
+            log_warning("⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
+
+            # Limpa a memória e reinsere apenas as últimas 10 mensagens
+            memory.clear()
+            for i in range(len(history) - 6, len(history)):  # Mantém as 10 mais recentes
+                entry = history[i]
+                if isinstance(entry, HumanMessage):
+                    memory.save_context({"input": entry.content}, {"output": ""})  # Salva sem erro
+                elif isinstance(entry, AIMessage):
+                    memory.save_context({"input": "", "output": entry.content})  # Salva sem erro
+
+        log_success("✅ Memória temporária do LangChain atualizada com sucesso!")
+
+    except Exception as e:
+        log_error(f"❌ Erro ao salvar na memória temporária do LangChain: {str(e)}")
+
+# 🔹 Armazenar informações no MongoDB
+def save_to_mongo(user_input):
+    """Salva informações no MongoDB e também armazena no ChromaDB com limite de 10 entradas"""
+    try:
+        existing_entry = collection.find_one({"text": user_input})
+        if existing_entry:
+            log_warning(f"⚠️ Entrada duplicada detectada, não será salva: {user_input}")
+            return
+
+        doc = {"text": user_input, "timestamp": datetime.utcnow()}
+        result = collection.insert_one(doc)
+        if result.inserted_id:
+            log_success(f"✅ Informação armazenada no MongoDB: {user_input}")
+
+    except Exception as e:
+        log_error(f"❌ Erro ao salvar no MongoDB: {str(e)}")
+
+# 🔹 Carrega o prompt de instrução do arquivo
+def load_prompt_from_file(file_path="polaris_prompt.txt"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando um prompt padrão.")
+        return """\
+        ### Instruções:
+        Você é Polaris, um assistente inteligente.
+        Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
+        Se não souber a resposta, seja honesto e não invente informações.
+
+        Agora, aqui está a conversa atual:
+        """
+
+def load_keywords_from_file(file_path="keywords.txt"):
+    """Carrega a lista de palavras-chave do arquivo especificado."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            keywords = [line.strip().lower() for line in file.readlines() if line.strip()]
+            log_info(f"📂 Palavras-chave carregadas do arquivo ({len(keywords)} palavras).")
+            return keywords
+    except FileNotFoundError:
+        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando palavras-chave padrão.")
+        return ["meu nome é", "eu moro em", "eu gosto de"]
+
+def trim_langchain_memory():
+    """Mantém apenas as últimas 10 mensagens no cache temporário do LangChain sem quebrar o formato."""
+    try:
+        history = memory.load_memory_variables({})["history"]
+
+        if not isinstance(history, list):
+            return
+
+        # 🔹 Se o histórico tiver mais de 10 mensagens, reduzimos para as 10 mais recentes
+        if len(history) > 6:
+            log_warning("⚠️ ⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
+            memory.chat_memory.messages = history[-6:]  # Mantém apenas as 10 mais recentes
+
+        log_success("✅ Memória temporária ajustada sem perda de formato!")
+
+    except Exception as e:
+        log_error(f"❌ ❌ Erro ao ajustar memória temporária do LangChain: {str(e)}")
+
+from langchain.schema import HumanMessage, AIMessage
+
+@app.post("/inference/")
+async def inference(request: InferenceRequest):
+    session_id = request.session_id or "default_session"
+    log_info(f"📥 Nova solicitação de inferência: {request.prompt}")
+
+    keywords = load_keywords_from_file()
+
+    # 🔹 Salva no MongoDB se for informação relevante
+    if any(kw in request.prompt.lower() for kw in keywords):
+        save_to_mongo(request.prompt)
+
+    # 🔹 Ajusta a memória temporária antes de salvar novas entradas
+    trim_langchain_memory()
+
+    # 🔹 Recupera memórias
+    mongo_memories = get_memories()
+    recent_memories = get_recent_memories()
+
+    # 🔹 Constrói contexto
+    context_pieces = []
+    if mongo_memories:
+        context_pieces.append("📌 Memória do Usuário:\n" + "\n".join(mongo_memories))
+    if recent_memories:
+        context_pieces.append("📌 Conversa recente:\n" + recent_memories)
+
+    context = "\n\n".join(context_pieces)
+
+    # 🔹 Carrega o prompt de instrução
+    prompt_instrucoes = load_prompt_from_file()
+
+    # 🔹 Monta prompt final
+    full_prompt = f"""{prompt_instrucoes}
+
+--- CONTEXTO ---
+{context}
+
+--- CONVERSA ATUAL ---
+Usuário: {request.prompt}
+
+Polaris:"""
+
+    # 🔹 Gera resposta
+    resposta = llm.invoke(full_prompt)
+
+    # 🔹 Salva nova interação na memória temporária
+    memory.save_context({"input": request.prompt}, {"output": resposta})
+
+    return {"resposta": resposta}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -174,42 +283,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🔹 Instancia o modelo
-llm = LlamaLLM(model_path=MODEL_PATH, prompt_file=PROMPT_FILE)
-
-@app.post("/inference/")
-async def inference(request: InferenceRequest):
-    """Gera resposta e mantém contexto no MongoDB"""
-    try:
-        session_data = await collection.find_one({"session_id": request.session_id}) if mongo_available else None
-
-        # Resgatar histórico da conversa, se existir
-        history = session_data.get("history", []) if session_data else []
-
-        # Adicionar a pergunta ao histórico
-        history.append({"role": "User", "content": request.prompt})
-
-        # Passar histórico para o modelo
-        context_prompt = "\n".join([f"{msg['content']}" for msg in history])
-
-        answer = llm.call(context_prompt)
-
-        # Adicionar resposta ao histórico
-        history.append({"role": "Polaris", "content": answer})
-
-        if mongo_available:
-            await collection.update_one(
-                {"session_id": request.session_id},
-                {"$set": {"history": history}},
-                upsert=True
-            )
-            log_success("💾 Histórico da sessão atualizado no MongoDB.")
-
-        return {"resposta": answer}
-    except Exception as e:
-        log_error(f"Erro inesperado: {e}\n{traceback.format_exc()}")
-        raise HTTPException(status_code=500, detail="Erro interno na API")
-
 if __name__ == "__main__":
-    log_success("🔥 Iniciando servidor FastAPI...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
