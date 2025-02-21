@@ -84,7 +84,7 @@ class LlamaRunnable:
         log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
 
         start_time = time.time()
-        response = self.llm(prompt, stop=["\n"], max_tokens=100, echo=False)
+        response = self.llm(prompt, stop=["\n"], max_tokens=512, echo=False)
         end_time = time.time()
 
         elapsed_time = end_time - start_time
@@ -114,7 +114,7 @@ class InferenceRequest(BaseModel):
 
 # 🔹 Recuperar memórias do MongoDB
 def get_memories():
-    memories = collection.find().sort("timestamp", -1).limit(5)
+    memories = collection.find().sort("timestamp", -1).limit(6)
     texts = [mem["text"] for mem in memories]
     log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB.")
     return texts
@@ -145,12 +145,12 @@ def save_to_langchain_memory(user_input, response):
         history = memory.load_memory_variables({})["history"]
 
         # 🔹 Se o histórico ultrapassar 10 mensagens, removemos as mais antigas
-        if len(history) > 10:
+        if len(history) > 6:
             log_warning("⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
 
             # Limpa a memória e reinsere apenas as últimas 10 mensagens
             memory.clear()
-            for i in range(len(history) - 10, len(history)):  # Mantém as 10 mais recentes
+            for i in range(len(history) - 6, len(history)):  # Mantém as 10 mais recentes
                 entry = history[i]
                 if isinstance(entry, HumanMessage):
                     memory.save_context({"input": entry.content}, {"output": ""})  # Salva sem erro
@@ -161,26 +161,6 @@ def save_to_langchain_memory(user_input, response):
 
     except Exception as e:
         log_error(f"❌ Erro ao salvar na memória temporária do LangChain: {str(e)}")
-
-def save_to_chroma_limited(user_input):
-    """Salva no ChromaDB mantendo no máximo 10 entradas recentes"""
-    try:
-        # Recupera todas as memórias salvas no ChromaDB
-        all_docs = vectorstore.similarity_search("", k=100)  # Busca todas as entradas
-        total_memories = len(all_docs)
-
-        # Se já temos 10 ou mais memórias, removemos as mais antigas
-        if total_memories >= 10:
-            log_warning(f"⚠️ Limite de 10 entradas atingido. Removendo as mais antigas...")
-            for i in range(total_memories - 9):  # Remove apenas as mais antigas para manter 10 no total
-                vectorstore.delete([all_docs[i].id])
-
-        # Adiciona a nova entrada
-        vectorstore.add_texts([user_input])
-        log_success(f"✅ Informação armazenada no ChromaDB: {user_input}")
-
-    except Exception as e:
-        log_error(f"❌ Erro ao salvar no ChromaDB: {str(e)}")
 
 # 🔹 Armazenar informações no MongoDB
 def save_to_mongo(user_input):
@@ -196,8 +176,6 @@ def save_to_mongo(user_input):
         if result.inserted_id:
             log_success(f"✅ Informação armazenada no MongoDB: {user_input}")
 
-            # 🔹 Agora salvamos no ChromaDB com limite
-            save_to_chroma_limited(user_input)
     except Exception as e:
         log_error(f"❌ Erro ao salvar no MongoDB: {str(e)}")
 
@@ -237,9 +215,9 @@ def trim_langchain_memory():
             return
 
         # 🔹 Se o histórico tiver mais de 10 mensagens, reduzimos para as 10 mais recentes
-        if len(history) > 10:
+        if len(history) > 6:
             log_warning("⚠️ ⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
-            memory.chat_memory.messages = history[-10:]  # Mantém apenas as 10 mais recentes
+            memory.chat_memory.messages = history[-6:]  # Mantém apenas as 10 mais recentes
 
         log_success("✅ Memória temporária ajustada sem perda de formato!")
 
