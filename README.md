@@ -33,7 +33,7 @@ Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama*,
 ### ⚙️ Passos para Configuração
 1. Clone o repositório:
    ```sh
-   git clone https://github.com/seu-usuario/polaris.git
+   git clone https://github.com/Tech-Tweakers/polaris-python-api.git
    cd polaris
    ```
 
@@ -49,16 +49,9 @@ Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama*,
    pip install -r requirements.txt
    ```
 
-4. Configure as variáveis de ambiente:
-   ```sh
-   export MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
-   export MODEL_PATH="./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
-   ```
-   *(No Windows, use `set` em vez de `export`.)*
-
 5. Execute a API:
    ```sh
-   python main.py
+   python polaris_api.py
    ```
 
 ## 🔥 Endpoints Disponíveis
