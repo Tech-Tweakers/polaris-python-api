@@ -226,7 +226,7 @@ Usuário: {request.prompt}
 
 Polaris:"""
 
-    log_info(f"📜 Prompt final gerado:\n{full_prompt}")
+    # log_info(f"📜 Prompt final gerado:\n{full_prompt}")
 
     # 🔹 Faz a inferência com base no prompt ajustado
     resposta = llm.invoke(full_prompt)
