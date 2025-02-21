@@ -1,27 +1,49 @@
-# 🔹 Identidade e Nome
 meu nome é
 sou conhecido como
 me chamam de
 meu apelido é
 sou chamado de
+me apresento como
+as pessoas me conhecem como
+geralmente sou chamado de
+pode me chamar de
+eu atendo por
 
-# 🔹 Localização e Residência
-eu moro
-eu vivo
+eu moro em
+eu vivo em
 sou de
 nasci em
-meu bairro
-meu estado
+minha cidade é
+minha região é
+meu bairro é
+meu estado é
+minha rua é
+atualmente moro em
+já morei em
+estou morando em
+me mudei para
+cresci em
+minha cidade natal é
 
-# 🔹 Profissão e Trabalho
 trabalho como
 sou formado em
 minha profissão é
 estudo em
 minha faculdade é
 minha empresa é
+sou especialista em
+sou estudante de
+sou autônomo
+sou empreendedor
+sou freelancer
+trabalho na área de
+atuo como
+faço estágio em
+minha carreira é
+minha ocupação atual é
+sou dono de
+presto serviços como
 
-# 🔹 Interesses e Preferências
 eu gosto de
 adoro
 sou fã de
@@ -29,9 +51,20 @@ minha banda favorita é
 meu filme favorito é
 minha comida favorita é
 meu esporte favorito é
-eu torço para
+meu livro favorito é
+minha série favorita é
+minha música favorita é
+minha cor favorita é
+meu passatempo preferido é
+curto muito
+sou apaixonado por
+não gosto de
+prefiro
+minha bebida favorita é
+gosto de praticar
+sou viciado em
+sou colecionador de
 
-# 🔹 Relacionamentos
 meu amigo
 minha amiga
 meu filho
@@ -39,21 +72,58 @@ minha esposa
 meu namorado
 minha namorada
 minha mãe
-meu filho
-minha filha
 meu pai
+minha filha
+meu irmão
+minha irmã
+meu parceiro
+minha parceira
+meu melhor amigo
+minha melhor amiga
+tenho um relacionamento com
+sou casado com
+sou solteiro
+sou divorciado
+sou viúvo
+estou namorando
 
-# 🔹 Saúde e Hábitos
 tenho alergia a
 sou vegetariano
+sou vegano
 pratico esportes
 faço academia
 medito todos os dias
 sou fitness
+faço dieta
+sigo uma alimentação saudável
+sou intolerante a
+sou alérgico a
+tenho uma condição médica chamada
+tenho uma rotina saudável
+faço yoga
+corro todas as manhãs
+evito alimentos como
+não consumo álcool
+não fumo
+durmo cedo
+tenho insônia
+cuido da minha saúde com
 
-# 🔹 Vida e Experiências
 viajei para
 fiz intercâmbio
 participei de
 meu objetivo é
 meu sonho é
+já morei em
+quero visitar
+estou planejando viajar para
+aprendi a
+minha maior conquista foi
+quero aprender
+uma experiência inesquecível que tive foi
+um desafio que superei foi
+sempre quis
+já experimentei
+meu próximo destino é
+minha maior aventura foi
+estou me preparando para
