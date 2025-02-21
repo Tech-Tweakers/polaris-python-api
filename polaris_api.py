@@ -16,29 +16,30 @@ from pymongo import MongoClient
 import uvicorn
 
 # 🔹 Configuração do log
-class LogColors:
-    INFO = "\033[94m"
-    SUCCESS = "\033[92m"
-    WARNING = "\033[93m"
-    ERROR = "\033[91m"
-    RESET = "\033[0m"
+LOG_FILE = "polaris.log"
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
 
-def log_info(message: str): logging.info(f"{LogColors.INFO}🔹 {message}{LogColors.RESET}")
-def log_success(message: str): logging.info(f"{LogColors.SUCCESS}✅ {message}{LogColors.RESET}")
-def log_warning(message: str): logging.warning(f"{LogColors.WARNING}⚠️ {message}{LogColors.RESET}")
-def log_error(message: str): logging.error(f"{LogColors.ERROR}❌ {message}{LogColors.RESET}")
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+def log_info(message: str): logging.info(f"🔹 {message}")
+def log_success(message: str): logging.info(f"✅ {message}")
+def log_warning(message: str): logging.warning(f"⚠️ {message}")
+def log_error(message: str): logging.error(f"❌ {message}")
 
 # 🔹 Configuração do modelo
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
-
 NUM_CORES = 6
-MODEL_CONTEXT_SIZE = 2048
+MODEL_CONTEXT_SIZE = 4096
 MODEL_BATCH_SIZE = 8
 
 # 🔹 Conexão com o MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
 
@@ -50,61 +51,55 @@ log_info("🔹 Configurando memória do LangChain...")
 
 embedder = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
-
-# 🔹 Memória de conversação curta
 memory = ConversationBufferMemory(memory_key="history", return_messages=True)
 
-# 🔹 Classe para Llama (Agora um `Runnable`)
+# 🔹 Classe para Llama
 class LlamaRunnable:
     def __init__(self, model_path: str):
         self.model_path = model_path
         self.llm = None
 
     def load(self):
-        if self.llm is None:
-            log_info("🔹 Carregando modelo LLaMA...")
-            self.llm = Llama(model_path=self.model_path, n_threads=NUM_CORES, n_ctx=4096, batch_size=MODEL_BATCH_SIZE)
-            log_success("✅ Modelo LLaMA carregado com sucesso!")
+        try:
+            if self.llm is None:
+                log_info("🔹 Carregando modelo LLaMA...")
+                self.llm = Llama(model_path=self.model_path, n_threads=NUM_CORES, n_ctx=MODEL_CONTEXT_SIZE, batch_size=MODEL_BATCH_SIZE, verbose=False)
+                log_success("✅ Modelo LLaMA carregado com sucesso!")
+        except Exception as e:
+            log_error(f"❌ Erro ao carregar o modelo LLaMA: {str(e)}")
+            raise e
 
     def close(self):
-        """ Fecha corretamente o modelo LLaMA para evitar erro de finalização. """
         if self.llm is not None:
             log_info("🔹 Fechando o modelo LLaMA...")
-            del self.llm  # Remove o objeto para liberar a memória
+            del self.llm
             self.llm = None
             log_success("✅ Modelo LLaMA fechado com sucesso!")
 
-    def invoke(self, messages):
+    def invoke(self, prompt: str):
         if self.llm is None:
             log_error("❌ Erro: Modelo não carregado!")
             raise HTTPException(status_code=500, detail="Modelo não carregado!")
 
-        # 🔹 Construir prompt baseado no histórico
-        context = "\n".join([msg["content"] if isinstance(msg, dict) else msg.content for msg in messages])
+        log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
 
-        # 🔹 Formatar prompt para IA
-        full_prompt = f"Usuário: {context}\nPolaris:"
-
-        # 🔹 Mede tempo de inferência
         start_time = time.time()
-        response = self.llm(full_prompt, stop=["\n"], max_tokens=100, echo=False)
+        response = self.llm(prompt, stop=["\n"], max_tokens=100, echo=False)
         end_time = time.time()
 
-        # 🔹 Correção do cálculo do tempo de inferência
         elapsed_time = end_time - start_time
-        formatted_time = f"{int(elapsed_time // 3600):02}:{int((elapsed_time % 3600) // 60):02}:{elapsed_time % 60:06.3f}"
-        log_info(f"⚡ Tempo de inferência: {formatted_time}")
+        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
 
-        # 🔹 Verifica se a resposta do modelo existe antes de acessá-la
         if "choices" in response and response["choices"]:
-            return response["choices"][0]["text"].strip()
+            resposta = response["choices"][0]["text"].strip()
+            log_success(f"✅ Resposta gerada pelo modelo: {resposta}")
+            return resposta
 
         log_error("❌ Erro: Resposta do modelo vazia ou inválida!")
         return "Erro ao gerar resposta."
 
 llm = LlamaRunnable(model_path=MODEL_PATH)
 
-# 🔹 Carrega o modelo antes do primeiro uso
 @app.on_event("startup")
 async def startup_event():
     llm.load()
@@ -113,7 +108,6 @@ async def startup_event():
 async def shutdown_event():
     llm.close()
 
-# 🔹 Modelo de inferência
 class InferenceRequest(BaseModel):
     prompt: str
     session_id: Optional[str] = "default_session"
@@ -121,21 +115,74 @@ class InferenceRequest(BaseModel):
 # 🔹 Recuperar memórias do MongoDB
 def get_memories():
     memories = collection.find().sort("timestamp", -1).limit(5)
-    return [mem["text"] for mem in memories]
+    texts = [mem["text"] for mem in memories]
+    log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB.")
+    return texts
 
-# 🔹 Recuperar contexto semântico do ChromaDB
+# 🔹 Recuperar contexto do ChromaDB
 def get_similar_memories(prompt):
     retrieved_docs = vectorstore.similarity_search(prompt, k=3)
-    return [doc.page_content for doc in retrieved_docs]
+    docs = [doc.page_content for doc in retrieved_docs]
+    log_info(f"📌 Recuperadas {len(docs)} memórias semânticas do ChromaDB.")
+    return docs
 
 # 🔹 Armazenar informações no MongoDB
 def save_to_mongo(user_input):
-    doc = {"text": user_input, "timestamp": datetime.utcnow()}
-    collection.insert_one(doc)
+    """Salva informações no MongoDB, evitando entradas duplicadas."""
+    try:
+        # Verifica se a entrada já existe no banco
+        existing_entry = collection.find_one({"text": user_input})
+        if existing_entry:
+            log_warning(f"⚠️ Entrada duplicada detectada, não será salva: {user_input}")
+            return  # Se já existe, não salva de novo
+
+        # Caso não exista, insere no banco
+        doc = {"text": user_input, "timestamp": datetime.utcnow()}
+        result = collection.insert_one(doc)
+        if result.inserted_id:
+            log_success(f"✅ Informação armazenada no MongoDB: {user_input}")
+    except Exception as e:
+        log_error(f"❌ Erro ao salvar no MongoDB: {str(e)}")
+
+# 🔹 Carrega o prompt de instrução do arquivo
+def load_prompt_from_file(file_path="polaris_prompt.txt"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando um prompt padrão.")
+        return """\
+        ### Instruções:
+        Você é Polaris, um assistente inteligente.
+        Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
+        Se não souber a resposta, seja honesto e não invente informações.
+
+        Agora, aqui está a conversa atual:
+        """
+
+def load_keywords_from_file(file_path="keywords.txt"):
+    """Carrega a lista de palavras-chave do arquivo especificado."""
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            keywords = [line.strip().lower() for line in file.readlines() if line.strip()]
+            log_info(f"📂 Palavras-chave carregadas do arquivo ({len(keywords)} palavras).")
+            return keywords
+    except FileNotFoundError:
+        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando palavras-chave padrão.")
+        return ["meu nome é", "eu moro em", "eu gosto de"]
+
+
+from langchain.schema import HumanMessage, AIMessage
 
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
     session_id = request.session_id or "default_session"
+    log_info(f"📥 Nova solicitação de inferência: {request.prompt}")
+
+    keywords = load_keywords_from_file()
+
+    if any(kw in request.prompt.lower() for kw in keywords):
+        save_to_mongo(request.prompt)
 
     # 🔹 Recupera memórias de longo prazo
     mongo_memories = get_memories()
@@ -145,26 +192,54 @@ async def inference(request: InferenceRequest):
     if not isinstance(memory_short, list):
         memory_short = []
 
-    # 🔹 Monta contexto com MongoDB + ChromaDB + Memória curta
-    context = "\n".join(mongo_memories + chroma_memories + [msg["content"] for msg in memory_short])
+    # 🔹 Organiza a memória curta corretamente
+    short_memory_formatted = "\n".join(
+        [f"Usuário: {msg.content}" if isinstance(msg, HumanMessage) else f"Polaris: {msg.content}" for msg in memory_short]
+    )
 
-    # 🔹 Faz a inferência com base no histórico atualizado
-    resposta = llm.invoke([{"role": "user", "content": context}])
+    # 🔹 Constrói o contexto separado por blocos
+    context_pieces = []
+    
+    if mongo_memories:
+        context_pieces.append("📌 Memória do Usuário (extraída do banco de dados):\n" + "\n".join(mongo_memories))
+    
+    if chroma_memories:
+        context_pieces.append("📌 Informações relevantes (ChromaDB):\n" + "\n".join(chroma_memories))
+    
+    if short_memory_formatted:
+        context_pieces.append("📌 Conversa recente:\n" + short_memory_formatted)
 
-    # 🔹 Salva resposta na memória curta
+    # 🔹 Junta tudo em um contexto bem formatado
+    context = "\n\n".join(context_pieces)
+
+    # 🔹 Carrega o prompt de instrução
+    prompt_instrucoes = load_prompt_from_file()
+
+    # 🔹 Constrói o prompt final
+    full_prompt = f"""{prompt_instrucoes}
+
+--- CONTEXTO ---
+{context}
+
+--- CONVERSA ATUAL ---
+Usuário: {request.prompt}
+
+Polaris:"""
+
+    log_info(f"📜 Prompt final gerado:\n{full_prompt}")
+
+    # 🔹 Faz a inferência com base no prompt ajustado
+    resposta = llm.invoke(full_prompt)
+
+    # 🔹 Salva a resposta na memória curta
     memory.save_context({"input": request.prompt}, {"output": resposta})
 
-    # 🔹 Verifica se o prompt contém informações importantes para armazenar no MongoDB
-    if any(kw in request.prompt.lower() for kw in [
-        "meu nome é", "eu moro em", "eu gosto de", "minha profissão é",
-        "tenho um amigo chamado", "minha esposa se chama", "viajei para",
-        "meu objetivo é", "meu sonho é", "eu torço para"
-    ]):
+    # 🔹 Verifica se o input contém informações importantes para armazenar no MongoDB
+    if any(kw in request.prompt.lower() for kw in ["meu nome é", "eu moro em", "eu gosto de"]):
         save_to_mongo(request.prompt)
 
     return {"resposta": resposta}
 
-# 🔹 Aplicando CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -173,6 +248,5 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🔹 Rodar servidor
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

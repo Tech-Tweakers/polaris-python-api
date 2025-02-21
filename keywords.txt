@@ -1,0 +1,54 @@
+# 🔹 Identidade e Nome
+meu nome é
+sou conhecido como
+me chamam de
+meu apelido é
+sou chamado de
+
+# 🔹 Localização e Residência
+eu moro em
+eu vivo em
+sou de
+nasci em
+meu bairro é
+meu estado é
+
+# 🔹 Profissão e Trabalho
+trabalho como
+sou formado em
+minha profissão é
+estudo em
+minha faculdade é
+minha empresa é
+
+# 🔹 Interesses e Preferências
+eu gosto de
+adoro
+sou fã de
+minha banda favorita é
+meu filme favorito é
+minha comida favorita é
+meu esporte favorito é
+eu torço para
+
+# 🔹 Relacionamentos
+tenho um amigo chamado
+meu filho se chama
+minha esposa se chama
+meu namorado se chama
+minha namorada se chama
+
+# 🔹 Saúde e Hábitos
+tenho alergia a
+sou vegetariano
+pratico esportes
+faço academia
+medito todos os dias
+sou fitness
+
+# 🔹 Vida e Experiências
+viajei para
+fiz intercâmbio
+participei de
+meu objetivo é
+meu sonho é
