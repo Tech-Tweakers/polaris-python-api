@@ -51,7 +51,7 @@ log_info("🔹 Configurando memória do LangChain...")
 
 embedder = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
-memory = ConversationBufferMemory(memory_key="history", return_messages=True)
+memory = ConversationBufferMemory(memory_key="history", output_key="output", return_messages=True)
 
 # 🔹 Classe para Llama
 class LlamaRunnable:
@@ -120,27 +120,84 @@ def get_memories():
     return texts
 
 # 🔹 Recuperar contexto do ChromaDB
-def get_similar_memories(prompt):
-    retrieved_docs = vectorstore.similarity_search(prompt, k=3)
-    docs = [doc.page_content for doc in retrieved_docs]
-    log_info(f"📌 Recuperadas {len(docs)} memórias semânticas do ChromaDB.")
-    return docs
+def get_recent_memories():
+    """Recupera as últimas mensagens armazenadas no LangChain para fornecer contexto recente."""
+    history = memory.load_memory_variables({})["history"]
+
+    if not isinstance(history, list):
+        return []
+
+    recent_memories = "\n".join(
+        [f"Usuário: {msg.content}" if isinstance(msg, HumanMessage) else f"Polaris: {msg.content}" for msg in history]
+    )
+
+    log_info(f"📌 Recuperadas {len(history)} mensagens da memória temporária do LangChain.")
+    return recent_memories
+
+
+def save_to_langchain_memory(user_input, response):
+    """Salva a conversa no cache temporário do LangChain, mantendo um histórico curto."""
+    try:
+        # 🔹 Adiciona a conversa no cache temporário
+        memory.save_context({"input": user_input}, {"output": response})  # Garante que 'output' sempre existe
+
+        # 🔹 Recupera o histórico atualizado
+        history = memory.load_memory_variables({})["history"]
+
+        # 🔹 Se o histórico ultrapassar 10 mensagens, removemos as mais antigas
+        if len(history) > 10:
+            log_warning("⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
+
+            # Limpa a memória e reinsere apenas as últimas 10 mensagens
+            memory.clear()
+            for i in range(len(history) - 10, len(history)):  # Mantém as 10 mais recentes
+                entry = history[i]
+                if isinstance(entry, HumanMessage):
+                    memory.save_context({"input": entry.content}, {"output": ""})  # Salva sem erro
+                elif isinstance(entry, AIMessage):
+                    memory.save_context({"input": "", "output": entry.content})  # Salva sem erro
+
+        log_success("✅ Memória temporária do LangChain atualizada com sucesso!")
+
+    except Exception as e:
+        log_error(f"❌ Erro ao salvar na memória temporária do LangChain: {str(e)}")
+
+def save_to_chroma_limited(user_input):
+    """Salva no ChromaDB mantendo no máximo 10 entradas recentes"""
+    try:
+        # Recupera todas as memórias salvas no ChromaDB
+        all_docs = vectorstore.similarity_search("", k=100)  # Busca todas as entradas
+        total_memories = len(all_docs)
+
+        # Se já temos 10 ou mais memórias, removemos as mais antigas
+        if total_memories >= 10:
+            log_warning(f"⚠️ Limite de 10 entradas atingido. Removendo as mais antigas...")
+            for i in range(total_memories - 9):  # Remove apenas as mais antigas para manter 10 no total
+                vectorstore.delete([all_docs[i].id])
+
+        # Adiciona a nova entrada
+        vectorstore.add_texts([user_input])
+        log_success(f"✅ Informação armazenada no ChromaDB: {user_input}")
+
+    except Exception as e:
+        log_error(f"❌ Erro ao salvar no ChromaDB: {str(e)}")
 
 # 🔹 Armazenar informações no MongoDB
 def save_to_mongo(user_input):
-    """Salva informações no MongoDB, evitando entradas duplicadas."""
+    """Salva informações no MongoDB e também armazena no ChromaDB com limite de 10 entradas"""
     try:
-        # Verifica se a entrada já existe no banco
         existing_entry = collection.find_one({"text": user_input})
         if existing_entry:
             log_warning(f"⚠️ Entrada duplicada detectada, não será salva: {user_input}")
-            return  # Se já existe, não salva de novo
+            return
 
-        # Caso não exista, insere no banco
         doc = {"text": user_input, "timestamp": datetime.utcnow()}
         result = collection.insert_one(doc)
         if result.inserted_id:
             log_success(f"✅ Informação armazenada no MongoDB: {user_input}")
+
+            # 🔹 Agora salvamos no ChromaDB com limite
+            save_to_chroma_limited(user_input)
     except Exception as e:
         log_error(f"❌ Erro ao salvar no MongoDB: {str(e)}")
 
@@ -171,6 +228,23 @@ def load_keywords_from_file(file_path="keywords.txt"):
         log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando palavras-chave padrão.")
         return ["meu nome é", "eu moro em", "eu gosto de"]
 
+def trim_langchain_memory():
+    """Mantém apenas as últimas 10 mensagens no cache temporário do LangChain sem quebrar o formato."""
+    try:
+        history = memory.load_memory_variables({})["history"]
+
+        if not isinstance(history, list):
+            return
+
+        # 🔹 Se o histórico tiver mais de 10 mensagens, reduzimos para as 10 mais recentes
+        if len(history) > 10:
+            log_warning("⚠️ ⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
+            memory.chat_memory.messages = history[-10:]  # Mantém apenas as 10 mais recentes
+
+        log_success("✅ Memória temporária ajustada sem perda de formato!")
+
+    except Exception as e:
+        log_error(f"❌ ❌ Erro ao ajustar memória temporária do LangChain: {str(e)}")
 
 from langchain.schema import HumanMessage, AIMessage
 
@@ -181,41 +255,30 @@ async def inference(request: InferenceRequest):
 
     keywords = load_keywords_from_file()
 
+    # 🔹 Salva no MongoDB se for informação relevante
     if any(kw in request.prompt.lower() for kw in keywords):
         save_to_mongo(request.prompt)
 
-    # 🔹 Recupera memórias de longo prazo
+    # 🔹 Ajusta a memória temporária antes de salvar novas entradas
+    trim_langchain_memory()
+
+    # 🔹 Recupera memórias
     mongo_memories = get_memories()
-    chroma_memories = get_similar_memories(request.prompt)
-    memory_short = memory.load_memory_variables({})["history"]
+    recent_memories = get_recent_memories()
 
-    if not isinstance(memory_short, list):
-        memory_short = []
-
-    # 🔹 Organiza a memória curta corretamente
-    short_memory_formatted = "\n".join(
-        [f"Usuário: {msg.content}" if isinstance(msg, HumanMessage) else f"Polaris: {msg.content}" for msg in memory_short]
-    )
-
-    # 🔹 Constrói o contexto separado por blocos
+    # 🔹 Constrói contexto
     context_pieces = []
-    
     if mongo_memories:
-        context_pieces.append("📌 Memória do Usuário (extraída do banco de dados):\n" + "\n".join(mongo_memories))
-    
-    if chroma_memories:
-        context_pieces.append("📌 Informações relevantes (ChromaDB):\n" + "\n".join(chroma_memories))
-    
-    if short_memory_formatted:
-        context_pieces.append("📌 Conversa recente:\n" + short_memory_formatted)
+        context_pieces.append("📌 Memória do Usuário:\n" + "\n".join(mongo_memories))
+    if recent_memories:
+        context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
-    # 🔹 Junta tudo em um contexto bem formatado
     context = "\n\n".join(context_pieces)
 
     # 🔹 Carrega o prompt de instrução
     prompt_instrucoes = load_prompt_from_file()
 
-    # 🔹 Constrói o prompt final
+    # 🔹 Monta prompt final
     full_prompt = f"""{prompt_instrucoes}
 
 --- CONTEXTO ---
@@ -226,17 +289,13 @@ Usuário: {request.prompt}
 
 Polaris:"""
 
-    # log_info(f"📜 Prompt final gerado:\n{full_prompt}")
+    log_info(f"📜 Prompt final gerado:\n{full_prompt}")
 
-    # 🔹 Faz a inferência com base no prompt ajustado
+    # 🔹 Gera resposta
     resposta = llm.invoke(full_prompt)
 
-    # 🔹 Salva a resposta na memória curta
+    # 🔹 Salva nova interação na memória temporária
     memory.save_context({"input": request.prompt}, {"output": resposta})
-
-    # 🔹 Verifica se o input contém informações importantes para armazenar no MongoDB
-    if any(kw in request.prompt.lower() for kw in ["meu nome é", "eu moro em", "eu gosto de"]):
-        save_to_mongo(request.prompt)
 
     return {"resposta": resposta}
 

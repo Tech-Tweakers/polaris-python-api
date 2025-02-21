@@ -1,2 +1,5 @@
 models
 models/
+*.log
+log.*
+*log*

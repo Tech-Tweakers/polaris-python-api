@@ -6,12 +6,12 @@ meu apelido é
 sou chamado de
 
 # 🔹 Localização e Residência
-eu moro em
-eu vivo em
+eu moro
+eu vivo
 sou de
 nasci em
-meu bairro é
-meu estado é
+meu bairro
+meu estado
 
 # 🔹 Profissão e Trabalho
 trabalho como
@@ -32,11 +32,16 @@ meu esporte favorito é
 eu torço para
 
 # 🔹 Relacionamentos
-tenho um amigo chamado
-meu filho se chama
-minha esposa se chama
-meu namorado se chama
-minha namorada se chama
+meu amigo
+minha amiga
+meu filho
+minha esposa
+meu namorado
+minha namorada
+minha mãe
+meu filho
+minha filha
+meu pai
 
 # 🔹 Saúde e Hábitos
 tenho alergia a
