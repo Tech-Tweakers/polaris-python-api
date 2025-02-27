@@ -14,6 +14,27 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from pymongo import MongoClient
 import uvicorn
 
+from colorama import Fore, Style, init
+
+init(autoreset=True)
+
+TEXT_COLOR = Fore.LIGHTCYAN_EX
+STAR_COLOR = Fore.YELLOW
+DIM_STAR = Fore.LIGHTBLACK_EX
+
+# ASCII ART do Polaris com cores
+LOGO = f"""
+       {STAR_COLOR}*{Style.RESET_ALL}        .       .   *    .
+  .        .    {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}       .
+       {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
+    .      *       .        .
+ {STAR_COLOR}*{Style.RESET_ALL}      .     *         .     
+     .     .        .   *    
+"""
+
+# Exibir o logo no terminal
+print(LOGO)
+
 LOG_FILE = "polaris.log"
 logging.basicConfig(
     level=logging.INFO,
@@ -36,6 +57,12 @@ MODEL_BATCH_SIZE = 8
 
 MONGODB_HISTORY = 10
 LANGCHAIN_HISTORY = 6
+
+# Hiperparâmetros ajustáveis
+TEMPERATURE = 0.7  # Criatividade do modelo (0.0 = determinístico, 1.0 = criativo)
+TOP_P = 0.9  # Nucleus sampling (ajusta diversidade)
+TOP_K = 50  # Limita os k tokens mais prováveis
+FREQUENCY_PENALTY = 2.0  # Penaliza repetições
 
 MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 client = MongoClient(MONGO_URI)
@@ -90,7 +117,16 @@ class LlamaRunnable:
         log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
 
         start_time = time.time()
-        response = self.llm(prompt, stop=["\n", "---"], max_tokens=1024, echo=False)
+        response = self.llm(
+            prompt, 
+            stop=["\n", "---"], 
+            max_tokens=1024, 
+            echo=False,
+            temperature=TEMPERATURE,  # 🔥 Aplicando temperatura
+            top_p=TOP_P,  # 🔥 Aplicando nucleus sampling
+            top_k=TOP_K,  # 🔥 Aplicando top_k sampling
+            repeat_penalty=FREQUENCY_PENALTY  # 🔥 Aplicando penalidade de repetição
+        )
         end_time = time.time()
 
         elapsed_time = end_time - start_time
@@ -212,7 +248,7 @@ def trim_langchain_memory():
             log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
             memory.chat_memory.messages = history[-LANGCHAIN_HISTORY:]
 
-        log_success("Memória temporária ajustada sem perda de formato!")
+        log_info("📂 Memória temporária ajustada sem perda de formato!")
 
     except Exception as e:
         log_error(f"Erro ao ajustar memória temporária do LangChain: {str(e)}")
