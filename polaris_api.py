@@ -13,16 +13,12 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_huggingface import HuggingFaceEmbeddings
 from pymongo import MongoClient
 import uvicorn
-
 from colorama import Fore, Style, init
 
 init(autoreset=True)
-
 TEXT_COLOR = Fore.LIGHTCYAN_EX
 STAR_COLOR = Fore.YELLOW
 DIM_STAR = Fore.LIGHTBLACK_EX
-
-# ASCII ART do Polaris com cores
 LOGO = f"""
        {STAR_COLOR}*{Style.RESET_ALL}        .       .   *    .
   .        .    {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}       .
@@ -31,8 +27,6 @@ LOGO = f"""
  {STAR_COLOR}*{Style.RESET_ALL}      .     *         .     
      .     .        .   *    
 """
-
-# Exibir o logo no terminal
 print(LOGO)
 
 LOG_FILE = "polaris.log"
@@ -56,13 +50,12 @@ MODEL_CONTEXT_SIZE = 4096
 MODEL_BATCH_SIZE = 8
 
 MONGODB_HISTORY = 10
-LANGCHAIN_HISTORY = 6
+LANGCHAIN_HISTORY = 10
 
-# Hiperparâmetros ajustáveis
-TEMPERATURE = 0.7  # Criatividade do modelo (0.0 = determinístico, 1.0 = criativo)
-TOP_P = 0.9  # Nucleus sampling (ajusta diversidade)
-TOP_K = 50  # Limita os k tokens mais prováveis
-FREQUENCY_PENALTY = 2.0  # Penaliza repetições
+TEMPERATURE = 0.3 
+TOP_P = 0.9
+TOP_K = 50
+FREQUENCY_PENALTY = 2.0
 
 MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 client = MongoClient(MONGO_URI)
@@ -77,7 +70,7 @@ embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
 
 history = ChatMessageHistory()
-memory = ConversationBufferMemory(chat_memory=history, return_messages=True)  # ✅ memory_key REMOVIDO
+memory = ConversationBufferMemory(chat_memory=history, return_messages=True)
 
 
 class LlamaRunnable:
@@ -144,10 +137,8 @@ llm = LlamaRunnable(model_path=MODEL_PATH)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Evento de startup
     llm.load()
-    yield  # Permite que a aplicação rode enquanto a inicialização ocorre
-    # Evento de shutdown
+    yield
     llm.close()
 
 app = FastAPI(lifespan=lifespan)
@@ -293,7 +284,6 @@ Polaris:"""
 
     return {"resposta": resposta}
     
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
