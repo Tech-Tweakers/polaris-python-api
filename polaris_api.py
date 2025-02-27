@@ -1,21 +1,19 @@
-import asyncio
-import os
 import time
-import traceback
 import logging
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from llama_cpp import Llama
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_chroma import Chroma
 from langchain.memory import ConversationBufferMemory
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_huggingface import HuggingFaceEmbeddings
 from pymongo import MongoClient
 import uvicorn
 
-# 🔹 Configuração do log
 LOG_FILE = "polaris.log"
 logging.basicConfig(
     level=logging.INFO,
@@ -31,29 +29,30 @@ def log_success(message: str): logging.info(f"✅ {message}")
 def log_warning(message: str): logging.warning(f"⚠️ {message}")
 def log_error(message: str): logging.error(f"❌ {message}")
 
-# 🔹 Configuração do modelo
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 NUM_CORES = 6
 MODEL_CONTEXT_SIZE = 4096
 MODEL_BATCH_SIZE = 8
 
-# 🔹 Conexão com o MongoDB
+MONGODB_HISTORY = 10
+LANGCHAIN_HISTORY = 6
+
 MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
 
-# 🔹 Inicializa FastAPI
 app = FastAPI()
 
-# 🔹 Inicializa LangChain Memory
-log_info("🔹 Configurando memória do LangChain...")
+log_info("Configurando memória do LangChain...")
 
-embedder = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
-memory = ConversationBufferMemory(memory_key="history", output_key="output", return_messages=True)
 
-# 🔹 Classe para Llama
+history = ChatMessageHistory()
+memory = ConversationBufferMemory(chat_memory=history, return_messages=True)  # ✅ memory_key REMOVIDO
+
+
 class LlamaRunnable:
     def __init__(self, model_path: str):
         self.model_path = model_path
@@ -62,29 +61,36 @@ class LlamaRunnable:
     def load(self):
         try:
             if self.llm is None:
-                log_info("🔹 Carregando modelo LLaMA...")
-                self.llm = Llama(model_path=self.model_path, n_threads=NUM_CORES, n_ctx=MODEL_CONTEXT_SIZE, batch_size=MODEL_BATCH_SIZE, verbose=False)
-                log_success("✅ Modelo LLaMA carregado com sucesso!")
+                log_info("Carregando modelo LLaMA...")
+                self.llm = Llama(
+                    model_path=self.model_path, 
+                    n_threads=NUM_CORES, 
+                    n_ctx=MODEL_CONTEXT_SIZE, 
+                    batch_size=MODEL_BATCH_SIZE, 
+                    verbose=False,
+                    use_mlock=True
+                )
+                log_success("Modelo LLaMA carregado com sucesso!")
         except Exception as e:
-            log_error(f"❌ Erro ao carregar o modelo LLaMA: {str(e)}")
+            log_error(f"Erro ao carregar o modelo LLaMA: {str(e)}")
             raise e
 
     def close(self):
         if self.llm is not None:
-            log_info("🔹 Fechando o modelo LLaMA...")
+            log_info("Fechando o modelo LLaMA...")
             del self.llm
             self.llm = None
-            log_success("✅ Modelo LLaMA fechado com sucesso!")
+            log_success("Modelo LLaMA fechado com sucesso!")
 
     def invoke(self, prompt: str):
         if self.llm is None:
-            log_error("❌ Erro: Modelo não carregado!")
+            log_error("Erro: Modelo não carregado!")
             raise HTTPException(status_code=500, detail="Modelo não carregado!")
 
         log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
 
         start_time = time.time()
-        response = self.llm(prompt, stop=["\n"], max_tokens=512, echo=False)
+        response = self.llm(prompt, stop=["\n", "---"], max_tokens=1024, echo=False)
         end_time = time.time()
 
         elapsed_time = end_time - start_time
@@ -92,36 +98,35 @@ class LlamaRunnable:
 
         if "choices" in response and response["choices"]:
             resposta = response["choices"][0]["text"].strip()
-            log_success(f"✅ Resposta gerada pelo modelo: {resposta}")
+            log_success(f"Resposta gerada pelo modelo: {resposta}")
             return resposta
 
-        log_error("❌ Erro: Resposta do modelo vazia ou inválida!")
+        log_error("Erro: Resposta do modelo vazia ou inválida!")
         return "Erro ao gerar resposta."
 
 llm = LlamaRunnable(model_path=MODEL_PATH)
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Evento de startup
     llm.load()
-
-@app.on_event("shutdown")
-async def shutdown_event():
+    yield  # Permite que a aplicação rode enquanto a inicialização ocorre
+    # Evento de shutdown
     llm.close()
+
+app = FastAPI(lifespan=lifespan)
 
 class InferenceRequest(BaseModel):
     prompt: str
     session_id: Optional[str] = "default_session"
 
-# 🔹 Recuperar memórias do MongoDB
 def get_memories():
-    memories = collection.find().sort("timestamp", -1).limit(6)
+    memories = collection.find().sort("timestamp", -1).limit(MONGODB_HISTORY)
     texts = [mem["text"] for mem in memories]
     log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB.")
     return texts
 
-# 🔹 Recuperar contexto do ChromaDB
 def get_recent_memories():
-    """Recupera as últimas mensagens armazenadas no LangChain para fornecer contexto recente."""
     history = memory.load_memory_variables({})["history"]
 
     if not isinstance(history, list):
@@ -136,56 +141,46 @@ def get_recent_memories():
 
 
 def save_to_langchain_memory(user_input, response):
-    """Salva a conversa no cache temporário do LangChain, mantendo um histórico curto."""
     try:
-        # 🔹 Adiciona a conversa no cache temporário
-        memory.save_context({"input": user_input}, {"output": response})  # Garante que 'output' sempre existe
-
-        # 🔹 Recupera o histórico atualizado
+        memory.save_context({"input": user_input}, {"output": response})
         history = memory.load_memory_variables({})["history"]
 
-        # 🔹 Se o histórico ultrapassar 10 mensagens, removemos as mais antigas
-        if len(history) > 6:
-            log_warning("⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
-
-            # Limpa a memória e reinsere apenas as últimas 10 mensagens
+        if len(history) > LANGCHAIN_HISTORY:
+            log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
             memory.clear()
-            for i in range(len(history) - 6, len(history)):  # Mantém as 10 mais recentes
+            for i in range(len(history) - LANGCHAIN_HISTORY, len(history)):
                 entry = history[i]
                 if isinstance(entry, HumanMessage):
-                    memory.save_context({"input": entry.content}, {"output": ""})  # Salva sem erro
+                    memory.save_context({"input": entry.content}, {"output": ""})
                 elif isinstance(entry, AIMessage):
-                    memory.save_context({"input": "", "output": entry.content})  # Salva sem erro
+                    memory.save_context({"input": "", "output": entry.content})
 
-        log_success("✅ Memória temporária do LangChain atualizada com sucesso!")
+        log_success("Memória temporária do LangChain atualizada com sucesso!")
 
     except Exception as e:
-        log_error(f"❌ Erro ao salvar na memória temporária do LangChain: {str(e)}")
+        log_error(f"Erro ao salvar na memória temporária do LangChain: {str(e)}")
 
-# 🔹 Armazenar informações no MongoDB
 def save_to_mongo(user_input):
-    """Salva informações no MongoDB e também armazena no ChromaDB com limite de 10 entradas"""
     try:
         existing_entry = collection.find_one({"text": user_input})
         if existing_entry:
-            log_warning(f"⚠️ Entrada duplicada detectada, não será salva: {user_input}")
+            log_warning(f"Entrada duplicada detectada, não será salva: {user_input}")
             return
 
         doc = {"text": user_input, "timestamp": datetime.utcnow()}
         result = collection.insert_one(doc)
         if result.inserted_id:
-            log_success(f"✅ Informação armazenada no MongoDB: {user_input}")
+            log_success(f"Informação armazenada no MongoDB: {user_input}")
 
     except Exception as e:
-        log_error(f"❌ Erro ao salvar no MongoDB: {str(e)}")
+        log_error(f"Erro ao salvar no MongoDB: {str(e)}")
 
-# 🔹 Carrega o prompt de instrução do arquivo
 def load_prompt_from_file(file_path="polaris_prompt.txt"):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             return file.read().strip()
     except FileNotFoundError:
-        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando um prompt padrão.")
+        log_warning(f"Arquivo {file_path} não encontrado! Usando um prompt padrão.")
         return """\
         ### Instruções:
         Você é Polaris, um assistente inteligente.
@@ -203,26 +198,24 @@ def load_keywords_from_file(file_path="keywords.txt"):
             log_info(f"📂 Palavras-chave carregadas do arquivo ({len(keywords)} palavras).")
             return keywords
     except FileNotFoundError:
-        log_warning(f"⚠️ Arquivo {file_path} não encontrado! Usando palavras-chave padrão.")
+        log_warning(f"Arquivo {file_path} não encontrado! Usando palavras-chave padrão.")
         return ["meu nome é", "eu moro em", "eu gosto de"]
 
 def trim_langchain_memory():
-    """Mantém apenas as últimas 10 mensagens no cache temporário do LangChain sem quebrar o formato."""
     try:
         history = memory.load_memory_variables({})["history"]
 
         if not isinstance(history, list):
             return
 
-        # 🔹 Se o histórico tiver mais de 10 mensagens, reduzimos para as 10 mais recentes
-        if len(history) > 6:
-            log_warning("⚠️ ⚠️ Memória temporária cheia, removendo mensagens mais antigas...")
-            memory.chat_memory.messages = history[-6:]  # Mantém apenas as 10 mais recentes
+        if len(history) > LANGCHAIN_HISTORY:
+            log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
+            memory.chat_memory.messages = history[-LANGCHAIN_HISTORY:]
 
-        log_success("✅ Memória temporária ajustada sem perda de formato!")
+        log_success("Memória temporária ajustada sem perda de formato!")
 
     except Exception as e:
-        log_error(f"❌ ❌ Erro ao ajustar memória temporária do LangChain: {str(e)}")
+        log_error(f"Erro ao ajustar memória temporária do LangChain: {str(e)}")
 
 from langchain.schema import HumanMessage, AIMessage
 
@@ -233,18 +226,14 @@ async def inference(request: InferenceRequest):
 
     keywords = load_keywords_from_file()
 
-    # 🔹 Salva no MongoDB se for informação relevante
     if any(kw in request.prompt.lower() for kw in keywords):
         save_to_mongo(request.prompt)
 
-    # 🔹 Ajusta a memória temporária antes de salvar novas entradas
     trim_langchain_memory()
 
-    # 🔹 Recupera memórias
     mongo_memories = get_memories()
     recent_memories = get_recent_memories()
 
-    # 🔹 Constrói contexto
     context_pieces = []
     if mongo_memories:
         context_pieces.append("📌 Memória do Usuário:\n" + "\n".join(mongo_memories))
@@ -252,11 +241,7 @@ async def inference(request: InferenceRequest):
         context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
     context = "\n\n".join(context_pieces)
-
-    # 🔹 Carrega o prompt de instrução
     prompt_instrucoes = load_prompt_from_file()
-
-    # 🔹 Monta prompt final
     full_prompt = f"""{prompt_instrucoes}
 
 --- CONTEXTO ---
@@ -267,13 +252,11 @@ Usuário: {request.prompt}
 
 Polaris:"""
 
-    # 🔹 Gera resposta
     resposta = llm.invoke(full_prompt)
-
-    # 🔹 Salva nova interação na memória temporária
     memory.save_context({"input": request.prompt}, {"output": resposta})
 
     return {"resposta": resposta}
+    
 
 app.add_middleware(
     CORSMiddleware,
