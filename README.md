@@ -49,7 +49,7 @@ Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama*,
    pip install -r requirements.txt
    ```
 
-4. Execute a Docker Composer:
+4. Execute o Docker Composer:
    ```sh
    docker-compose up --build -d
    ```
