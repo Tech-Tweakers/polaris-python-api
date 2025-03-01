@@ -46,15 +46,15 @@ def log_error(message: str): logging.error(f"❌ {message}")
 
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 NUM_CORES = 6
-MODEL_CONTEXT_SIZE = 4096
+MODEL_CONTEXT_SIZE = 256
 MODEL_BATCH_SIZE = 8
 
-MONGODB_HISTORY = 10
-LANGCHAIN_HISTORY = 10
+MONGODB_HISTORY = 2
+LANGCHAIN_HISTORY = 2
 
 TEMPERATURE = 0.3 
-TOP_P = 0.9
-TOP_K = 50
+TOP_P = 0.5
+TOP_K = 30
 FREQUENCY_PENALTY = 2.0
 
 MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
