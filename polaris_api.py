@@ -264,7 +264,7 @@ from langchain.schema import HumanMessage, AIMessage
 
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
-    session_id = request.session_id or "default_session"
+    session_id = request.session_id
     log_info(f"📥 Nova solicitação de inferência para sessão {session_id}: {request.prompt}")
 
     keywords = load_keywords_from_file()
