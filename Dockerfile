@@ -18,9 +18,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -L -H "Authorization: Bearer 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" \
--o Meta-Llama-3-8B-Instruct.Q4_0.gguf \
-"https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
+RUN wget --header="Authorization: Bearer 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" https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_0.gguf
 
 # Cria um ambiente virtual para evitar conflitos de pacotes
 RUN python -m venv $VENV_PATH
