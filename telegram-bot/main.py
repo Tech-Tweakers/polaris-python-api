@@ -12,7 +12,7 @@ load_dotenv()
 # Configurações
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
-POLARIS_API_URL = "https://polaris-telegram-bot.railway.internal/inference/"  # Endpoint da Polaris
+POLARIS_API_URL = "https://polaris-python-api-production.up.railway.app/inference/"  # Endpoint da Polaris
 
 # Inicializar FastAPI
 app = FastAPI()
