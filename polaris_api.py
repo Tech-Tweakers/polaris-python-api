@@ -13,6 +13,7 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_huggingface import HuggingFaceEmbeddings
 from pymongo import MongoClient
 import uvicorn
+import os
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -57,7 +58,15 @@ TOP_P = 0.5
 TOP_K = 30
 FREQUENCY_PENALTY = 2.0
 
-MONGO_URI = "mongodb://admin:admin123@switchyard.proxy.rlwy.net:29341/polaris_db?authSource=admin"
+DB_USER = os.getenv("MONGO_INITDB_ROOT_USERNAME")
+DB_PASS = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
+DB_URL = os.getenv("MONGO_URL")
+
+print(f"DB_USER: {DB_USER}")
+print(f"DB_PASS: {DB_PASS}")
+print(f"DB_URL: {DB_URL}")
+
+MONGO_URI = f"mongodb://{DB_USER}:{DB_PASS}@{DB_URL}/polaris_db?authSource={DB_USER}"
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
