@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     libomp-dev \
     git \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget -O Meta-Llama-3-8B-Instruct.Q4_0.gguf https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_0.gguf
