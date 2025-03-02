@@ -46,11 +46,11 @@ def log_error(message: str): logging.error(f"❌ {message}")
 
 MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 NUM_CORES = 6
-MODEL_CONTEXT_SIZE = 256
-MODEL_BATCH_SIZE = 8
+MODEL_CONTEXT_SIZE = 8192
+MODEL_BATCH_SIZE = 4
 
 MONGODB_HISTORY = 2
-LANGCHAIN_HISTORY = 2
+LANGCHAIN_HISTORY = 10
 
 TEMPERATURE = 0.3 
 TOP_P = 0.5
@@ -61,6 +61,7 @@ MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admi
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
+memory_store = {}
 
 app = FastAPI()
 
@@ -147,14 +148,17 @@ class InferenceRequest(BaseModel):
     prompt: str
     session_id: Optional[str] = "default_session"
 
-def get_memories():
-    memories = collection.find().sort("timestamp", -1).limit(MONGODB_HISTORY)
+def get_memories(session_id):
+    memories = collection.find({"session_id": session_id}).sort("timestamp", -1).limit(MONGODB_HISTORY)
     texts = [mem["text"] for mem in memories]
-    log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB.")
+    log_info(f"📌 Recuperadas {len(texts)} memórias do MongoDB para sessão {session_id}.")
     return texts
 
-def get_recent_memories():
-    history = memory.load_memory_variables({})["history"]
+def get_recent_memories(session_id):
+    if session_id not in memory_store:
+        memory_store[session_id] = ConversationBufferMemory(chat_memory=ChatMessageHistory(), return_messages=True)
+    
+    history = memory_store[session_id].load_memory_variables({})["history"]
 
     if not isinstance(history, list):
         return []
@@ -167,9 +171,12 @@ def get_recent_memories():
     return recent_memories
 
 
-def save_to_langchain_memory(user_input, response):
+def save_to_langchain_memory(user_input, response, session_id):
     try:
-        memory.save_context({"input": user_input}, {"output": response})
+        if session_id not in memory_store:
+            memory_store[session_id] = ConversationBufferMemory(chat_memory=ChatMessageHistory(), return_messages=True)
+        
+        memory_store[session_id].save_context({"input": user_input}, {"output": response})
         history = memory.load_memory_variables({})["history"]
 
         if len(history) > LANGCHAIN_HISTORY:
@@ -187,17 +194,17 @@ def save_to_langchain_memory(user_input, response):
     except Exception as e:
         log_error(f"Erro ao salvar na memória temporária do LangChain: {str(e)}")
 
-def save_to_mongo(user_input):
+def save_to_mongo(user_input, session_id):
     try:
-        existing_entry = collection.find_one({"text": user_input})
+        existing_entry = collection.find_one({"text": user_input, "session_id": session_id})
         if existing_entry:
-            log_warning(f"Entrada duplicada detectada, não será salva: {user_input}")
+            log_warning(f"Entrada duplicada detectada para sessão {session_id}, não será salva: {user_input}")
             return
 
-        doc = {"text": user_input, "timestamp": datetime.utcnow()}
+        doc = {"text": user_input, "session_id": session_id, "timestamp": datetime.utcnow()}
         result = collection.insert_one(doc)
         if result.inserted_id:
-            log_success(f"Informação armazenada no MongoDB: {user_input}")
+            log_success(f"Informação armazenada no MongoDB para sessão {session_id}: {user_input}")
 
     except Exception as e:
         log_error(f"Erro ao salvar no MongoDB: {str(e)}")
@@ -249,17 +256,17 @@ from langchain.schema import HumanMessage, AIMessage
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
     session_id = request.session_id or "default_session"
-    log_info(f"📥 Nova solicitação de inferência: {request.prompt}")
+    log_info(f"📥 Nova solicitação de inferência para sessão {session_id}: {request.prompt}")
 
     keywords = load_keywords_from_file()
 
     if any(kw in request.prompt.lower() for kw in keywords):
-        save_to_mongo(request.prompt)
+        save_to_mongo(request.prompt, session_id)
 
     trim_langchain_memory()
 
-    mongo_memories = get_memories()
-    recent_memories = get_recent_memories()
+    mongo_memories = get_memories(session_id)
+    recent_memories = get_recent_memories(session_id)
 
     context_pieces = []
     if mongo_memories:
@@ -280,7 +287,7 @@ Usuário: {request.prompt}
 Polaris:"""
 
     resposta = llm.invoke(full_prompt)
-    memory.save_context({"input": request.prompt}, {"output": resposta})
+    save_to_langchain_memory(request.prompt, resposta, session_id)
 
     return {"resposta": resposta}
     
