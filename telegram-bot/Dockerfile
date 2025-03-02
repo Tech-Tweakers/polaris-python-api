@@ -15,12 +15,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN python -m venv $VENV_PATH
 
-COPY telegram-bot/requirements.txt /app/requirements.txt
+COPY requirements.txt /app/requirements.txt
 RUN . $VENV_PATH/bin/activate && \
     pip install --no-cache-dir --upgrade pip && \
     pip install -r requirements.txt
 
-COPY telegram-bot /app
+COPY . /app
 
 EXPOSE 8001
 
