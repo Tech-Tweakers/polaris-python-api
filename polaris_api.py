@@ -57,7 +57,7 @@ TOP_P = 0.5
 TOP_K = 30
 FREQUENCY_PENALTY = 2.0
 
-MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+MONGO_URI = "mongodb://admin:admin123@switchyard.proxy.rlwy.net:29341/polaris_db?authSource=admin"
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
