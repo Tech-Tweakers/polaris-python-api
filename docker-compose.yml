@@ -33,6 +33,41 @@ services:
     networks:
       - polaris_network
 
+  polaris-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: polaris-api
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://admin:admin123@mongodb:27017/polaris_db?authSource=admin
+    networks:
+      - polaris_network
+    volumes:
+      - ./polaris-api:/app
+
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: telegram-bot/Dockerfile
+    container_name: telegram-bot
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      - polaris-api
+    environment:
+      - POLARIS_API_URL=http://polaris-api:8000/inference/
+      - TELEGRAM_TOKEN=7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s
+    networks:
+      - polaris_network
+    volumes:
+      - ./telegram-bot:/app
+
 volumes:
   mongodb_data:
     driver: local

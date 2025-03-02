@@ -2,4 +2,5 @@ models
 models/
 *.log
 log.*
-*log*
+chroma_db/
+chroma_db

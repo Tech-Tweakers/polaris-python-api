@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libopenblas-dev \
     libomp-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Cria um ambiente virtual para evitar conflitos de pacotes

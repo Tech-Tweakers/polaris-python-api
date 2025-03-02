@@ -1,10 +1,9 @@
 fastapi
 uvicorn
-pydantic
-llama-cpp-python
-langchain
-langchain-community
-langchain-huggingface
-langchain-chroma
 pymongo
-sentence-transformers
+langchain
+llama-cpp-python==0.3.6
+langchain-chroma
+langchain-huggingface
+langchain-community
+colorama
