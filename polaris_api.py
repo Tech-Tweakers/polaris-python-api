@@ -44,7 +44,7 @@ def log_success(message: str): logging.info(f"✅ {message}")
 def log_warning(message: str): logging.warning(f"⚠️ {message}")
 def log_error(message: str): logging.error(f"❌ {message}")
 
-MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
+MODEL_PATH = "Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 NUM_CORES = 6
 MODEL_CONTEXT_SIZE = 8192
 MODEL_BATCH_SIZE = 4
