@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+RUN wget -O Meta-Llama-3-8B-Instruct.Q4_0.gguf https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_0.gguf
+
 # Cria um ambiente virtual para evitar conflitos de pacotes
 RUN python -m venv $VENV_PATH
 
