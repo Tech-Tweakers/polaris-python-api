@@ -66,7 +66,7 @@ print(f"DB_USER: {DB_USER}")
 print(f"DB_PASS: {DB_PASS}")
 print(f"DB_URL: {DB_URL}")
 
-MONGO_URI = f"{DB_URL}/polaris_db?authSource={DB_USER}"
+MONGO_URI = DB_URL
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
