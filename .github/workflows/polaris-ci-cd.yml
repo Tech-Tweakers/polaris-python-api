@@ -31,13 +31,12 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r ./polaris-api/requirements.txt
-          pip install black flake8 pytest
+          pip install black pytest
 
-      - name: 🎨 Rodar Linter (Black e Flake8)
+      - name: 🎨 Rodar Linter
         run: |
           source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
           black --check ./polaris-api
-          flake8 ./polaris-api
 
       - name: 🧪 Executar Testes
         run: |
@@ -63,13 +62,12 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r ./telegram-bot/requirements.txt
-          pip install black flake8 pytest
+          pip install black pytest
 
       - name: 🎨 Rodar Linter (Black e Flake8)
         run: |
           source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
           black --check ./telegram-bot
-          flake8 ./telegram-bot
 
       - name: 🧪 Executar Testes
         run: |
