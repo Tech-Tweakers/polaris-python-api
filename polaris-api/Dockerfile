@@ -18,19 +18,17 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget --header="Authorization: Bearer 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" https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_0.gguf
-
 # Cria um ambiente virtual para evitar conflitos de pacotes
 RUN python -m venv $VENV_PATH
 
 # Ativa o ambiente virtual e instala as dependências
-COPY requirements.txt /app/requirements.txt
+COPY ./polaris-api/requirements.txt /app/requirements.txt
 RUN . $VENV_PATH/bin/activate && \
     pip install --no-cache-dir --upgrade pip && \
     pip install -r requirements.txt
 
 # Copia os arquivos do projeto para o container
-COPY . /app
+COPY ./polaris-api/ /app
 
 # Expõe a porta 8000
 EXPOSE 8000

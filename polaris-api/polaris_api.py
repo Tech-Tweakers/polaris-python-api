@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Optional
 from llama_cpp import Llama
@@ -45,20 +46,23 @@ def log_success(message: str): logging.info(f"✅ {message}")
 def log_warning(message: str): logging.warning(f"⚠️ {message}")
 def log_error(message: str): logging.error(f"❌ {message}")
 
-MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
-NUM_CORES = 16
-MODEL_CONTEXT_SIZE = 8192
-MODEL_BATCH_SIZE = 4
+load_dotenv()
 
-MONGODB_HISTORY = 2
-LANGCHAIN_HISTORY = 10
+MODEL_PATH = os.getenv("MODEL_PATH")
+NUM_CORES = int(os.getenv("NUM_CORES"))
+MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE"))
+MODEL_BATCH_SIZE = int(os.getenv("MODEL_BATCH_SIZE"))
 
-TEMPERATURE = 0.3 
-TOP_P = 0.5
-TOP_K = 30
-FREQUENCY_PENALTY = 2.0
+MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY"))
+LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY"))
 
-MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+TEMPERATURE = float(os.getenv("TEMPERATURE"))
+TOP_P = float(os.getenv("TOP_P"))
+TOP_K = int(os.getenv("TOP_K"))
+FREQUENCY_PENALTY = int(os.getenv("FREQUENCY_PENALTY"))
+
+MONGO_URI = os.getenv("MONGO_URI")
+
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
@@ -114,7 +118,7 @@ class LlamaRunnable:
         start_time = time.time()
         response = self.llm(
             prompt, 
-            stop=["\n", "---"], 
+            stop=["---"], 
             max_tokens=1024, 
             echo=False,
             temperature=TEMPERATURE,  # 🔥 Aplicando temperatura

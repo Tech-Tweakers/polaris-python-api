@@ -1,0 +1,66 @@
+name: Polaris CI/CD
+
+on:
+  push:
+    branches:
+      - "feature/*"  # Aciona apenas para branches que começam com "feature/"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test-lint:
+    name: 🚀 Testes e Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 📦 Instalar dependências
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install black flake8 pytest
+
+      - name: 🎨 Rodar Linter (Black e Flake8)
+        run: |
+          black --check .
+          flake8 .
+
+      - name: 🧪 Executar Testes
+        run: |
+          pytest --maxfail=1 --disable-warnings
+
+  create-pr:
+    name: 🔀 Criar PR para Main
+    needs: test-lint  # Só executa se os testes passarem
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🔀 Criar Pull Request para `main`
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: ${{ github.ref }}
+          title: "🚀 Merge automático de ${{ github.ref_name }} para main"
+          body: |
+            **Descrição:**
+            Este PR foi criado automaticamente a partir da branch `${{ github.ref_name }}`.
+            Verifique os testes antes de aprovar o merge.
+          labels: "automated-pr"
+          draft: false

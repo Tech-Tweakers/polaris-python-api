@@ -36,7 +36,7 @@ services:
   polaris-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./polaris-api/Dockerfile
     container_name: polaris-api
     restart: always
     ports:
@@ -53,7 +53,7 @@ services:
   telegram-bot:
     build:
       context: .
-      dockerfile: telegram-bot/Dockerfile
+      dockerfile: ./telegram-bot/Dockerfile
     container_name: telegram-bot
     restart: always
     ports:
