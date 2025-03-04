@@ -69,12 +69,12 @@ jobs:
           flake8 ./telegram-bot
 
       - name: 🧪 Executar Testes
-        run: |
+        run: |-
           pytest --maxfail=1 --disable-warnings
 
   create-pr:
     name: 🔀 Criar PR para Main
-    needs: test-lint  # Só executa se os testes passarem
+    needs: [test-lint-polaris-api, test-lint-polaris-telegram]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
