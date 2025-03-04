@@ -13,8 +13,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  test-lint:
-    name: 🚀 Testes e Lint
+  test-lint-polaris-api:
+    name: 🚀 Tests and Linter - Polaris API
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do código
@@ -30,13 +30,43 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r ./polaris-api/requirements.txt
           pip install black flake8 pytest
 
       - name: 🎨 Rodar Linter (Black e Flake8)
         run: |
-          black --check .
-          flake8 .
+          black --check ./polaris-api
+          flake8 ./polaris-api
+
+      - name: 🧪 Executar Testes
+        run: |
+          pytest --maxfail=1 --disable-warnings
+
+  test-lint-polaris-telegram:
+    name: 🚀 Tests and Linter - Polaris Telegram
+    runs-on: ubuntu-latest
+    needs: test-lint-polaris-api
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 📦 Instalar dependências
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r ./telegram-bot/requirements.txt
+          pip install black flake8 pytest
+
+      - name: 🎨 Rodar Linter (Black e Flake8)
+        run: |
+          black --check ./telegram-bot
+          flake8 ./telegram-bot
 
       - name: 🧪 Executar Testes
         run: |
