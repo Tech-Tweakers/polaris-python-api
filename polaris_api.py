@@ -45,7 +45,7 @@ def log_success(message: str): logging.info(f"✅ {message}")
 def log_warning(message: str): logging.warning(f"⚠️ {message}")
 def log_error(message: str): logging.error(f"❌ {message}")
 
-MODEL_PATH = "Meta-Llama-3-8B-Instruct.Q4_0.gguf"
+MODEL_PATH = "./models/Meta-Llama-3-8B-Instruct.Q4_0.gguf"
 NUM_CORES = 16
 MODEL_CONTEXT_SIZE = 8192
 MODEL_BATCH_SIZE = 4
@@ -58,15 +58,7 @@ TOP_P = 0.5
 TOP_K = 30
 FREQUENCY_PENALTY = 2.0
 
-DB_USER = os.getenv("MONGO_INITDB_ROOT_USERNAME")
-DB_PASS = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
-DB_URL = os.getenv("MONGO_URL")
-
-print(f"DB_USER: {DB_USER}")
-print(f"DB_PASS: {DB_PASS}")
-print(f"DB_URL: {DB_URL}")
-
-MONGO_URI = DB_URL
+MONGO_URI = "mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
