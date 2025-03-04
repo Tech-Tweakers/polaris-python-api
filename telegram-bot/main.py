@@ -10,7 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configurações
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s")
+TELEGRAM_TOKEN = os.getenv(
+    "TELEGRAM_TOKEN", "7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s"
+)
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 POLARIS_API_URL = "http://192.168.2.48:8000/inference/"  # Endpoint da Polaris
 
@@ -21,9 +23,11 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 class TelegramMessage(BaseModel):
     update_id: int
     message: dict
+
 
 @app.post("/telegram-webhook/")
 async def telegram_webhook(update: TelegramMessage):
@@ -38,14 +42,15 @@ async def telegram_webhook(update: TelegramMessage):
     else:
         # Enviar a pergunta para a Polaris com o session_id correto
         polaris_response = requests.post(
-            POLARIS_API_URL, 
-            json={"prompt": text, "session_id": str(chat_id)}
+            POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)}
         )
-        
+
         # Processar a resposta da Polaris
         if polaris_response.status_code == 200:
             response_data = polaris_response.json()
-            reply_text = response_data.get("resposta", "⚠️ Erro ao processar a resposta.")
+            reply_text = response_data.get(
+                "resposta", "⚠️ Erro ao processar a resposta."
+            )
         else:
             reply_text = "⚠️ Erro ao se comunicar com a Polaris."
 
@@ -53,11 +58,13 @@ async def telegram_webhook(update: TelegramMessage):
     send_message(chat_id, reply_text)
     return {"status": "ok"}
 
+
 def send_message(chat_id, text):
     """Envia uma mensagem para um chat no Telegram"""
     url = f"{TELEGRAM_API_URL}/sendMessage"
     payload = {"chat_id": chat_id, "text": text}
     requests.post(url, json=payload)
+
 
 if __name__ == "__main__":
     log.info("🚀 Iniciando Telegram Bot Handler...")
