@@ -22,6 +22,8 @@ TEXT_COLOR = Fore.LIGHTCYAN_EX
 STAR_COLOR = Fore.YELLOW
 DIM_STAR = Fore.LIGHTBLACK_EX
 LOGO = f"""
+       {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
+    .      *       .        .
        {STAR_COLOR}*{Style.RESET_ALL}        .       .   *    .
   .        .    {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}       .
        {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
