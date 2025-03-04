@@ -1,16 +1,10 @@
 import pytest
 from httpx import AsyncClient
 from polaris_api.main import app
-
-import sys
-import os
-
 import sys
 import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
-
-
 
 @pytest.mark.asyncio
 async def test_api_running():

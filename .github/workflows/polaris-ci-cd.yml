@@ -46,7 +46,7 @@ jobs:
   test-lint-polaris-telegram:
     name: 🚀 Tests and Linter - Polaris Telegram
     runs-on: ubuntu-latest
-    needs: test-lint-polaris_api
+    needs: test-lint-polaris-api
     steps:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
