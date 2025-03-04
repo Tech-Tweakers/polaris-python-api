@@ -35,11 +35,13 @@ jobs:
 
       - name: 🎨 Rodar Linter (Black e Flake8)
         run: |
+          source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
           black --check ./polaris-api
           flake8 ./polaris-api
 
       - name: 🧪 Executar Testes
         run: |
+          source venv/bin/activate
           pytest --maxfail=1 --disable-warnings
 
   test-lint-polaris-telegram:
@@ -65,11 +67,13 @@ jobs:
 
       - name: 🎨 Rodar Linter (Black e Flake8)
         run: |
+          source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
           black --check ./telegram-bot
           flake8 ./telegram-bot
 
       - name: 🧪 Executar Testes
-        run: |-
+        run: |
+          source venv/bin/activate
           pytest --maxfail=1 --disable-warnings
 
   create-pr:
