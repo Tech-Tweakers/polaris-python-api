@@ -65,7 +65,7 @@ MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE", 512))
 MODEL_BATCH_SIZE = int(os.getenv("MODEL_BATCH_SIZE", 8))
 
 MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY", 0))
-LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY, 0"))
+LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY", 0))
 
 TEMPERATURE = float(os.getenv("TEMPERATURE", 0.5))
 TOP_P = float(os.getenv("TOP_P", 0.7))
