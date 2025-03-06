@@ -3,10 +3,26 @@ from httpx import AsyncClient
 from polaris_api.main import app
 import sys
 import os
-from dotenv import load_dotenv
-import os
 
-load_dotenv(dotenv_path="../polaris_api/.env") 
+# Configuração do modelo
+MODEL_PATH="../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
+NUM_CORES=2
+MODEL_CONTEXT_SIZE=512
+MODEL_BATCH_SIZE=8
+
+# Configuração de histórico
+MONGODB_HISTORY=0
+LANGCHAIN_HISTORY=0
+
+# Hiperparâmetros do modelo
+TEMPERATURE=0.3
+TOP_P=0.7
+TOP_K=70
+FREQUENCY_PENALTY=3
+
+# Configuração do MongoDB
+MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
