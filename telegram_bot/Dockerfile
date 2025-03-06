@@ -22,3 +22,5 @@ COPY ./telegram_bot/ /app
 EXPOSE 8001
 
 CMD ["python", "main.py"]
+
+#
