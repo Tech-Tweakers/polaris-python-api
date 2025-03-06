@@ -61,13 +61,13 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-          pip install -r ./telegram-bot/requirements.txt
+          pip install -r ./telegram_bot/requirements.txt
           pip install black pytest
 
       - name: 🎨 Rodar Linter (Black e Flake8)
         run: |
           source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
-          black --check ./telegram-bot
+          black --check ./telegram_bot
 
       - name: 🧪 Executar Testes
         run: |
