@@ -60,17 +60,17 @@ def log_error(message: str):
 load_dotenv()
 
 MODEL_PATH = os.getenv("MODEL_PATH")
-NUM_CORES = int(os.getenv("NUM_CORES"))
-MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE"))
-MODEL_BATCH_SIZE = int(os.getenv("MODEL_BATCH_SIZE"))
+NUM_CORES = int(os.getenv("NUM_CORES", 4))
+MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE", 512))
+MODEL_BATCH_SIZE = int(os.getenv("MODEL_BATCH_SIZE", 8))
 
-MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY"))
-LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY"))
+MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY", 0))
+LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY, 0"))
 
-TEMPERATURE = float(os.getenv("TEMPERATURE"))
-TOP_P = float(os.getenv("TOP_P"))
-TOP_K = int(os.getenv("TOP_K"))
-FREQUENCY_PENALTY = int(os.getenv("FREQUENCY_PENALTY"))
+TEMPERATURE = float(os.getenv("TEMPERATURE", 0.5))
+TOP_P = float(os.getenv("TOP_P", 0.7))
+TOP_K = int(os.getenv("TOP_K", 40))
+FREQUENCY_PENALTY = int(os.getenv("FREQUENCY_PENALTY", 3))
 
 MONGO_URI = os.getenv("MONGO_URI")
 
