@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path="..polaris_api/.env") 
+load_dotenv(dotenv_path="../polaris_api/.env") 
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
