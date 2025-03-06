@@ -1,37 +1,35 @@
-# Usa uma imagem base do Python
 FROM python:3.10-slim
 
-# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Define a variável de ambiente para evitar criação de cache do pip
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     VENV_PATH="/app/venv"
 
-# Instala dependências básicas do sistema para o FAISS
 RUN apt-get update && apt-get install -y \
     build-essential \
     libopenblas-dev \
     libomp-dev \
     git \
-    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Cria um ambiente virtual para evitar conflitos de pacotes
+# Criar e ativar o ambiente virtual
 RUN python -m venv $VENV_PATH
 
-# Ativa o ambiente virtual e instala as dependências
-COPY ./polaris-api/requirements.txt /app/requirements.txt
-RUN . $VENV_PATH/bin/activate && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install -r requirements.txt
+# Definir o Python do virtualenv como padrão
+ENV PATH="$VENV_PATH/bin:$PATH"
 
-# Copia os arquivos do projeto para o container
-COPY ./polaris-api/ /app
+# Copiar os arquivos de dependências primeiro para evitar reinstalação desnecessária
+COPY ./polaris_api/requirements.txt /app/requirements.txt
 
-# Expõe a porta 8000
+# Instalar dependências
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install -r requirements.txt
+
+# Copiar o restante da aplicação
+COPY ./polaris_api/ /app
+
 EXPOSE 8000
 
-# Comando para iniciar a API usando o ambiente virtual
-CMD ["/app/venv/bin/uvicorn", "polaris_api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Definir o comando padrão
+CMD ["python", "main.py"]

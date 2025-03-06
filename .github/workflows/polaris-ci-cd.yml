@@ -41,7 +41,7 @@ jobs:
       - name: 🧪 Executar Testes
         run: |
           source venv/bin/activate
-          pytest --maxfail=1 --disable-warnings
+          PYTHONPATH=./ pytest tests/test_polaris_api.py --maxfail=1 --disable-warnings
 
   test-lint-polaris-telegram:
     name: 🚀 Tests and Linter - Polaris Telegram
@@ -72,7 +72,7 @@ jobs:
       - name: 🧪 Executar Testes
         run: |
           source venv/bin/activate
-          pytest --maxfail=1 --disable-warnings
+          PYTHONPATH=./ pytest tests/test_polaris_api.py --maxfail=1 --disable-warnings
 
   create-pr:
     name: 🔀 Criar PR para Main
