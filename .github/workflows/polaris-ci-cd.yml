@@ -72,7 +72,7 @@ jobs:
       - name: 🧪 Executar Testes
         run: |
           source venv/bin/activate
-          PYTHONPATH=./ pytest tests/tests/test_telegram_bot.py --maxfail=1 --disable-warnings
+          PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
 
   create-pr:
     name: 🔀 Criar PR para Main
