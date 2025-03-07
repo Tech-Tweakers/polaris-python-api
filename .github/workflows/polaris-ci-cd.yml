@@ -86,7 +86,7 @@ jobs:
       - name: 🔀 Criar Pull Request para `main`
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}  # Usando o Personal Access Token (PAT)
           base: main
           branch: ${{ github.ref }}
           title: "🚀 Merge automático de ${{ github.ref_name }} para main"
@@ -95,4 +95,5 @@ jobs:
             Este PR foi criado automaticamente a partir da branch `${{ github.ref_name }}`.
             Verifique os testes antes de aprovar o merge.
           labels: "automated-pr"
-          draft: true
+          draft: true  # PR como rascunho, exigindo revisão manual antes do merge
+
