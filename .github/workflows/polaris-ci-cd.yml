@@ -13,8 +13,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  test-lint:
-    name: 🚀 Testes e Lint
+  test-lint-polaris-api:
+    name: 🚀 Tests and Linter - Polaris API
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do código
@@ -30,21 +30,53 @@ jobs:
           python -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install black flake8 pytest
+          pip install -r ./polaris_api/requirements.txt
+          pip install black pytest
 
-      - name: 🎨 Rodar Linter (Black e Flake8)
+      - name: 🎨 Rodar Linter
         run: |
-          black --check .
-          flake8 .
+          source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
+          black --check ./polaris_api
 
       - name: 🧪 Executar Testes
         run: |
-          pytest --maxfail=1 --disable-warnings
+          source venv/bin/activate
+          PYTHONPATH=./ pytest tests/test_polaris_api.py --maxfail=1 --disable-warnings
+
+  test-lint-polaris-telegram:
+    name: 🚀 Tests and Linter - Polaris Telegram
+    runs-on: ubuntu-latest
+    needs: test-lint-polaris-api
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 📦 Instalar dependências
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r ./telegram_bot/requirements.txt
+          pip install black pytest
+
+      - name: 🎨 Rodar Linter (Black e Flake8)
+        run: |
+          source venv/bin/activate  # 🔥 Garante que estamos no ambiente virtual
+          black --check ./telegram_bot
+
+      - name: 🧪 Executar Testes
+        run: |
+          source venv/bin/activate
+          PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
 
   create-pr:
     name: 🔀 Criar PR para Main
-    needs: test-lint  # Só executa se os testes passarem
+    needs: [test-lint-polaris-api, test-lint-polaris-telegram]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
@@ -54,7 +86,7 @@ jobs:
       - name: 🔀 Criar Pull Request para `main`
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}  # Usando o Personal Access Token (PAT)
           base: main
           branch: ${{ github.ref }}
           title: "🚀 Merge automático de ${{ github.ref_name }} para main"
@@ -63,4 +95,4 @@ jobs:
             Este PR foi criado automaticamente a partir da branch `${{ github.ref_name }}`.
             Verifique os testes antes de aprovar o merge.
           labels: "automated-pr"
-          draft: false
+
