@@ -95,5 +95,4 @@ jobs:
             Este PR foi criado automaticamente a partir da branch `${{ github.ref_name }}`.
             Verifique os testes antes de aprovar o merge.
           labels: "automated-pr"
-          draft: true  # PR como rascunho, exigindo revisão manual antes do merge
 
