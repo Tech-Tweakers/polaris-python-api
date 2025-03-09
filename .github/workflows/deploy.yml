@@ -113,7 +113,7 @@ jobs:
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
-          ssh -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod/*"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" -i ~/.ssh/id_polaris ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod/*"
           scp -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
