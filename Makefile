@@ -3,7 +3,7 @@ PIP = pip
 DOCKER_COMPOSE = docker-compose
 BLACK = black
 
-.PHONY: help install format test docker-build docker-up docker-down
+.PHONY: help install format test docker-build docker-up docker-down version
 
 help:
 	@echo "Comandos disponíveis:"
@@ -13,6 +13,7 @@ help:
 	@echo "  make docker-build   -> Constrói as imagens Docker"
 	@echo "  make docker-up      -> Sobe os containers Docker"
 	@echo "  make docker-down    -> Para e remove os containers Docker"
+	@echo "  make version        -> Gera uma nova versão semântica"
 
 install:
 	$(PIP) install --upgrade pip
@@ -34,3 +35,6 @@ docker-up:
 docker-down:
 	$(DOCKER_COMPOSE) down
 
+version:
+	git tag $(shell date +"v%Y.%m.%d-%H%M%S")
+	git push origin --tags
