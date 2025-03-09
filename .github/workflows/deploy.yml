@@ -86,6 +86,12 @@ jobs:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
 
+      - name: 📥 Instalar Cloudflare Tunnel (cloudflared)
+        run: |
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
+          chmod +x /usr/local/bin/cloudflared
+          cloudflared --version  # Verifica se instalou corretamente
+
       - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
         run: |
           mkdir -p ~/.ssh  # Cria a pasta se não existir
