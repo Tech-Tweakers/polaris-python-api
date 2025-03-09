@@ -4,6 +4,13 @@ FROM python:3.10-slim
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
 
+# Instala dependências do sistema necessárias para compilar `llama-cpp-python`
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copia apenas o requirements.txt primeiro (para melhorar o cache do Docker)
 COPY polaris_api/requirements.txt /app/requirements.txt
 
