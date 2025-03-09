@@ -3,7 +3,7 @@ name: Polaris CI/CD
 on:
   push:
     branches:
-      - "feature/*"  # Aciona apenas para branches que começam com "feature/"
+      - "feature/*"
   pull_request:
     branches:
       - main
@@ -80,9 +80,30 @@ jobs:
           POLARIS_API_URL: ${{ secrets.POLARIS_API_URL }}
         run: PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
 
+  semantic-version:
+    name: 🏷️ Gerar versão semântica
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🔖 Gerar nova versão semântica
+        id: version
+        uses: paulhatch/semantic-version@v5.3.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "#major"
+          minor_pattern: "#minor"
+          format: "${{version}}"
+
+      - name: 📌 Criar tag da versão
+        run: |
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
+
   create-pr:
     name: 🔀 Criar PR para Main
-    needs: [test-lint-polaris-api, test-lint-polaris-telegram]
+    needs: [test-lint-polaris-api, test-lint-polaris-telegram, semantic-version]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref_name, 'feature/')
     steps:
@@ -92,7 +113,7 @@ jobs:
       - name: 🔀 Criar Pull Request para `main`
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GH_PAT }}  # Usando o Personal Access Token (PAT)
+          token: ${{ secrets.GH_PAT }}
           base: main
           branch: ${{ github.ref }}
           title: "🚀 Merge automático de ${{ github.ref_name }} para main"

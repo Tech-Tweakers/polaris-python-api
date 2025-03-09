@@ -62,7 +62,7 @@ services:
       - polaris-api
     environment:
       - POLARIS_API_URL=http://polaris-api:8000/inference/
-      - TELEGRAM_TOKEN=7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s
+      - TELEGRAM_TOKEN=000000000:ASHhkD63bDj98&6689
     networks:
       - polaris_network
     volumes:
