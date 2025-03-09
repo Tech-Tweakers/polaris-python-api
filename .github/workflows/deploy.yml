@@ -101,21 +101,22 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_polaris
+          echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_polaris
           chmod 600 ~/.ssh/id_polaris
+          ssh-keygen -y -f ~/.ssh/id_polaris > ~/.ssh/id_polaris.pub
           echo "Host cloudflare-ssh
           HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
           User ${{ secrets.SERVER_USER }}
           IdentityFile ~/.ssh/id_polaris
           StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
+          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" > ~/.ssh/config
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
-          echo "📤 Enviando código para: ${{ secrets.CLOUDFLARE_SSH_HOST }}"
           scp -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+              -i ~/.ssh/id_polaris \
               -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
