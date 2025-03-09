@@ -16,9 +16,12 @@ jobs:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
 
-      - name: 🔖 Recuperar a última versão
+      - name: 🔖 Recuperar a última versão remota
         id: get_last_version
-        run: echo "LAST_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo 'v0.0.0')" >> $GITHUB_ENV
+        run: |
+          LAST_VERSION=$(git ls-remote --tags origin | awk -F'/' '{print $3}' | sort -V | tail -n 1)
+          echo "LAST_VERSION=${LAST_VERSION}" >> $GITHUB_ENV
+          echo "Última versão remota encontrada: ${LAST_VERSION}"
 
       - name: 🔖 Gerar nova versão semântica
         id: semantic_version
@@ -30,11 +33,15 @@ jobs:
           patch_pattern: "#patch"
           change_path: "."
 
-      - name: 📌 Criar tag da versão apenas se for diferente
+      - name: 📌 Criar tag da versão apenas se for diferente e não existir no repositório
         run: |
-          if [ "v${{ steps.semantic_version.outputs.version }}" != "${{ env.LAST_VERSION }}" ]; then
-            git tag v${{ steps.semantic_version.outputs.version }}
-            git push origin v${{ steps.semantic_version.outputs.version }}
+          NEW_VERSION="v${{ steps.semantic_version.outputs.version }}"
+          echo "Nova versão calculada: ${NEW_VERSION}"
+
+          if git ls-remote --tags origin | grep -q "refs/tags/${NEW_VERSION}"; then
+            echo "🔹 A tag ${NEW_VERSION} já existe no repositório remoto. Nada a fazer!"
           else
-            echo "🔹 Nenhuma mudança de versão detectada. Nada a fazer!"
+            git tag ${NEW_VERSION}
+            git push origin ${NEW_VERSION}
+            echo "✅ Nova versão ${NEW_VERSION} criada com sucesso!"
           fi
