@@ -69,3 +69,7 @@ volumes:
 networks:
   polaris_network:
     driver: bridge
+
+#
+#
+#
