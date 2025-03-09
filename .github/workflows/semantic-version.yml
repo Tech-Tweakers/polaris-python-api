@@ -16,6 +16,9 @@ jobs:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
 
+      - name: 🔎 Exibir mensagens de commit recentes
+        run: git log --oneline -n 10
+
       - name: 🔖 Recuperar a última versão remota
         id: get_last_version
         run: |
