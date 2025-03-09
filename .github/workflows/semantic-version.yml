@@ -28,9 +28,9 @@ jobs:
         uses: paulhatch/semantic-version@v5.3.0
         with:
           tag_prefix: "v"
-          major_pattern: "#major"
-          minor_pattern: "#minor"
-          patch_pattern: "#patch"
+          major_pattern: "(BREAKING CHANGE|major:)"
+          minor_pattern: "(feat:|minor:)"
+          patch_pattern: "(fix:|patch:|chore:|refactor:)"
           change_path: "."
 
       - name: 📌 Criar tag da versão apenas se for diferente e não existir no repositório
