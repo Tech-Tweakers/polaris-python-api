@@ -64,7 +64,9 @@ jobs:
       - name: 🔨 Build da Imagem Docker
         run: |
           VERSION="v${{ needs.semantic-version.outputs.version }}"
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION -f polaris_api/Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION \
+                       -f polaris_api/Dockerfile ../polaris_api
 
       - name: 🚀 Push da Imagem para o Docker Hub
         run: |
