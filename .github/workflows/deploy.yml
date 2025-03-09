@@ -115,16 +115,13 @@ jobs:
 
           echo "✅ Configuração SSH criada com sucesso!"
 
-      - name: 🔑 Adicionar Host ao known_hosts (Evita erro de verificação)
-        run: |
-          ssh-keyscan -H ${{ secrets.CLOUDFLARE_SSH_HOST }} >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
-          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
-          echo "📤 Enviando código para: $CLOUDFLARE_SSH_HOST"
-          scp -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
+          echo "📤 Enviando código para: ${{ secrets.CLOUDFLARE_SSH_HOST }}"
+          scp -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+              -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         run: |
