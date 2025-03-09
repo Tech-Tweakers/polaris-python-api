@@ -92,6 +92,14 @@ jobs:
           chmod +x /usr/local/bin/cloudflared
           cloudflared --version  # Verifica se instalou corretamente
 
+      - name: 🔑 Configurar chave SSH para conexão segura
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
       - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
         run: |
           mkdir -p ~/.ssh  # Cria a pasta se não existir
