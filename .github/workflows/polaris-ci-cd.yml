@@ -117,9 +117,9 @@ jobs:
           tag_prefix: "v"
           major_pattern: "#major"
           minor_pattern: "#minor"
-          format: "${{ version }}"
 
       - name: 📌 Criar tag da versão
         run: |
           git tag v${{ steps.semantic_version.outputs.version }}
           git push origin v${{ steps.semantic_version.outputs.version }}
+
