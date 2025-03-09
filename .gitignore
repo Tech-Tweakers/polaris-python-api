@@ -7,3 +7,8 @@ chroma_db
 .env
 __pycache__
 .pytest_cache
+.terraform.*
+terraform.tfstate
+terraform.*
+.terraform*
+.terraform
