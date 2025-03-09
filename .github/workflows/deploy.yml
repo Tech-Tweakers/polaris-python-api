@@ -100,6 +100,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
+
       - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
         run: |
           mkdir -p ~/.ssh  # Cria a pasta se não existir
