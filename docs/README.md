@@ -5,76 +5,11 @@ Polaris é um sistema modular que permite a automação de interações via Tele
 
 ---
 
-## 📊 Nível 1: Diagrama de Contexto
-Mostra a visão geral do sistema e seus principais atores.
+## 📊 Diagrama de Arquitetura
 
-```plantuml
-@startuml
-!include <C4/C4_Container>
+A seguir, apresentamos o diagrama de contêineres representando os principais componentes do Polaris e suas interações:
 
-Person(Usuario, "Usuário")
-System(Polaris, "Sistema Polaris", "Plataforma de Assistente Virtual")
-System_Ext(Telegram, "Telegram", "Canal de Comunicação")
-System_Ext(LLM, "Modelo de Linguagem", "Processamento de Respostas")
-
-Usuario --> Telegram : Envia mensagens
-Telegram --> Polaris : Encaminha mensagens
-Polaris --> LLM : Processa as mensagens e gera respostas
-LLM --> Polaris : Retorna respostas geradas
-Polaris --> Telegram : Envia resposta ao usuário
-@enduml
-```
-
----
-
-## 📦 Nível 2: Diagrama de Contêineres
-Detalha os principais contêineres do sistema e como eles se comunicam.
-
-```plantuml
-@startuml
-!include <C4/C4_Container>
-
-Person(Usuario, "Usuário")
-System_Boundary(Polaris, "Sistema Polaris") {
-    Container(Backend, "FastAPI Backend", "Python", "Processa requisições")
-    Container(TelegramBot, "Telegram Bot", "Python", "Interação com Telegram")
-    Container(Database, "MongoDB", "Banco de Dados", "Armazena histórico")
-}
-
-System_Ext(Telegram, "Telegram")
-System_Ext(LLM, "Modelo de Linguagem")
-
-Usuario --> Telegram : Envia mensagens
-Telegram --> TelegramBot : Encaminha mensagens
-TelegramBot --> Backend : Processa requisição
-Backend --> Database : Armazena dados
-Backend --> LLM : Envia requisição
-LLM --> Backend : Retorna resposta
-Backend --> TelegramBot : Responde ao usuário
-TelegramBot --> Telegram : Envia resposta
-@enduml
-```
-
----
-
-## 🏗️ Nível 3: Diagrama de Componentes
-Este nível detalha os módulos internos da Polaris.
-
-```plantuml
-@startuml
-!include <C4/C4_Component>
-
-Container_Boundary(Backend, "FastAPI Backend") {
-    Component(API, "API Polaris", "FastAPI", "Gerencia requisições")
-    Component(LLMClient, "Cliente LLM", "Python", "Comunicação com modelo de linguagem")
-    Component(DBManager, "Gerenciador de DB", "Python", "Persistência de dados")
-}
-
-API --> LLMClient : Envia prompt
-LLMClient --> API : Retorna resposta
-API --> DBManager : Armazena histórico
-@enduml
-```
+![Diagrama de Contêineres](diag2.png)
 
 ---
 
@@ -209,4 +144,3 @@ version:
 ## 📜 Conclusão
 O Polaris é uma arquitetura modular e escalável baseada em **FastAPI, MongoDB e Docker**, permitindo fácil implantação e manutenção. 🚀
 
-Agora, qualquer desenvolvedor pode entender e contribuir rapidamente com o projeto! 😃
