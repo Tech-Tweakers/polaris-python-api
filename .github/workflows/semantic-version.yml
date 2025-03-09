@@ -13,8 +13,10 @@ jobs:
     name: 🏷️ Gerar versão semântica
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout do código
+      - name: 📥 Checkout do código com histórico completo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Garante que o histórico completo de commits seja baixado
 
       - name: 🔎 Exibir mensagens de commit recentes
         run: git log --oneline -n 10
