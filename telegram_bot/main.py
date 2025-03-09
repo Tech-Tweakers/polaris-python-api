@@ -6,20 +6,14 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# Carregar variáveis do .env (caso esteja usando)
 load_dotenv()
 
-# Configurações
-TELEGRAM_TOKEN = os.getenv(
-    "TELEGRAM_TOKEN", "7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s"
-)
-TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
-POLARIS_API_URL = "http://192.168.2.48:8000/inference/"  # Endpoint da Polaris
+TELEGRAM_API_URL = os.getenv("TELEGRAM_API_URL")
 
-# Inicializar FastAPI
+POLARIS_API_URL = os.getenv("POLARIS_API_URL")
+
 app = FastAPI()
 
-# Logger
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -31,7 +25,6 @@ class TelegramMessage(BaseModel):
 
 @app.post("/telegram-webhook/")
 async def telegram_webhook(update: TelegramMessage):
-    """Recebe mensagens do Telegram e responde via Polaris"""
     chat_id = update.message["chat"]["id"]
     text = update.message.get("text", "")
 
@@ -60,7 +53,6 @@ async def telegram_webhook(update: TelegramMessage):
 
 
 def send_message(chat_id, text):
-    """Envia uma mensagem para um chat no Telegram"""
     url = f"{TELEGRAM_API_URL}/sendMessage"
     payload = {"chat_id": chat_id, "text": text}
     requests.post(url, json=payload)
