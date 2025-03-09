@@ -107,7 +107,9 @@ jobs:
 
       - name: 🔄 Copiar código para o laptop via SCP (usando Cloudflare)
         run: |
-          scp -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" -r . ${{ secrets.CLOUDFLARE_SSH_USER }}@localhost:/home/atorres/polaris-prod
+          scp -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+              -o StrictHostKeyChecking=no \
+              -r . ${{ secrets.CLOUDFLARE_SSH_USER }}@localhost:/home/atorres/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         run: |
