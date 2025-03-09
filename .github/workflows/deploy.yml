@@ -99,21 +99,16 @@ jobs:
 
       - name: 🔑 Configurar acesso SSH via Cloudflare Tunnel
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf "%s" "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-          # Criar arquivo ~/.ssh/config corretamente com o Secret já armazenado
-          echo "Host cloudflare-ssh" > ~/.ssh/config
-          echo "  HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
-          echo "  User ${{ secrets.SERVER_USER }}" >> ~/.ssh/config
-          echo "  IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
-          echo "  StrictHostKeyChecking no" >> ~/.ssh/config
-          echo "  ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
-
-          chmod 600 ~/.ssh/config
-
-          echo "✅ Configuração SSH criada com sucesso!"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_polaris
+          chmod 600 ~/.ssh/id_polaris
+          echo "Host cloudflare-ssh
+          HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
+          User ${{ secrets.SERVER_USER }}
+          IdentityFile ~/.ssh/id_polaris
+          StrictHostKeyChecking no
+          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
