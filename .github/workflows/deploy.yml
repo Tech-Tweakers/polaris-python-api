@@ -1,4 +1,4 @@
-name: 🚀 Polaris - Build & Deploy
+name: 🚀 Polaris - Build, Version & Deploy
 
 on:
   push:
@@ -6,11 +6,50 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
+  semantic-version:
+    name: 🏷️ Gerar versão semântica
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semantic_version.outputs.version }}
+    steps:
+      - name: 📥 Checkout do código com histórico completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Garante que o histórico completo de commits seja baixado
+
+      - name: 🔎 Exibir mensagens de commit recentes
+        run: git log --oneline -n 10
+
+      - name: 🔖 Gerar nova versão semântica
+        id: semantic_version
+        uses: paulhatch/semantic-version@v5.3.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "(BREAKING CHANGE|major:)"
+          minor_pattern: "(feat:|minor:)"
+          change_path: "."
+          version_format: "${major}.${minor}.${patch}"
+          debug: true
+
+      - name: 📌 Criar tag da versão apenas se for diferente e não existir no repositório
+        run: |
+          NEW_VERSION="v${{ steps.semantic_version.outputs.version }}"
+          echo "Nova versão calculada: ${NEW_VERSION}"
+
+          if git ls-remote --tags origin | grep -q "refs/tags/${NEW_VERSION}"; then
+            echo "🔹 A tag ${NEW_VERSION} já existe no repositório remoto. Nada a fazer!"
+          else
+            git tag ${NEW_VERSION}
+            git push origin ${NEW_VERSION}
+            echo "✅ Nova versão ${NEW_VERSION} criada com sucesso!"
+          fi
+
   build-and-push:
     name: 🛠️ Build & Push Docker Image
+    needs: semantic-version  # Espera a versão ser gerada antes
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do código
@@ -24,11 +63,14 @@ jobs:
 
       - name: 🔨 Build da Imagem Docker
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest -f polaris_api/Dockerfile .
+          VERSION="v${{ needs.semantic-version.outputs.version }}"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION -f polaris_api/Dockerfile .
 
       - name: 🚀 Push da Imagem para o Docker Hub
         run: |
+          VERSION="v${{ needs.semantic-version.outputs.version }}"
           docker push ${{ secrets.DOCKER_USERNAME }}/polaris:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
 
   deploy:
     name: 🚀 Deploy no Servidor
@@ -49,7 +91,9 @@ jobs:
             docker-compose down
 
             echo "📥 Baixando nova imagem..."
+            VERSION="v${{ needs.semantic-version.outputs.version }}"
             docker pull ${{ secrets.DOCKER_USERNAME }}/polaris:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
 
             echo "🚀 Subindo os containers..."
             docker-compose up -d
