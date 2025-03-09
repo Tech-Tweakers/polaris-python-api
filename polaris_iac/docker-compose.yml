@@ -34,7 +34,6 @@ services:
     build:
       context: ../polaris_api
       dockerfile: Dockerfile
-
     container_name: polaris-api
     restart: always
     ports:
@@ -49,8 +48,8 @@ services:
 
   telegram-bot:
     build:
-      context: ../
-      dockerfile: telegram_bot/Dockerfile
+      context: ../telegram_bot
+      dockerfile: Dockerfile
     container_name: telegram-bot
     restart: always
     ports:
@@ -63,8 +62,6 @@ services:
       - PYTHONPATH=/app
     networks:
       - polaris_network
-    volumes:
-      - ../telegram_bot:/app
 
 volumes:
   mongodb_data:
