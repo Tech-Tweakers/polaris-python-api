@@ -1,6 +1,3 @@
-# Makefile para Polaris
-
-# Definição de variáveis
 PYTHON = python3
 PIP = pip
 DOCKER_COMPOSE = docker-compose
