@@ -1,3 +1,10 @@
+name: Semantic Versioning
+
+on:
+  push:
+    branches:
+      - main
+
 permissions:
   contents: write
 
@@ -16,6 +23,8 @@ jobs:
           tag_prefix: "v"
           major_pattern: "#major"
           minor_pattern: "#minor"
+          patch_pattern: "#patch"
+          change_path: "."
 
       - name: 📌 Criar tag da versão
         run: |
