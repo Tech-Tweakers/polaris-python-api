@@ -15,10 +15,10 @@ jobs:
     outputs:
       version: ${{ steps.semantic_version.outputs.version }}
     steps:
-      - name: 📥 Checkout do código com histórico completo
+      - name: 📥 Checkout do código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Garante que o histórico completo de commits seja baixado
+          fetch-depth: 0
 
       - name: 🔎 Exibir mensagens de commit recentes
         run: git log --oneline -n 10
@@ -36,25 +36,25 @@ jobs:
           debug: true
           ignore_patterns: "wip|WIP"
 
-      - name: 📌 Criar tag da versão apenas se for diferente e não existir no repositório
+      - name: 📌 Criar tag da versão
         run: |
           NEW_VERSION="v${{ steps.semantic_version.outputs.version }}"
           echo "Nova versão calculada: ${NEW_VERSION}"
 
           if git ls-remote --tags origin | grep -q "refs/tags/${NEW_VERSION}"; then
-            echo "🔹 A tag ${NEW_VERSION} já existe no repositório remoto. Nada a fazer!"
+            echo "🔹 A tag ${NEW_VERSION} já existe. Nada a fazer!"
           else
             git tag ${NEW_VERSION}
             git push origin ${NEW_VERSION}
-            echo "✅ Nova versão ${NEW_VERSION} criada com sucesso!"
+            echo "✅ Nova versão ${NEW_VERSION} criada!"
           fi
 
   build-and-push:
     name: 🛠️ Build & Push Docker Image
-    needs: semantic-version  # Espera a versão ser gerada antes
+    needs: semantic-version
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout do código completo
+      - name: 📥 Checkout do código
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -64,9 +64,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: 📂 Listar arquivos no workspace (DEBUG)
-        run: ls -R
 
       - name: 🔨 Build da Imagem Docker
         run: |
@@ -82,27 +79,33 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
 
   deploy:
-    name: 🚀 Deploy no Servidor
-    needs: build-and-push  # Só roda o deploy depois que o build foi concluído
+    name: 🚀 Deploy no Laptop (via Terraform + Cloudflare Tunnel)
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: 🔑 Acessar o Servidor via SSH e atualizar a aplicação
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            echo "🚀 Acessando o servidor..."
-            cd /caminho/para/projeto/
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
 
-            echo "🔄 Parando os containers antigos..."
-            docker-compose down
+      - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
+        run: |
+          echo "Host cloudflare-ssh
+          HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
+          User ${{ secrets.CLOUDFLARE_SSH_USER }}
+          IdentityFile ~/.ssh/id_rsa
+          StrictHostKeyChecking no
+          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
 
-            echo "📥 Baixando nova imagem..."
-            VERSION="v${{ needs.semantic-version.outputs.version }}"
-            docker pull ${{ secrets.DOCKER_USERNAME }}/polaris:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
+      - name: 🔄 Copiar código para o laptop via SCP (usando Cloudflare)
+        run: |
+          scp -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" -r . ${{ secrets.CLOUDFLARE_SSH_USER }}@localhost:/home/atorres/polaris-prod
 
-            echo "🚀 Subindo os containers..."
-            docker-compose up -d
+      - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
+        run: |
+          ssh -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" ${{ secrets.CLOUDFLARE_SSH_USER }}@localhost << 'EOF'
+            echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
+            cd /home/atorres/polaris-prod
+
+            echo "📌 Aplicando Terraform..."
+            terraform init
+            terraform apply -auto-approve
+          EOF
