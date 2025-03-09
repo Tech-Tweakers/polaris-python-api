@@ -125,6 +125,7 @@ jobs:
             EOF
 
           chmod 600 ~/.ssh/config
+          cat ~/.ssh/config
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
