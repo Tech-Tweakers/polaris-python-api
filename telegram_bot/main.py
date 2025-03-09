@@ -8,13 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TELEGRAM_API_URL = os.getenv(
-    "TELEGRAM_API_URL"
-)
+TELEGRAM_API_URL = os.getenv("TELEGRAM_API_URL")
 
-POLARIS_API_URL = os.getenv(
-    "POLARIS_API_URL"
-)
+POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
 app = FastAPI()
 
