@@ -4,25 +4,20 @@ from polaris_api.main import app
 import sys
 import os
 
-# Configuração do modelo
 MODEL_PATH="../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
 NUM_CORES=2
 MODEL_CONTEXT_SIZE=512
 MODEL_BATCH_SIZE=8
 
-# Configuração de histórico
 MONGODB_HISTORY=0
 LANGCHAIN_HISTORY=0
 
-# Hiperparâmetros do modelo
 TEMPERATURE=0.3
 TOP_P=0.7
 TOP_K=70
 FREQUENCY_PENALTY=3
 
-# Configuração do MongoDB
 MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
-
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
@@ -31,7 +26,7 @@ async def test_api_running():
     """Testa se a API inicializa corretamente"""
     async with AsyncClient(app=app, base_url="http://test") as client:
         response = await client.get("/")
-        assert response.status_code == 404  # O endpoint root não está definido
+        assert response.status_code == 404
 
 @pytest.mark.asyncio
 async def test_inference_valid_prompt():
@@ -49,7 +44,7 @@ async def test_inference_missing_prompt():
     async with AsyncClient(app=app, base_url="http://test") as client:
         payload = {"session_id": "user_456"}  # Sem prompt
         response = await client.post("/inference/", json=payload)
-        assert response.status_code == 422  # FastAPI retorna erro de validação
+        assert response.status_code == 422
 
 @pytest.mark.asyncio
 async def test_inference_invalid_session_id():
@@ -57,12 +52,12 @@ async def test_inference_invalid_session_id():
     async with AsyncClient(app=app, base_url="http://test") as client:
         payload = {"prompt": "Teste erro", "session_id": None}
         response = await client.post("/inference/", json=payload)
-        assert response.status_code == 422  # FastAPI deve recusar o request
+        assert response.status_code == 422
 
 @pytest.mark.asyncio
 async def test_inference_long_prompt():
     """Testa um prompt longo para verificar a robustez"""
-    long_prompt = "Teste " * 1000  # Criando um prompt muito longo
+    long_prompt = "Teste " * 1000
     async with AsyncClient(app=app, base_url="http://test") as client:
         payload = {"prompt": long_prompt, "session_id": "long_user"}
         response = await client.post("/inference/", json=payload)
@@ -72,13 +67,13 @@ async def test_inference_long_prompt():
 @pytest.mark.asyncio
 async def test_model_not_loaded():
     """Testa a resposta caso o modelo não esteja carregado"""
-    from polaris_api import llm  # Importa a instância do modelo
+    from polaris_api import llm
 
-    llm.close()  # Força o modelo a fechar antes do teste
+    llm.close()
     async with AsyncClient(app=app, base_url="http://test") as client:
         payload = {"prompt": "Teste sem modelo", "session_id": "user_789"}
         response = await client.post("/inference/", json=payload)
         assert response.status_code == 500
         assert response.json()["detail"] == "Modelo não carregado!"
     
-    llm.load()  # Recarrega o modelo após o teste
+    llm.load()

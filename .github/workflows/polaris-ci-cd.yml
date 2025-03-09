@@ -3,7 +3,7 @@ name: Polaris CI/CD
 on:
   push:
     branches:
-      - "feature/*"  # Aciona apenas para branches que começam com "feature/"
+      - "feature/*"
   pull_request:
     branches:
       - main
@@ -92,7 +92,7 @@ jobs:
       - name: 🔀 Criar Pull Request para `main`
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GH_PAT }}  # Usando o Personal Access Token (PAT)
+          token: ${{ secrets.GH_PAT }}
           base: main
           branch: ${{ github.ref }}
           title: "🚀 Merge automático de ${{ github.ref_name }} para main"
