@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - polaris_network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - polaris_network
+
+  polaris-api:
+    build:
+      context: ../
+      dockerfile: polaris_api/Dockerfile
+
+    container_name: polaris-api
+    restart: always
+    ports:
+      - "${POLARIS_API_PORT}:${POLARIS_API_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/polaris_db?authSource=admin
+      - PYTHONPATH=/app
+    networks:
+      - polaris_network
+    volumes:
+      - ../polaris_api:/app
+
+  telegram-bot:
+    build:
+      context: ../
+      dockerfile: telegram_bot/Dockerfile
+    container_name: telegram-bot
+    restart: always
+    ports:
+      - "${TELEGRAM_BOT_PORT}:${TELEGRAM_BOT_PORT}"
+    depends_on:
+      - polaris-api
+    environment:
+      - POLARIS_API_URL=http://polaris-api:${POLARIS_API_PORT}/inference/
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - PYTHONPATH=/app
+    networks:
+      - polaris_network
+    volumes:
+      - ../telegram_bot:/app
+
+volumes:
+  mongodb_data:
+
+networks:
+  polaris_network:
+    driver: bridge

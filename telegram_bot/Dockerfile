@@ -1,26 +1,23 @@
+# Usa a imagem base do Python
 FROM python:3.10-slim
 
+# Define o diretório de trabalho
 WORKDIR /app
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    VENV_PATH="/app/venv"
+# Copia apenas o requirements.txt primeiro (melhor para cache)
+COPY telegram_bot/requirements.txt /app/requirements.txt
 
-RUN apt-get update && apt-get install -y \
-    && rm -rf /var/lib/apt/lists/*
+# Instala as dependências
+RUN pip install --no-cache-dir --upgrade pip && pip install -r requirements.txt
 
-RUN python -m venv $VENV_PATH
+# Agora copia o resto do código
+COPY telegram_bot/ /app
 
-COPY ./telegram_bot/requirements.txt /app/requirements.txt
+# Garante que o Python enxergue a pasta
+ENV PYTHONPATH=/app
 
-RUN . $VENV_PATH/bin/activate && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install -r requirements.txt
+# Expõe a porta 8000
+EXPOSE 8000
 
-COPY ./telegram_bot/ /app
-
-EXPOSE 8001
-
+# Comando para rodar a API
 CMD ["python", "main.py"]
-
-#
