@@ -101,18 +101,18 @@ jobs:
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
 
-      - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
+      - name: 🔑 Configurar acesso SSH via Cloudflare Tunnel
         run: |
-          mkdir -p ~/.ssh  # Cria a pasta se não existir
-          chmod 700 ~/.ssh  # Garante que tem a permissão correta
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           echo "Host cloudflare-ssh
-          HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
-          User ${{ secrets.CLOUDFLARE_SSH_USER }}
+          HostName fiji-mlb-congo-steal.trycloudflare.com
+          User ${{ secrets.SERVER_USER }}
           IdentityFile ~/.ssh/id_rsa
           StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config  # Protege o arquivo de configuração
-
+          ProxyCommand cloudflared access ssh --hostname fiji-mlb-congo-steal.trycloudflare.com" >> ~/.ssh/config
 
       - name: 🔄 Copiar código para o laptop via SCP (usando Cloudflare)
         run: |
