@@ -10,3 +10,5 @@ __pycache__
 .terraform.*
 terraform.tfstate
 terraform.*
+.terraform*
+.terraform
