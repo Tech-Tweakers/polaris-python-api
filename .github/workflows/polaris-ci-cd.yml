@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+  workflow_run:
+    workflows: ["Polaris CI/CD"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -103,8 +107,9 @@ jobs:
           labels: "automated-pr"
 
   semantic-version:
-    name: 🏷️ Gerar versão semântica
-    needs: [create-pr]
+    name: 🏷️ Gerar versão semântica após merge na main
+    needs: [test-lint-polaris-api, test-lint-polaris-telegram]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do código
@@ -122,4 +127,3 @@ jobs:
         run: |
           git tag v${{ steps.semantic_version.outputs.version }}
           git push origin v${{ steps.semantic_version.outputs.version }}
-
