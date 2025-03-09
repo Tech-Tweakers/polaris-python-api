@@ -88,32 +88,45 @@ jobs:
 
       - name: 📥 Instalar Cloudflare Tunnel (cloudflared)
         run: |
-          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
-          chmod +x /usr/local/bin/cloudflared
-          cloudflared --version  # Verifica se instalou corretamente
+          if ! command -v cloudflared &> /dev/null
+          then
+            echo "🔧 Instalando Cloudflare Tunnel..."
+            curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+            chmod +x cloudflared
+            sudo mv cloudflared /usr/local/bin/
+          fi
+          cloudflared --version
 
       - name: 🔑 Configurar acesso SSH via Cloudflare Tunnel
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf "%s" "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          echo "Host cloudflare-ssh
-          HostName fiji-mlb-congo-steal.trycloudflare.com
+          
+          CLOUDFLARE_SSH_HOST=$(curl -s http://fiji-mlb-congo-steal.trycloudflare.com/api/tunnels | jq -r '.tunnels[0].public_url' | sed 's/https:\/\///')
+          echo "🔗 Cloudflare SSH Host: $CLOUDFLARE_SSH_HOST"
+          
+          tee -a ~/.ssh/config <<EOF
+          Host cloudflare-ssh
+          HostName $CLOUDFLARE_SSH_HOST
           User ${{ secrets.SERVER_USER }}
           IdentityFile ~/.ssh/id_rsa
           StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname fiji-mlb-congo-steal.trycloudflare.com" >> ~/.ssh/config
+          ProxyCommand cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST
+          EOF
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
-          scp -o ProxyCommand="cloudflared access ssh --hostname fiji-mlb-congo-steal.trycloudflare.com" -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
+          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
+          echo "📤 Enviando código para: $CLOUDFLARE_SSH_HOST"
+          scp -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         run: |
-          ssh -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" ${{ secrets.CLOUDFLARE_SSH_USER }}@localhost << 'EOF'
+          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
+          ssh -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" ${{ secrets.SERVER_USER }}@localhost << 'EOF'
             echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-            cd /home/atorres/polaris-prod
+            cd /home/${{ secrets.SERVER_USER }}/polaris-prod
 
             echo "📌 Aplicando Terraform..."
             terraform init
