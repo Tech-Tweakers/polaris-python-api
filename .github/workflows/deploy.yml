@@ -102,18 +102,29 @@ jobs:
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
           printf "%s" "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          
-          CLOUDFLARE_SSH_HOST=$(curl -s http://fiji-mlb-congo-steal.trycloudflare.com/api/tunnels | jq -r '.tunnels[0].public_url' | sed 's/https:\/\///')
+
+          # Obter hostname do túnel via API do Cloudflare
+          CLOUDFLARE_SSH_HOST=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url' | sed 's/https:\/\///')
+
+          # Verificar se a variável foi preenchida corretamente
+          if [[ -z "$CLOUDFLARE_SSH_HOST" ]]; then
+            echo "❌ Erro: Não foi possível obter o hostname do túnel."
+            exit 1
+          fi
+
           echo "🔗 Cloudflare SSH Host: $CLOUDFLARE_SSH_HOST"
-          
-          tee -a ~/.ssh/config <<EOF
-          Host cloudflare-ssh
-          HostName $CLOUDFLARE_SSH_HOST
-          User ${{ secrets.SERVER_USER }}
-          IdentityFile ~/.ssh/id_rsa
-          StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST
-          EOF
+
+          # Criar arquivo ~/.ssh/config corretamente
+          cat <<EOF > ~/.ssh/config
+            Host cloudflare-ssh
+              HostName $CLOUDFLARE_SSH_HOST
+              User ${{ secrets.SERVER_USER }}
+              IdentityFile ~/.ssh/id_rsa
+              StrictHostKeyChecking no
+              ProxyCommand cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST
+            EOF
+
+          chmod 600 ~/.ssh/config
 
       - name: 🔄 Copiar código para o laptop via SCP
         run: |
