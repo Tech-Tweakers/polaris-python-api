@@ -46,8 +46,6 @@ services:
       - PYTHONPATH=/app
     networks:
       - polaris_network
-    volumes:
-      - ../polaris_api:/app
 
   telegram-bot:
     build:
