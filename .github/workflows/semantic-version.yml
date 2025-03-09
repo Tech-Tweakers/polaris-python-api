@@ -45,3 +45,6 @@ jobs:
             git push origin ${NEW_VERSION}
             echo "✅ Nova versão ${NEW_VERSION} criada com sucesso!"
           fi
+#
+#
+#
