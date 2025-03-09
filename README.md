@@ -1,86 +1,105 @@
-# Polaris AI v2
+# 🌟 Polaris AI v2 - Assistente Virtual Inteligente
 
-## 🚀 Sobre o Projeto
+## 📌 Sobre o Projeto
+Polaris é um **assistente inteligente** que interage com os usuários via **Telegram**, processando mensagens e fornecendo respostas contextuais utilizando um **modelo de linguagem avançado**. O sistema é baseado em **FastAPI, Llama.cpp, LangChain e MongoDB**, garantindo escalabilidade e precisão nas respostas.
 
-Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama.cpp*, *LangChain* e *MongoDB* para oferecer inferências contextuais aprimoradas. Ele possui memória de conversação e armazenamento de memórias de usuários, permitindo respostas mais precisas e personalizadas ao longo do tempo.
+---
 
-## ✨ Recursos Principais
+## 🚀 Funcionalidades
+✅ **Interação via Telegram** – Polaris recebe mensagens e retorna respostas inteligentes.  
+✅ **API baseada em FastAPI** – Interface eficiente para comunicação com o backend.  
+✅ **Inferência via LLaMA** – Utiliza *Meta-Llama-3-8B-Instruct* para gerar respostas contextuais.  
+✅ **Memória Persistente** – Armazena informações importantes no *MongoDB*.  
+✅ **Memória Temporária** – Utiliza *LangChain Memory* e *ChromaDB* para contexto recente.  
+✅ **Infraestrutura Docker** – Fácil deploy e escalabilidade.  
+✅ **Arquitetura modular** – Separação clara entre API, modelo e Bot do Telegram.  
+✅ **Logging Estruturado** – Logs detalhados para rastreamento eficiente.  
+✅ **Configuração customizável** – Hiperparâmetros ajustáveis via `.env`.  
 
-- 🌍 **API REST**: Desenvolvida em *FastAPI* para alta performance.
-- 🤖 **Integração com Telegram**: O bot do Telegram interage diretamente com a Polaris para responder perguntas em tempo real.
-- 🧠 **Modelo LLaMA**: Utiliza *Meta-Llama-3-8B-Instruct* para respostas inteligentes e contextuais.
-- 🗄️ **Memória Persistente**: Armazena informações importantes no *MongoDB*.
-- 🔄 **Memória Temporária**: Utiliza *LangChain Memory* e *ChromaDB* para manter contexto recente.
-- 🔥 **Inferência Eficiente**: Implementa otimizações para respostas rápidas e relevantes.
-- 🔧 **Logging Estruturado**: Sistema de logs para rastreamento detalhado.
+---
 
-## 🏗️ Tecnologias Utilizadas
+## 🏗️ Arquitetura
+Polaris segue o **modelo C4**, organizado nos seguintes módulos:
+- **Polaris API** – Processa requisições e interage com o modelo de linguagem.
+- **Telegram Bot** – Interface para comunicação com os usuários.
+- **MongoDB** – Banco de dados para armazenamento de históricos.
+- **LLaMA Model** – Motor de inferência para respostas contextuais.
+- **Docker** – Infraestrutura para execução dos serviços.
 
-- [**FastAPI**](https://fastapi.tiangolo.com/) - Framework para desenvolvimento rápido de APIs
-- [**Llama.cpp**](https://github.com/ggerganov/llama.cpp) - Implementação eficiente de modelos LLaMA
-- [**LangChain**](https://python.langchain.com/) - Gerenciamento de memória e histórico de conversação
-- [**MongoDB**](https://www.mongodb.com/) - Banco de dados NoSQL para persistência de informações
-- [**ChromaDB**](https://www.trychroma.com/) - Vetorizador de memórias contextuais para busca eficiente
-- [**Uvicorn**](https://www.uvicorn.org/) - Servidor ASGI para execução do FastAPI
-- [**Telegram Bot API**](https://core.telegram.org/bots/api) - API de bots do Telegram para interatividade em tempo real
+📖 **[Documentação completa](./docs/README.md)**
 
-## 📦 Instalação e Execução
+---
 
-### 📌 Requisitos
+## 🔧 Como Executar o Projeto
+### **1️⃣ Clonar o Repositório**
+```bash
+git clone https://github.com/seu-usuario/polaris.git
+cd polaris
+```
 
-- Python 3.9+
-- MongoDB rodando na porta padrão (ou configurado em `MONGO_URI`)
-- Modelo LLaMA baixado para `./models/`
-- Dependências Python instaladas
-- **Token do Telegram Bot** configurado em variáveis de ambiente
+### **2️⃣ Criar um Bot no Telegram**
+Para conectar o Polaris ao Telegram, siga estes passos:
+1. Acesse o **Telegram** e procure por `@BotFather`.
+2. Envie o comando `/newbot` e siga as instruções.
+3. Escolha um nome e um nome de usuário único para o bot.
+4. Após a criação, o BotFather fornecerá um **TOKEN de API**.
+5. Copie esse token e adicione no arquivo `.env` conforme o próximo passo.
 
-### ⚙️ Passos para Configuração
+### **3️⃣ Configurar Variáveis de Ambiente**
+Crie um arquivo `.env` e adicione as configurações necessárias:
+```env
+# Configuração do modelo
+MODEL_PATH="../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
+NUM_CORES=16
+MODEL_CONTEXT_SIZE=4096
+MODEL_BATCH_SIZE=8
 
-1. Clone o repositório:
+# Configuração de histórico
+MONGODB_HISTORY=2
+LANGCHAIN_HISTORY=10
 
-   ```sh
-   git clone https://github.com/Tech-Tweakers/polaris-python-api.git
-   cd polaris-python
-   ```
+# Hiperparâmetros do modelo
+TEMPERATURE=0.3
+TOP_P=0.7
+TOP_K=70
+FREQUENCY_PENALTY=3
 
-2. Crie e ative um ambiente virtual (opcional, mas recomendado):
+# Configuração do MongoDB
+MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
+```
 
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # Linux/macOS
-   venv\Scripts\activate  # Windows
-   ```
+### **4️⃣ Subir os Containers com Docker**
+```bash
+docker-compose up -d --build
+```
 
-3. Instale as dependências:
+### **5️⃣ Testar a API**
+Acesse no navegador ou use `curl`:
+```bash
+curl http://localhost:8000/ping
+```
+Saída esperada:
+```json
+{"message": "Polaris API online!"}
+```
 
-   ```sh
-   pip install -r requirements.txt
-   ```
+### **6️⃣ Testar o Bot do Telegram**
+Envie uma mensagem para o bot e verifique a resposta!
 
-4. Execute o Docker Composer (se necessário para MongoDB e ChromaDB):
+---
 
-   ```sh
-   docker-compose up --build -d
-   ```
+## 🧪 Executar Testes
+Para rodar os testes unitários:
+```bash
+make test
+```
 
-5. **Inicie a API Polaris**:
-
-   ```sh
-   python polaris-api/polaris_api.py
-   ```
-
-6. **Inicie o Bot do Telegram**:
-
-   ```sh
-   python telegram-bot/main.py
-   ```
+---
 
 ## 🔥 Endpoints Disponíveis
 
 ### 🔹 Inferência com o Modelo
-
 **POST** `/inference/`
-
 - **Descrição**: Envia um prompt para o modelo e recebe uma resposta inteligente.
 - **Body (JSON)**:
   ```json
@@ -97,9 +116,7 @@ Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama.c
   ```
 
 ### 🔹 Webhook do Telegram
-
 **POST** `/telegram-webhook/`
-
 - **Descrição**: Recebe mensagens do Telegram e retorna respostas geradas pela Polaris.
 - **Body (JSON)**:
   ```json
@@ -118,31 +135,37 @@ Polaris é um assistente inteligente desenvolvido utilizando *FastAPI*, *Llama.c
   }
   ```
 
-## 🛠️ Estrutura do Projeto
+---
 
-```
-polaris-python/
-│── polaris-api/              # Código principal da API
-│   │── Dockerfile
-│   │── keywords.txt          # Palavras-chave para memórias importantes
-│   │── polaris_api.py        # Código principal da API Polaris
-│   │── polaris_prompt.txt    # Prompt de configuração do modelo
-│   │── requirements.txt      # Dependências da API
-│
-│── telegram-bot/             # Módulo do bot do Telegram
-│   │── Dockerfile
-│   │── main.py               # Código principal do bot
-│   │── requirements.txt      # Dependências do bot
-│
-│── .gitignore
-│── docker-compose.yml        # Configuração do Docker Compose
-│── README.md                 # Documentação do projeto
+## 📜 Estrutura do Projeto
+```bash
+📂 polaris
+├── 📂 polaris_api          # API FastAPI
+├── 📂 telegram_bot         # Bot do Telegram
+├── 📂 models               # Modelos LLaMA para inferência
+├── 📂 tests                # Testes unitários
+├── 📜 docker-compose.yml   # Infraestrutura Docker
+├── 📜 Makefile             # Automação de comandos
+└── 📜 README.md            # Documentação inicial
 ```
 
-## 📌 Considerações Finais
+---
 
-Polaris foi projetado para ser um assistente poderoso e altamente escalável. Atualmente, a inferência é feita diretamente no backend Python, mas há planos de migrar para um servidor LLaMA.cpp dedicado para maior eficiência.
+## 📌 Tecnologias Utilizadas
+- **Python 3.10**
+- **FastAPI**
+- **Llama.cpp**
+- **LangChain**
+- **MongoDB**
+- **ChromaDB**
+- **Docker & Docker Compose**
+- **PlantUML (Documentação C4)**
 
-Além disso, a integração com o **Telegram Bot** permite interatividade em tempo real, ampliando a usabilidade do projeto.
+---
 
-💡 Se desejar contribuir com melhorias, sinta-se à vontade para abrir um *Pull Request*! 🚀
+## 📄 Licença
+Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+### 🚀 **Agora é só começar a usar o Polaris AI!** 😃
