@@ -32,8 +32,8 @@ services:
 
   polaris-api:
     build:
-      context: ../
-      dockerfile: polaris_api/Dockerfile
+      context: ../polaris_api
+      dockerfile: Dockerfile
 
     container_name: polaris-api
     restart: always
