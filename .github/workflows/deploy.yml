@@ -115,14 +115,16 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
-              -o ProxyCommand="cloudflared access ssh --hostname ***" \
+              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
-              ***@localhost "rm -rf /home/***/polaris-prod && mkdir -p /home/***/polaris-prod"
+              ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod && mkdir -p /home/${{ secrets.SERVER_USER }}/polaris-prod"
+
           scp -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
               -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
+
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         run: |
