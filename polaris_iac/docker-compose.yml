@@ -32,8 +32,8 @@ services:
 
   polaris-api:
     build:
-      context: ../polaris_api
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: polaris_api/Dockerfile
     container_name: polaris-api
     restart: always
     ports:
@@ -69,3 +69,7 @@ volumes:
 networks:
   polaris_network:
     driver: bridge
+
+#
+#
+#

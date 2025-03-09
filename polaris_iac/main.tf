@@ -17,9 +17,10 @@ resource "docker_volume" "mongodb_data" {
   name = "mongodb_data"
 }
 
-resource "null_resource" "deploy" {
+resource "null_resource" "deploy_polaris" {
   provisioner "local-exec" {
     command = <<EOT
+      echo "🔥 Subindo Polaris no laptop..."
       docker-compose up -d
       ./scripts/setup_ngrok.sh
     EOT
