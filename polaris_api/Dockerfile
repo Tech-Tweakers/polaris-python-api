@@ -4,7 +4,7 @@ FROM python:3.10-slim
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia apenas o requirements.txt primeiro (isso melhora o cache do Docker)
+# Copia apenas o requirements.txt primeiro (melhora o cache do Docker)
 COPY requirements.txt /app/requirements.txt
 
 # Instala as dependências antes de copiar o resto do código
