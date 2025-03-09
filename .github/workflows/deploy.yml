@@ -122,11 +122,15 @@ jobs:
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
-          ssh -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" ${{ secrets.SERVER_USER }}@localhost << 'EOF'
-            echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-            cd /home/${{ secrets.SERVER_USER }}/polaris-prod
+          ssh -i ~/.ssh/id_polaris \
+              -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
+              -o StrictHostKeyChecking=no \
+              -o UserKnownHostsFile=/dev/null \
+              ${{ secrets.SERVER_USER }}@localhost << 'EOF'
+                echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
+                cd /home/${{ secrets.SERVER_USER }}/polaris-prod
 
-            echo "📌 Aplicando Terraform..."
-            terraform init
-            terraform apply -auto-approve
+                echo "📌 Aplicando Terraform..."
+                terraform init
+                terraform apply -auto-approve
           EOF
