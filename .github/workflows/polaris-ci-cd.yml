@@ -75,6 +75,9 @@ jobs:
         run: black --check telegram_bot
 
       - name: 🧪 Executar Testes
+        env:
+          TELEGRAM_API_URL: ${{ secrets.TELEGRAM_API_URL }}
+          POLARIS_API_URL: ${{ secrets.POLARIS_API_URL }}
         run: PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
 
   create-pr:
