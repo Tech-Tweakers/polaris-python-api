@@ -88,12 +88,16 @@ jobs:
 
       - name: 🔑 Criar Proxy SSH via Cloudflare Tunnel
         run: |
+          mkdir -p ~/.ssh  # Cria a pasta se não existir
+          chmod 700 ~/.ssh  # Garante que tem a permissão correta
           echo "Host cloudflare-ssh
           HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
           User ${{ secrets.CLOUDFLARE_SSH_USER }}
           IdentityFile ~/.ssh/id_rsa
           StrictHostKeyChecking no
           ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config  # Protege o arquivo de configuração
+
 
       - name: 🔄 Copiar código para o laptop via SCP (usando Cloudflare)
         run: |
