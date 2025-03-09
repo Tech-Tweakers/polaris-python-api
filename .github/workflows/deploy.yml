@@ -30,9 +30,11 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(BREAKING CHANGE|major:)"
           minor_pattern: "(feat:|minor:)"
+          patch_pattern: "(fix:|patch:)"
           change_path: "."
           version_format: "${major}.${minor}.${patch}"
           debug: true
+          ignore_patterns: "wip|WIP"
 
       - name: 📌 Criar tag da versão apenas se for diferente e não existir no repositório
         run: |
