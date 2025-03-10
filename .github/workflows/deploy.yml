@@ -174,6 +174,7 @@ jobs:
               fi
 
               terraform apply \
+                -var="server_user=$SERVER_USER" \
                 -var="mongo_user=$MONGO_USER" \
                 -var="mongo_password=$MONGO_PASSWORD" \
                 -var="polaris_api_port=$POLARIS_API_PORT" \

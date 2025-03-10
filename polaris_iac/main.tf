@@ -7,7 +7,13 @@ terraform {
   }
 }
 
-provider "docker" {}
+provider "docker" {
+  host = "unix:///var/run/docker.sock"
+  registry_auth {
+    address = "https://index.docker.io/v1/"
+    config_file = "/home/${var.server_user}/.docker/config.json"
+  }
+}
 
 resource "docker_network" "polaris_network" {
   name = "polaris_network"
