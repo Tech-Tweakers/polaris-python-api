@@ -136,6 +136,7 @@ jobs:
           TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           NGROK_URL: ${{ secrets.NGROK_URL }}
+          NGROK_PORT: ${{ secrets.NGROK_PORT }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
