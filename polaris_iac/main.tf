@@ -22,6 +22,7 @@ resource "null_resource" "deploy_ngrok" {
   provisioner "local-exec" {
     command = <<EOT
       echo "🔥 Subindo Ngrok..."
+      export TELEGRAM_BOT_PORT="${var.telegram_bot_port}",
       export NGROK_URL="${var.ngrok_url}"
       ./scripts/setup_ngrok.sh
     EOT
