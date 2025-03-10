@@ -6,3 +6,4 @@ variable "telegram_token" {}
 variable "ngrok_url" {}
 variable "ngrok_port" {}
 variable "server_user" {}
+variable "docker_username" {}

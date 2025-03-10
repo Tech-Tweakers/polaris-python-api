@@ -35,7 +35,7 @@ resource "null_resource" "deploy_ngrok" {
 }
 
 resource "docker_container" "polaris-api" {
-  image    = "polaris-api:latest"
+  image = "${var.docker_username}/polaris:latest"
   name     = "polaris-api"
   restart  = "always"
 
@@ -46,7 +46,8 @@ resource "docker_container" "polaris-api" {
     "TELEGRAM_BOT_PORT=${var.telegram_bot_port}",
     "TELEGRAM_TOKEN=${var.telegram_token}",
     "NGROK_URL=${var.ngrok_url}",
-    "NGROK_PORT=${var.ngrok_port}"
+    "NGROK_PORT=${var.ngrok_port}",
+    "DOCKER_USERNAME=${var.docker_username}"
   ]
 
   networks_advanced {
