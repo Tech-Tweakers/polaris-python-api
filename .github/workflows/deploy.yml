@@ -135,7 +135,7 @@ jobs:
               ${{ secrets.SERVER_USER }}@localhost << 'EOF'
               
               echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-              cd /home/${{ secrets.SERVER_USER }}/polaris-prod
+              cd /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_iac
 
               echo "📌 Verificando se Terraform está instalado..."
               if ! command -v terraform &> /dev/null; then
