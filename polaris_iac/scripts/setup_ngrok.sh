@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Carregar variáveis do .env
-export $(grep -v '^#' ../.env | xargs)
+export $(grep -v '^#' .env | xargs)
 
 echo "🌐 Iniciando ngrok..."
 ngrok http $TELEGRAM_BOT_PORT > /dev/null &
