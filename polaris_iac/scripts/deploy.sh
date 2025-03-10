@@ -2,7 +2,7 @@
 
 echo "🚀 Iniciando deploy da Polaris..."
 
-export $(grep -v '^#' .env | xargs)
+export $(grep -v '^#' ./.env | xargs)
 
 COMPOSE_FILE="../docker-compose.yml"
 

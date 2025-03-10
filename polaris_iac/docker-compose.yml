@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   mongodb:
+    env_file:
+    - .env  # Garante que o Docker Compose vai carregar as variáveis de ambiente
     image: mongo:latest
     container_name: mongodb
     restart: always
@@ -16,6 +18,8 @@ services:
       - polaris_network
 
   mongo-express:
+    env_file:
+    - .env  # Garante que o Docker Compose vai carregar as variáveis de ambiente
     image: mongo-express
     container_name: mongo-express
     restart: always
@@ -31,6 +35,8 @@ services:
       - polaris_network
 
   polaris-api:
+    env_file:
+    - .env  # Garante que o Docker Compose vai carregar as variáveis de ambiente
     build:
       context: ../
       dockerfile: polaris_api/Dockerfile
@@ -47,6 +53,8 @@ services:
       - polaris_network
 
   telegram-bot:
+    env_file:
+    - .env  # Garante que o Docker Compose vai carregar as variáveis de ambiente
     build:
       context: ../telegram_bot
       dockerfile: Dockerfile
