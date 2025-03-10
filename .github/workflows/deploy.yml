@@ -143,11 +143,12 @@ jobs:
                   sudo apt-get update && sudo apt-get install -y wget unzip
                   wget https://releases.hashicorp.com/terraform/1.6.3/terraform_1.6.3_linux_amd64.zip
                   unzip terraform_1.6.3_linux_amd64.zip
-                  sudo mv terraform /usr/local/bin/
+                  mv terraform ~/.local/bin/
                   rm terraform_1.6.3_linux_amd64.zip
               fi
 
               echo "📌 Aplicando Terraform..."
+              export PATH="$HOME/.local/bin:$PATH"
               terraform init
               terraform apply -auto-approve
 
