@@ -18,13 +18,24 @@ resource "docker_volume" "mongodb_data" {
   name = "mongodb_data"
 }
 
-resource "null_resource" "deploy_polaris" {
+resource "null_resource" "deploy_ngrok" {
   provisioner "local-exec" {
     command = <<EOT
-      echo "🔥 Subindo Polaris no laptop..."
+      echo "🔥 Subindo Ngrok..."
       export $(grep -v '^#' .env | xargs)
       docker-compose --env-file .env up -d
       ./scripts/setup_ngrok.sh
+    EOT
+  }
+}
+
+resource "null_resource" "deploy_polaris" {
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "🔥 Subindo Polaris API..."
+      export $(grep -v '^#' .env | xargs)
+      docker-compose --env-file .env up -d
+      ./scripts/deploy.sh
     EOT
   }
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Iniciando deploy da Polaris..."
+echo "🚀 Iniciando deploy da Polaris API..."
 
 export $(grep -v '^#' ./.env | xargs)
 
