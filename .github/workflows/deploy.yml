@@ -120,25 +120,13 @@ jobs:
 
       - name: 🔄 Copiar código para o laptop via SCP (sem .git)
         run: |
-          ssh -o StrictHostKeyChecking=no \
+          ssh -v -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
               ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod && mkdir -p /home/${{ secrets.SERVER_USER }}/polaris-prod"
 
-          tar --exclude='.git' -czf polaris.tar.gz .
-          
-          scp -o StrictHostKeyChecking=no \
-              -o UserKnownHostsFile=/dev/null \
-              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
-              -i ~/.ssh/id_polaris \
-              polaris.tar.gz ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
-
-          ssh -o StrictHostKeyChecking=no \
-              -o UserKnownHostsFile=/dev/null \
-              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
-              -i ~/.ssh/id_polaris \
-              ${{ secrets.SERVER_USER }}@localhost "tar -xzf /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris.tar.gz -C /home/${{ secrets.SERVER_USER }}/polaris-prod && rm /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris.tar.gz"
+          rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         env:
