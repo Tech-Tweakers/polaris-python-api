@@ -138,6 +138,7 @@ jobs:
           NGROK_URL: ${{ secrets.NGROK_URL }}
           NGROK_PORT: ${{ secrets.NGROK_PORT }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
@@ -182,5 +183,6 @@ jobs:
                 -var="telegram_token=$TELEGRAM_TOKEN" \
                 -var="ngrok_url=$NGROK_URL" \
                 -var="ngrok_port=$NGROK_PORT" \
+                -var="docker_username=${{ secrets.DOCKER_USERNAME }}" \
                 -auto-approve
           EOF
