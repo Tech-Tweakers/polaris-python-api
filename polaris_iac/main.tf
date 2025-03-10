@@ -23,7 +23,7 @@ resource "null_resource" "deploy_polaris" {
     command = <<EOT
       echo "🔥 Subindo Polaris no laptop..."
       export $(grep -v '^#' .env | xargs)
-      docker-compose up -d
+      docker-compose --env-file .env up -d
       ./scripts/setup_ngrok.sh
     EOT
   }
