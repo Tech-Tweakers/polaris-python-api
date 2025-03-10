@@ -39,7 +39,8 @@ resource "docker_container" "polaris-api" {
     "MONGO_PASSWORD=${var.mongo_password}",
     "POLARIS_API_PORT=${var.polaris_api_port}",
     "TELEGRAM_BOT_PORT=${var.telegram_bot_port}",
-    "TELEGRAM_TOKEN=${var.telegram_token}"
+    "TELEGRAM_TOKEN=${var.telegram_token}",
+    "NGROK_URL=${var.var.ngrok_url}"
   ]
 
   networks_advanced {
