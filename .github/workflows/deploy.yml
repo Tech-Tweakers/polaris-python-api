@@ -132,6 +132,10 @@ jobs:
               -i ~/.ssh/id_polaris \
               -r . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
+      - name: 🔑 Login no Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
         env:
@@ -141,15 +145,18 @@ jobs:
           TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           NGROK_PORT: ${{ secrets.NGROK_PORT }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
               -i ~/.ssh/id_polaris \
-              ${{ secrets.SERVER_USER }}@localhost << 'EOF'
+              $SERVER_USER@localhost << EOF
+              
+              set -e  # Para interromper o script se algum erro ocorrer
               
               echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-              cd /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_iac
+              cd /home/$SERVER_USER/polaris-prod/polaris_iac
 
               echo "📌 Verificando se Terraform está instalado..."
               if ! command -v terraform &> /dev/null; then
@@ -159,19 +166,26 @@ jobs:
                   unzip terraform_1.6.3_linux_amd64.zip
                   mv terraform ~/.local/bin/
                   rm terraform_1.6.3_linux_amd64.zip
+                  export PATH="$HOME/.local/bin:$PATH"
               fi
 
+              echo "📌 Fazendo login no Docker e puxando imagem..."
+              docker login || echo "⚠️ Falha no login do Docker, pode ser um repositório privado!"
+              docker pull polaris-api:latest || echo "⚠️ Falha ao puxar a imagem, pode precisar de autenticação!"
+
               echo "📌 Aplicando Terraform..."
-              export PATH="$HOME/.local/bin:$PATH"
-              docker login
-              docker pull polaris-api:latest
               terraform init
-              docker network ls | grep polaris_network && docker network rm polaris_network || echo "Rede não existe, seguindo..."
+
+              echo "🛠️ Verificando e removendo rede duplicada..."
+              if docker network inspect polaris_network &>/dev/null; then
+                  docker network rm polaris_network
+              fi
+
               terraform apply \
-                -var="mongo_user=${MONGO_USER}" \
-                -var="mongo_password=${MONGO_PASSWORD}" \
-                -var="polaris_api_port=${POLARIS_API_PORT}" \
-                -var="telegram_bot_port=${TELEGRAM_BOT_PORT}" \
-                -var="telegram_token=${TELEGRAM_TOKEN}" \
+                -var="mongo_user=$MONGO_USER" \
+                -var="mongo_password=$MONGO_PASSWORD" \
+                -var="polaris_api_port=$POLARIS_API_PORT" \
+                -var="telegram_bot_port=$TELEGRAM_BOT_PORT" \
+                -var="telegram_token=$TELEGRAM_TOKEN" \
                 -auto-approve
           EOF
