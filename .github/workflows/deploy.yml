@@ -163,6 +163,8 @@ jobs:
 
               echo "📌 Aplicando Terraform..."
               export PATH="$HOME/.local/bin:$PATH"
+              docker login
+              docker pull polaris-api:latest
               terraform init
               docker network ls | grep polaris_network && docker network rm polaris_network || echo "Rede não existe, seguindo..."
               terraform apply \
