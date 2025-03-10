@@ -21,6 +21,7 @@ resource "null_resource" "deploy_polaris" {
   provisioner "local-exec" {
     command = <<EOT
       echo "🔥 Subindo Polaris no laptop..."
+      export $(grep -v '^#' .env | xargs)
       docker-compose up -d
       ./scripts/setup_ngrok.sh
     EOT
