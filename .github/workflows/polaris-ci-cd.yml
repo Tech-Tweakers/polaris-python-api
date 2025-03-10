@@ -1,4 +1,4 @@
-name: Polaris CI/CD
+name: Polaris CI/CD Tests
 
 on:
   push:
