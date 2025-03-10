@@ -144,7 +144,7 @@ jobs:
           POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
           TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          NGROK_PORT: ${{ secrets.NGROK_PORT }}
+          NGROK_URL: ${{ secrets.NGROK_URL }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
@@ -187,5 +187,6 @@ jobs:
                 -var="polaris_api_port=$POLARIS_API_PORT" \
                 -var="telegram_bot_port=$TELEGRAM_BOT_PORT" \
                 -var="telegram_token=$TELEGRAM_TOKEN" \
+                -var="ngrok_url=$NGROK_URL" \
                 -auto-approve
           EOF
