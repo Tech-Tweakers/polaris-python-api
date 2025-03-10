@@ -11,6 +11,7 @@ provider "docker" {}
 
 resource "docker_network" "polaris_network" {
   name = "polaris_network"
+  check_duplicate = true
 }
 
 resource "docker_volume" "mongodb_data" {
