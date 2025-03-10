@@ -22,13 +22,7 @@ resource "null_resource" "deploy_ngrok" {
   provisioner "local-exec" {
     command = <<EOT
       echo "🔥 Subindo Ngrok..."
-      export MONGO_USER="${var.mongo_user}"
-      export MONGO_PASSWORD="${var.mongo_password}"
-      export POLARIS_API_PORT="${var.polaris_api_port}"
-      export TELEGRAM_BOT_PORT="${var.telegram_bot_port}"
-      export TELEGRAM_TOKEN="${var.telegram_token}"
-      
-      docker-compose up -d
+      export NGROK_URL="${var.ngrok_url}"
       ./scripts/setup_ngrok.sh
     EOT
   }

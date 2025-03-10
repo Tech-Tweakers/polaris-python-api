@@ -3,3 +3,4 @@ variable "mongo_password" {}
 variable "polaris_api_port" {}
 variable "telegram_bot_port" {}
 variable "telegram_token" {}
+variable "ngrok_url" {}
