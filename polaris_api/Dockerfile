@@ -1,30 +1,28 @@
-# Usa a imagem base do Python
-FROM python:3.10-slim
+FROM python:3.10-slim AS builder
 
-# Define o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Instala dependências do sistema necessárias para compilar `llama-cpp-python`
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia apenas o requirements.txt primeiro (para melhorar o cache do Docker)
 COPY polaris_api/requirements.txt /app/requirements.txt
 
-# Instala as dependências antes de copiar o resto do código
-RUN pip install --no-cache-dir --upgrade pip && pip install -r /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r /app/requirements.txt --target /app/deps
 
-# Agora copia o resto do código
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/deps /app/deps
+
 COPY polaris_api/ /app
 
-# Garante que o Python enxergue os módulos corretamente
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app:/app/deps
 
-# Expõe a porta 8000 para a API
 EXPOSE 8000
 
-# Comando para rodar a API
 CMD ["python", "main.py"]
