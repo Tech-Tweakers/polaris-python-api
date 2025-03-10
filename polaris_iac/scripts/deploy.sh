@@ -2,8 +2,6 @@
 
 echo "🚀 Iniciando deploy da Polaris API..."
 
-export $(grep -v '^#' ./.env | xargs)
-
 COMPOSE_FILE="../docker-compose.yml"
 
 echo "🔧 Construindo as imagens da Polaris..."

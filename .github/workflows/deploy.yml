@@ -98,6 +98,13 @@ jobs:
           cloudflared --version
 
       - name: 🔑 Configurar acesso SSH via Cloudflare Tunnel
+        env:
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
+          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          NGROK_PORT: ${{ secrets.NGROK_PORT }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -127,6 +134,13 @@ jobs:
 
 
       - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
+        env:
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
+          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          NGROK_PORT: ${{ secrets.NGROK_PORT }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
@@ -151,6 +165,11 @@ jobs:
               export PATH="$HOME/.local/bin:$PATH"
               terraform init
               docker network ls | grep polaris_network && docker network rm polaris_network || echo "Rede não existe, seguindo..."
-              terraform apply -auto-approve
-
+              terraform apply \
+                -var="mongo_user=${MONGO_USER}" \
+                -var="mongo_password=${MONGO_PASSWORD}" \
+                -var="polaris_api_port=${POLARIS_API_PORT}" \
+                -var="telegram_bot_port=${TELEGRAM_BOT_PORT}" \
+                -var="telegram_token=${TELEGRAM_TOKEN}" \
+                -auto-approve
           EOF
