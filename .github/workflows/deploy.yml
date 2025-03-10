@@ -180,5 +180,6 @@ jobs:
                 -var="telegram_bot_port=$TELEGRAM_BOT_PORT" \
                 -var="telegram_token=$TELEGRAM_TOKEN" \
                 -var="ngrok_url=$NGROK_URL" \
+                -var="ngrok_port=$NGROK_PORT" \
                 -auto-approve
           EOF
