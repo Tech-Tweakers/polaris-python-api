@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY polaris_api/requirements.txt /app/requirements.txt
 
+# Instala a libgomp
+RUN apt-get update && apt-get install -y libgomp1 && rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r /app/requirements.txt --target /app/deps
 
