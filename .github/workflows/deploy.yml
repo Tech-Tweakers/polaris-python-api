@@ -1,4 +1,4 @@
-name: 🚀 Polaris - Build, Version & Deploy
+name: 🚀 Polaris - Version & Deploy
 
 on:
   push:
@@ -49,37 +49,8 @@ jobs:
             echo "✅ Nova versão ${NEW_VERSION} criada!"
           fi
 
-  # build-and-push:
-  #   name: 🛠️ Build & Push Docker Image
-  #   needs: semantic-version
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 📥 Checkout do código
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-
-  #     - name: 🔑 Login no Docker Hub
-  #       uses: docker/login-action@v2
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-
-  #     - name: 🔨 Build da Imagem Docker
-  #       run: |
-  #         VERSION="v${{ needs.semantic-version.outputs.version }}"
-  #         docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest \
-  #                      -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION \
-  #                      -f polaris_api/Dockerfile .
-
-  #     - name: 🚀 Push da Imagem para o Docker Hub
-  #       run: |
-  #         VERSION="v${{ needs.semantic-version.outputs.version }}"
-  #         docker push ${{ secrets.DOCKER_USERNAME }}/polaris:latest
-  #         docker push ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
-
   deploy:
-    name: 🚀 Deploy via Terraform + Cloudflare Tunnel
+    name: 🚀 Deploy via Cloudflare Tunnel
     needs: semantic-version
     runs-on: ubuntu-latest
     steps:
@@ -97,14 +68,7 @@ jobs:
           fi
           cloudflared --version
 
-      - name: 🔑 Configurar acesso SSH via Cloudflare Tunnel
-        env:
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
-          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          NGROK_PORT: ${{ secrets.NGROK_PORT }}
+      - name: 🔑 Configurar SSH via Cloudflare Tunnel
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
@@ -118,7 +82,7 @@ jobs:
           StrictHostKeyChecking no
           ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" > ~/.ssh/config
 
-      - name: 🔄 Copiar código para o laptop via SCP (sem .git)
+      - name: 🔄 Copiar Código Fonte
         run: |
           ssh -v -o StrictHostKeyChecking=no \
               -o UserKnownHostsFile=/dev/null \
@@ -128,7 +92,7 @@ jobs:
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
-      - name: 🚀 Configurar Servidor e Rodar API (sem venv)
+      - name: 🚀 Configurar Servidor e Rodar API
         run: |
           echo "📌 Reconfigurando SSH..."
           mkdir -p ~/.ssh
