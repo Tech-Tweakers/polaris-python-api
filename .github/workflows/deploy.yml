@@ -130,18 +130,16 @@ jobs:
 
       - name: 🔑 Teste de Conexão SSH e `ls -l`
         run: |
+          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
               -i ~/.ssh/id_polaris \
-              $SERVER_USER@localhost <<EOF
+              $SERVER_USER@localhost "
+              set -e  # Interrompe o script se algum erro ocorrer
+              echo '🚀 Testando conexão SSH!'
+              cd /home/$SERVER_USER/polaris-prod
+              echo '📌 Listando arquivos...'
+              ls -l
+              echo '✅ Teste finalizado!'
+              "
 
-          set -e  # Interrompe o script se algum erro ocorrer
-
-          echo "🚀 Testando conexão SSH!"
-          cd /home/$SERVER_USER/polaris-prod
-
-          echo "📌 Listando arquivos..."
-          ls -l
-
-          echo "✅ Teste finalizado!"
-          EOF
