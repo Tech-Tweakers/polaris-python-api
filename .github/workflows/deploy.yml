@@ -49,38 +49,38 @@ jobs:
             echo "✅ Nova versão ${NEW_VERSION} criada!"
           fi
 
-  build-and-push:
-    name: 🛠️ Build & Push Docker Image
-    needs: semantic-version
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout do código
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # build-and-push:
+  #   name: 🛠️ Build & Push Docker Image
+  #   needs: semantic-version
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 📥 Checkout do código
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: 🔑 Login no Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+  #     - name: 🔑 Login no Docker Hub
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKER_USERNAME }}
+  #         password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🔨 Build da Imagem Docker
-        run: |
-          VERSION="v${{ needs.semantic-version.outputs.version }}"
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION \
-                       -f polaris_api/Dockerfile .
+  #     - name: 🔨 Build da Imagem Docker
+  #       run: |
+  #         VERSION="v${{ needs.semantic-version.outputs.version }}"
+  #         docker build -t ${{ secrets.DOCKER_USERNAME }}/polaris:latest \
+  #                      -t ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION \
+  #                      -f polaris_api/Dockerfile .
 
-      - name: 🚀 Push da Imagem para o Docker Hub
-        run: |
-          VERSION="v${{ needs.semantic-version.outputs.version }}"
-          docker push ${{ secrets.DOCKER_USERNAME }}/polaris:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
+  #     - name: 🚀 Push da Imagem para o Docker Hub
+  #       run: |
+  #         VERSION="v${{ needs.semantic-version.outputs.version }}"
+  #         docker push ${{ secrets.DOCKER_USERNAME }}/polaris:latest
+  #         docker push ${{ secrets.DOCKER_USERNAME }}/polaris:$VERSION
 
   deploy:
     name: 🚀 Deploy via Terraform + Cloudflare Tunnel
-    needs: build-and-push
+    needs: semantic-version
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout do código
@@ -128,64 +128,47 @@ jobs:
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
-      - name: 🔑 Acessar o Laptop via SSH e rodar Terraform
-        env:
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
-          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          NGROK_URL: ${{ secrets.NGROK_URL }}
-          NGROK_PORT: ${{ secrets.NGROK_PORT }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: 🔑 Acessar o Laptop via SSH e configurar o ambiente
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
               -i ~/.ssh/id_polaris \
               $SERVER_USER@localhost << EOF
-              
-              set -e  # Para interromper o script se algum erro ocorrer
-              
+
+              set -e  # Interrompe o script se algum erro ocorrer
+
               echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-              cd /home/$SERVER_USER/polaris-prod/polaris_iac
+              cd /home/$SERVER_USER/polaris-prod
 
-              echo "📌 Verificando se Terraform está instalado..."
-              if ! command -v terraform &> /dev/null; then
-                  echo "🔧 Terraform não encontrado. Instalando..."
-                  sudo apt-get update && sudo apt-get install -y wget unzip
-                  wget https://releases.hashicorp.com/terraform/1.6.3/terraform_1.6.3_linux_amd64.zip
-                  unzip terraform_1.6.3_linux_amd64.zip
-                  mv terraform ~/.local/bin/
-                  rm terraform_1.6.3_linux_amd64.zip
-                  export PATH="$HOME/.local/bin:$PATH"
-              fi
+              echo "📌 Criando ambiente virtual..."
+              python3 -m venv venv
 
-              echo "📌 Fazendo login no Docker e puxando imagem..."
-              echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-              docker pull andrehtorres/polaris:latest || echo "⚠️ Falha ao puxar a imagem, pode precisar de autenticação!"
+              echo "📌 Ativando ambiente virtual e instalando dependências..."
+              source venv/bin/activate
+              pip install --upgrade pip
+              pip install -r polaris_api/requirements.txt
 
-              echo "📌 Aplicando Terraform..."
-              terraform init
+              echo "📌 Criando serviço systemd para manter a API rodando..."
+              sudo bash -c 'cat > /etc/systemd/system/polaris-api.service <<EOL
+              [Unit]
+              Description=Polaris API Service
+              After=network.target
 
-              echo "🛠️ Verificando e removendo rede duplicada..."
-              if docker network inspect polaris_network &>/dev/null; then
-                  docker network rm polaris_network
-              fi
+              [Service]
+              User=$SERVER_USER
+              WorkingDirectory=/home/$SERVER_USER/polaris-prod/polaris_api
+              ExecStart=/home/$SERVER_USER/polaris-prod/venv/bin/python3 main.py
+              Restart=always
 
-              echo "🗑️ Removendo container antigo (se existir)..."
-              docker ps -a --filter "name=polaris-api" --format "{{.ID}}" | xargs -r docker rm -f
+              [Install]
+              WantedBy=multi-user.target
+              EOL'
 
-              terraform apply \
-                -var="server_user=$SERVER_USER" \
-                -var="mongo_user=$MONGO_USER" \
-                -var="mongo_password=$MONGO_PASSWORD" \
-                -var="polaris_api_port=$POLARIS_API_PORT" \
-                -var="telegram_bot_port=$TELEGRAM_BOT_PORT" \
-                -var="telegram_token=$TELEGRAM_TOKEN" \
-                -var="ngrok_url=$NGROK_URL" \
-                -var="ngrok_port=$NGROK_PORT" \
-                -var="docker_username=${{ secrets.DOCKER_USERNAME }}" \
-                -auto-approve
+              echo "📌 Ativando e iniciando o serviço da API..."
+              sudo systemctl daemon-reload
+              sudo systemctl enable polaris-api
+              sudo systemctl restart polaris-api
+
+              echo "✅ API configurada e rodando! 🚀"
           EOF
