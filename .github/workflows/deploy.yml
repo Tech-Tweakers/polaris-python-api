@@ -128,15 +128,7 @@ jobs:
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
-      - name: 🔑 Acessar o Laptop via SSH e configurar o ambiente
-        env:
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
-          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
-          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          NGROK_PORT: ${{ secrets.NGROK_PORT }}
-          CLOUDFLARE_SSH_HOST: ${{ secrets.CLOUDFLARE_SSH_HOST }}
+      - name: 🔑 Teste de Conexão SSH e `ls -l`
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
@@ -146,37 +138,11 @@ jobs:
 
           set -e  # Interrompe o script se algum erro ocorrer
 
-          echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
+          echo "🚀 Testando conexão SSH!"
           cd /home/$SERVER_USER/polaris-prod
 
-          echo "📌 Criando ambiente virtual..."
-          python3 -m venv venv
+          echo "📌 Listando arquivos..."
+          ls -l
 
-          echo "📌 Ativando ambiente virtual e instalando dependências..."
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r polaris_api/requirements.txt
-
-          echo "📌 Criando serviço systemd para manter a API rodando..."
-          sudo bash -c 'cat > /etc/systemd/system/polaris-api.service <<EOL
-          [Unit]
-          Description=Polaris API Service
-          After=network.target
-
-          [Service]
-          User=$SERVER_USER
-          WorkingDirectory=/home/$SERVER_USER/polaris-prod/polaris_api
-          ExecStart=/home/$SERVER_USER/polaris-prod/venv/bin/python3 main.py
-          Restart=always
-
-          [Install]
-          WantedBy=multi-user.target
-          EOL'
-
-          echo "📌 Ativando e iniciando o serviço da API..."
-          sudo systemctl daemon-reload
-          sudo systemctl enable polaris-api
-          sudo systemctl restart polaris-api
-
-          echo "✅ API configurada e rodando! 🚀"
+          echo "✅ Teste finalizado!"
           EOF
