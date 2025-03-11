@@ -128,25 +128,29 @@ jobs:
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
-      - name: 🔑 Teste de Conexão SSH e `ls -l`
-        run: |
-          echo "📌 Reconfigurando SSH..."
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_polaris
-          chmod 600 ~/.ssh/id_polaris
-          ssh-keygen -y -f ~/.ssh/id_polaris > ~/.ssh/id_polaris.pub
-          echo "Host cloudflare-ssh
-          HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
-          User ${{ secrets.SERVER_USER }}
-          IdentityFile ~/.ssh/id_polaris
-          StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" > ~/.ssh/config
+- name: 🔑 Teste de Conexão SSH e `ls -l`
+  run: |
+    echo "📌 Reconfigurando SSH..."
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo "${{ secrets.SERVER_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_polaris
+    chmod 600 ~/.ssh/id_polaris
+    ssh-keygen -y -f ~/.ssh/id_polaris > ~/.ssh/id_polaris.pub
+    echo "Host cloudflare-ssh
+    HostName ${{ secrets.CLOUDFLARE_SSH_HOST }}
+    User ${{ secrets.SERVER_USER }}
+    IdentityFile ~/.ssh/id_polaris
+    StrictHostKeyChecking no
+    ProxyCommand cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" > ~/.ssh/config
 
-          echo "📌 Testando conexão SSH..."
-          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-              -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
-              -i ~/.ssh/id_polaris \
-              $SERVER_USER@localhost 'echo "🔥 Conexão estabelecida!" && ls -l'
+    echo "📌 Testando conexão SSH..."
+    echo "🔹 CLOUDFLARE_SSH_HOST: ${{ secrets.CLOUDFLARE_SSH_HOST }}"
+    echo "🔹 SERVER_USER: ${{ secrets.SERVER_USER }}"
+    
+    echo "📌 Tentando conexão SSH manualmente..."
+    ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+        -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+        -i ~/.ssh/id_polaris \
+        ${{ secrets.SERVER_USER }}@localhost "echo '🔥 Conexão estabelecida!' && ls -l"
+
 
