@@ -153,3 +153,11 @@ jobs:
 
           echo "✅ API configurada e rodando! 🚀"
           EOF
+          
+      - name: 🚀 Iniciando NGROK e configurando Webhook
+        run: |
+          echo "📌 Conectando ao servidor via SSH..."
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+              -i ~/.ssh/id_polaris \
+              ${{ secrets.SERVER_USER }}@localhost "bash /home/${{ secrets.SERVER_USER }}/polaris-setup/scripts/setup_ngrok.sh"
