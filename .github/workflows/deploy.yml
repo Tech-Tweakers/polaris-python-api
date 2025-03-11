@@ -129,6 +129,14 @@ jobs:
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
       - name: 🔑 Acessar o Laptop via SSH e configurar o ambiente
+        env:
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          POLARIS_API_PORT: ${{ secrets.POLARIS_API_PORT }}
+          TELEGRAM_BOT_PORT: ${{ secrets.TELEGRAM_BOT_PORT }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          NGROK_PORT: ${{ secrets.NGROK_PORT }}
+          CLOUDFLARE_SSH_HOST: ${{ secrets.CLOUDFLARE_SSH_HOST }}
         run: |
           CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
