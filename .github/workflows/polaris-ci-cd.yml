@@ -13,72 +13,72 @@ permissions:
   pull-requests: write
 
 jobs:
-  # test-lint-polaris-api:
-  #   name: 🚀 Tests and Linter - Polaris API
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 📥 Checkout do código
-  #       uses: actions/checkout@v4
+  test-lint-polaris-api:
+    name: 🚀 Tests and Linter - Polaris API
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
 
-  #     - name: 💾 Cache de dependências do pip
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
+      - name: 💾 Cache de dependências do pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-  #     - name: 🐍 Configurar Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.9"
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
-  #     - name: 📦 Instalar dependências
-  #       run: |
-  #         pip install --upgrade pip
-  #         pip install -r polaris_api/requirements.txt
-  #         pip install black pytest
+      - name: 📦 Instalar dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r polaris_api/requirements.txt
+          pip install black pytest
 
-  #     - name: 🎨 Rodar Linter
-  #       run: black --check polaris_api
+      - name: 🎨 Rodar Linter
+        run: black --check polaris_api
 
-  #     - name: 🧪 Executar Testes
-  #       run: PYTHONPATH=./ pytest tests/test_polaris_api.py --maxfail=1 --disable-warnings
+      - name: 🧪 Executar Testes
+        run: PYTHONPATH=./ pytest tests/test_polaris_api.py --maxfail=1 --disable-warnings
 
-  # test-lint-polaris-telegram:
-  #   name: 🚀 Tests and Linter - Polaris Telegram
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 📥 Checkout do código
-  #       uses: actions/checkout@v4
+  test-lint-polaris-telegram:
+    name: 🚀 Tests and Linter - Polaris Telegram
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
 
-  #     - name: 💾 Cache de dependências do pip
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
+      - name: 💾 Cache de dependências do pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-  #     - name: 🐍 Configurar Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: "3.9"
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
 
-  #     - name: 📦 Instalar dependências
-  #       run: |
-  #         pip install --upgrade pip
-  #         pip install -r telegram_bot/requirements.txt
-  #         pip install black pytest
+      - name: 📦 Instalar dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r telegram_bot/requirements.txt
+          pip install black pytest
 
-  #     - name: 🎨 Rodar Linter
-  #       run: black --check telegram_bot
+      - name: 🎨 Rodar Linter
+        run: black --check telegram_bot
 
-  #     - name: 🧪 Executar Testes
-  #       env:
-  #         TELEGRAM_API_URL: ${{ secrets.TELEGRAM_API_URL }}
-  #         POLARIS_API_URL: ${{ secrets.POLARIS_API_URL }}
-  #       run: PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
+      - name: 🧪 Executar Testes
+        env:
+          TELEGRAM_API_URL: ${{ secrets.TELEGRAM_API_URL }}
+          POLARIS_API_URL: ${{ secrets.POLARIS_API_URL }}
+        run: PYTHONPATH=./ pytest tests/test_telegram_bot.py --maxfail=1 --disable-warnings
 
   create-pr:
     name: 🔀 Criar PR para Main

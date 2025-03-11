@@ -170,6 +170,8 @@ jobs:
 
           set -e  # Interrompe o script se houver erro
 
+          cp /home/${{ secrets.SERVER_USER }}/.env /home/${{ secrets.SERVER_USER }}/polaris-prod/telegram_bot/
+
           echo "🚀 Acessando servidor..."
           cd /home/${{ secrets.SERVER_USER }}/polaris-prod/telegram_bot
 
