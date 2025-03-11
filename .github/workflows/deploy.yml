@@ -185,7 +185,7 @@ jobs:
           [Service]
           User=${{ secrets.SERVER_USER }}
           WorkingDirectory=/home/${{ secrets.SERVER_USER }}/polaris-prod/telegram_bot
-          ExecStart=/usr/bin/python3 bot.py
+          ExecStart=/usr/bin/python3 main.py
           Restart=always
 
           [Install]
