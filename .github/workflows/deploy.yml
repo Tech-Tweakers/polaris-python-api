@@ -128,7 +128,7 @@ jobs:
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
-      - name: 🚀 Configurar Servidor e Rodar API
+      - name: 🚀 Configurar Servidor e Rodar API (sem venv)
         run: |
           echo "📌 Reconfigurando SSH..."
           mkdir -p ~/.ssh
@@ -160,19 +160,15 @@ jobs:
           echo "🚀 Acessando servidor..."
           cd /home/${{ secrets.SERVER_USER }}/polaris-prod
 
-          echo "📌 Instalando pacotes essenciais..."
-          sudo apt update && sudo apt install -y python3-venv python3-pip
+          echo "📌 Instalando dependências globais do Python..."
+          sudo apt update && sudo apt install -y python3-pip
 
-          echo "📌 Criando ambiente virtual..."
-          python3 -m venv venv
-
-          echo "📌 Ativando ambiente virtual e instalando dependências..."
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r polaris_api/requirements.txt
+          echo "📌 Instalando pacotes Python..."
+          pip3 install --upgrade pip
+          pip3 install -r polaris_api/requirements.txt
 
           echo "📌 Criando serviço systemd para manter a API rodando..."
-          cat <<EOL | envsubst > /tmp/polaris-api.service
+          cat <<EOL | sudo tee /etc/systemd/system/polaris-api.service > /dev/null
           [Unit]
           Description=Polaris API Service
           After=network.target
@@ -180,14 +176,12 @@ jobs:
           [Service]
           User=${{ secrets.SERVER_USER }}
           WorkingDirectory=/home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_api
-          ExecStart=/home/${{ secrets.SERVER_USER }}/polaris-prod/venv/bin/python3 main.py
+          ExecStart=/usr/bin/python3 main.py
           Restart=always
 
           [Install]
           WantedBy=multi-user.target
           EOL
-
-          sudo mv /tmp/polaris-api.service /etc/systemd/system/polaris-api.service
 
           echo "📌 Ativando e iniciando o serviço da API..."
           sudo systemctl daemon-reload
