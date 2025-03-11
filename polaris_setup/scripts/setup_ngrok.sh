@@ -27,7 +27,7 @@ for i in {1..5}; do  # Tenta 5 vezes para garantir que a URL foi gerada
     if [[ "$NGROK_URL" != "null" && -n "$NGROK_URL" ]]; then
         break
     fi
-    echo "⌛ Aguardando ngrok gerar a URL ($i/10)..."
+    echo "⌛ Aguardando ngrok gerar a URL ($i/5)..."
     sleep 2
 done
 
@@ -40,7 +40,7 @@ echo "🌍 URL do Webhook: $NGROK_URL"
 
 echo "📡 Configurando Webhook no Telegram..."
 RESPONSE=$(curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/setWebhook" \
-     -d "url=$NGROK_URL/webhook")
+     -d "url=$NGROK_URL/telegram-webhook/")
 
 if [[ "$RESPONSE" == *"\"ok\":true"* ]]; then
     echo "✅ Webhook configurado com sucesso!"
