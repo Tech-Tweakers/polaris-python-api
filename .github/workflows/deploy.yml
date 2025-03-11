@@ -160,6 +160,9 @@ jobs:
           echo "🚀 Acessando servidor..."
           cd /home/${{ secrets.SERVER_USER }}/polaris-prod
 
+          echo "📌 Instalando pacotes essenciais..."
+          sudo apt update && sudo apt install -y python3-venv python3-pip
+
           echo "📌 Criando ambiente virtual..."
           python3 -m venv venv
 
