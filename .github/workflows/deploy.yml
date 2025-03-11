@@ -134,41 +134,41 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
               -i ~/.ssh/id_polaris \
-              $SERVER_USER@localhost << EOF
+              $SERVER_USER@localhost <<EOF
 
-              set -e  # Interrompe o script se algum erro ocorrer
+          set -e  # Interrompe o script se algum erro ocorrer
 
-              echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
-              cd /home/$SERVER_USER/polaris-prod
+          echo "🚀 Acessando o laptop via Cloudflare Tunnel..."
+          cd /home/$SERVER_USER/polaris-prod
 
-              echo "📌 Criando ambiente virtual..."
-              python3 -m venv venv
+          echo "📌 Criando ambiente virtual..."
+          python3 -m venv venv
 
-              echo "📌 Ativando ambiente virtual e instalando dependências..."
-              source venv/bin/activate
-              pip install --upgrade pip
-              pip install -r polaris_api/requirements.txt
+          echo "📌 Ativando ambiente virtual e instalando dependências..."
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r polaris_api/requirements.txt
 
-              echo "📌 Criando serviço systemd para manter a API rodando..."
-              sudo bash -c 'cat > /etc/systemd/system/polaris-api.service <<EOL
-              [Unit]
-              Description=Polaris API Service
-              After=network.target
+          echo "📌 Criando serviço systemd para manter a API rodando..."
+          sudo bash -c 'cat > /etc/systemd/system/polaris-api.service <<EOL
+          [Unit]
+          Description=Polaris API Service
+          After=network.target
 
-              [Service]
-              User=$SERVER_USER
-              WorkingDirectory=/home/$SERVER_USER/polaris-prod/polaris_api
-              ExecStart=/home/$SERVER_USER/polaris-prod/venv/bin/python3 main.py
-              Restart=always
+          [Service]
+          User=$SERVER_USER
+          WorkingDirectory=/home/$SERVER_USER/polaris-prod/polaris_api
+          ExecStart=/home/$SERVER_USER/polaris-prod/venv/bin/python3 main.py
+          Restart=always
 
-              [Install]
-              WantedBy=multi-user.target
-              EOL'
+          [Install]
+          WantedBy=multi-user.target
+          EOL'
 
-              echo "📌 Ativando e iniciando o serviço da API..."
-              sudo systemctl daemon-reload
-              sudo systemctl enable polaris-api
-              sudo systemctl restart polaris-api
+          echo "📌 Ativando e iniciando o serviço da API..."
+          sudo systemctl daemon-reload
+          sudo systemctl enable polaris-api
+          sudo systemctl restart polaris-api
 
-              echo "✅ API configurada e rodando! 🚀"
+          echo "✅ API configurada e rodando! 🚀"
           EOF
