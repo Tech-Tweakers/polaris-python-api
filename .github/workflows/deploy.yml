@@ -160,4 +160,43 @@ jobs:
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
               ${{ secrets.SERVER_USER }}@localhost "export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} && bash /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_setup/scripts/setup_ngrok.sh"
-###
+
+      - name: 🤖 Iniciar Telegram Bot
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+              -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
+              -i ~/.ssh/id_polaris \
+              ${{ secrets.SERVER_USER }}@localhost <<EOF
+
+          set -e  # Interrompe o script se houver erro
+
+          echo "🚀 Acessando servidor..."
+          cd /home/${{ secrets.SERVER_USER }}/polaris-prod/telegram_bot
+
+          echo "📌 Instalando dependências..."
+          pip3 install -r requirements.txt
+
+          echo "📌 Criando serviço systemd para manter o Telegram Bot rodando..."
+          cat <<EOL | sudo tee /etc/systemd/system/polaris-telegram-bot.service > /dev/null
+          [Unit]
+          Description=Polaris Telegram Bot Service
+          After=network.target
+
+          [Service]
+          User=${{ secrets.SERVER_USER }}
+          WorkingDirectory=/home/${{ secrets.SERVER_USER }}/polaris-prod/telegram_bot
+          ExecStart=/usr/bin/python3 bot.py
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+          EOL
+
+          echo "📌 Ativando e iniciando o serviço do Telegram Bot..."
+          sudo systemctl daemon-reload
+          sudo systemctl enable polaris-telegram-bot
+          sudo systemctl restart polaris-telegram-bot
+
+          echo "✅ Telegram Bot configurado e rodando! 🚀"
+          EOF
+
