@@ -146,7 +146,6 @@ jobs:
           [Install]
           WantedBy=multi-user.target
           EOL
-          ../Dev/models/
           echo "📌 Ativando e iniciando o serviço da API..."
           sudo systemctl daemon-reload
           sudo systemctl enable polaris-api
