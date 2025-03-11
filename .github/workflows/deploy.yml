@@ -130,7 +130,6 @@ jobs:
 
       - name: 🔑 Teste de Conexão SSH e `ls -l`
         run: |
-          CLOUDFLARE_SSH_HOST=$(grep 'HostName' ~/.ssh/config | awk '{print $2}')
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname $CLOUDFLARE_SSH_HOST" \
               -i ~/.ssh/id_polaris \
