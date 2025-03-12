@@ -33,12 +33,10 @@ async def telegram_webhook(update: TelegramMessage):
     if text.startswith("/start"):
         reply_text = "🤖 Olá! Meu nome é Polaris e sou sua assistente privada. Como posso ajudar?"
     else:
-        # Enviar a pergunta para a Polaris com o session_id correto
         polaris_response = requests.post(
             POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)}
         )
 
-        # Processar a resposta da Polaris
         if polaris_response.status_code == 200:
             response_data = polaris_response.json()
             reply_text = response_data.get(

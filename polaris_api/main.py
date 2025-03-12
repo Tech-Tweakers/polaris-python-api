@@ -25,11 +25,11 @@ LOGO = f"""
        {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
     .      *       .        .
        {STAR_COLOR}*{Style.RESET_ALL}        .       .   *    .
-  .        .    {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}       .
-       {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
-    .      *       .        .
+  .        .  {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}        .
+       {STAR_COLOR}*{Style.RESET_ALL}        .        *     .  
+    .       *        .        .
  {STAR_COLOR}*{Style.RESET_ALL}      .     *         .     
-     .     .        .   *    
+     .     .        .    *    
 """
 print(LOGO)
 
@@ -132,10 +132,10 @@ class LlamaRunnable:
             stop=["---"],
             max_tokens=1024,
             echo=False,
-            temperature=TEMPERATURE,  # 🔥 Aplicando temperatura
-            top_p=TOP_P,  # 🔥 Aplicando nucleus sampling
-            top_k=TOP_K,  # 🔥 Aplicando top_k sampling
-            repeat_penalty=FREQUENCY_PENALTY,  # 🔥 Aplicando penalidade de repetição
+            temperature=TEMPERATURE,
+            top_p=TOP_P,
+            top_k=TOP_K,
+            repeat_penalty=FREQUENCY_PENALTY,
         )
         end_time = time.time()
 
