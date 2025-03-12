@@ -202,6 +202,7 @@ jobs:
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
               ${{ secrets.SERVER_USER }}@localhost <<EOF
+          set -e  # Interrompe o script se houver erro
           export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
           bash /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_setup/setup_ngrok.sh
           EOF
