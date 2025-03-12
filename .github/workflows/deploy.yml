@@ -88,7 +88,7 @@ jobs:
               -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
-              ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod && mkdir -p /home/${{ secrets.SERVER_USER }}/polaris-prod && cp /home/${{ secrets.SERVER_USER }}/.env /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_api"
+              ${{ secrets.SERVER_USER }}@localhost "rm -rf /home/${{ secrets.SERVER_USER }}/polaris-prod && mkdir -p /home/${{ secrets.SERVER_USER }}/polaris-prod && ln -s /home/${{ secrets.SERVER_USER }}/Dev/models /home/${{ secrets.SERVER_USER }}/polaris-prod/models"
 
           rsync -avz --progress --exclude=".git" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand=\"cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}\" -i ~/.ssh/id_polaris" . ${{ secrets.SERVER_USER }}@localhost:/home/${{ secrets.SERVER_USER }}/polaris-prod
 
@@ -123,6 +123,7 @@ jobs:
 
           echo "🚀 Acessando servidor..."
           cd /home/${{ secrets.SERVER_USER }}/polaris-prod
+          cp /home/${{ secrets.SERVER_USER }}/.env /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_api
 
           echo "📌 Instalando dependências globais do Python..."
           sudo apt update && sudo apt install -y python3-pip
