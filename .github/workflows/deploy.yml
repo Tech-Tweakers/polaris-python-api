@@ -201,7 +201,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
-              ${{ secrets.SERVER_USER }}@localhost "export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} && bash /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_setup/setup_ngrok.sh"
+              ${{ secrets.SERVER_USER }}@localhost <<EOF
+          export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          bash /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_setup/setup_ngrok.sh
+          EOF
 
       - name: 🤖 Iniciar Telegram Bot
         run: |
