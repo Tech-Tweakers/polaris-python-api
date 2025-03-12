@@ -1,44 +1,93 @@
-PYTHON = python3
-PIP = pip
-DOCKER_COMPOSE = docker-compose
-BLACK = black
+# Variáveis de ambiente
+DEPLOY_PATH := $(shell pwd)
+PYTHON := python3
+PIP := pip3
+MODEL_DIR := $(DEPLOY_PATH)/models
+MODEL_URL := https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/resolve/main/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf?download=true  # Exemplo de URL
 
-.PHONY: help install format test docker-build docker-up docker-down version
-
-help:
-	@echo "Comandos disponíveis:"
-	@echo "  make install        -> Instala dependências do projeto"
-	@echo "  make format         -> Formata o código com Black"
-	@echo "  make test           -> Roda os testes unitários"
-	@echo "  make docker-build   -> Constrói as imagens Docker"
-	@echo "  make docker-up      -> Sobe os containers Docker"
-	@echo "  make docker-down    -> Para e remove os containers Docker"
-	@echo "  make version        -> Gera uma nova versão semântica"
-
-install:
+# ------------------------------------------------------------------------------------------
+# 🛠️ Configuração inicial
+# ------------------------------------------------------------------------------------------
+.PHONY: setup
+setup:
+	@echo "📦 Instalando dependências globais..."
+	sudo apt update && sudo apt install -y python3-pip jq wget
 	$(PIP) install --upgrade pip
+	@echo "✅ Setup inicial concluído!"
+
+# ------------------------------------------------------------------------------------------
+# 📦 Instalar dependências do projeto
+# ------------------------------------------------------------------------------------------
+.PHONY: install
+install:
+	@echo "📦 Instalando dependências do projeto..."
 	$(PIP) install -r polaris_api/requirements.txt
 	$(PIP) install -r telegram_bot/requirements.txt
+	@echo "✅ Dependências instaladas!"
 
-format:
-	$(BLACK) polaris_api telegram_bot tests
+# ------------------------------------------------------------------------------------------
+# 🤖 Baixar modelo LLaMA 3
+# ------------------------------------------------------------------------------------------
+.PHONY: download-model
+download-model:
+	@echo "📥 Baixando modelo LLaMA 3..."
+	mkdir -p $(MODEL_DIR)
+	wget -c $(MODEL_URL) -O $(MODEL_DIR)/llama3-7B.safetensors
+	@echo "✅ Modelo LLaMA 3 baixado em $(MODEL_DIR)!"
 
-test:
-	PYTHONPATH=./ pytest tests
+# ------------------------------------------------------------------------------------------
+# 🚀 Rodar API
+# ------------------------------------------------------------------------------------------
+.PHONY: start-api
+start-api:
+	@echo "🚀 Iniciando API..."
+	cd polaris_api && $(PYTHON) main.py
+	@echo "✅ API rodando!"
 
-docker-build:
-	$(DOCKER_COMPOSE) build
+# ------------------------------------------------------------------------------------------
+# 🤖 Rodar Telegram Bot
+# ------------------------------------------------------------------------------------------
+.PHONY: start-bot
+start-bot:
+	@echo "🤖 Iniciando Telegram Bot..."
+	cd telegram_bot && $(PYTHON) main.py
+	@echo "✅ Telegram Bot rodando!"
 
-docker-up:
-	$(DOCKER_COMPOSE) up -d
+# ------------------------------------------------------------------------------------------
+# 🌍 Configurar Ngrok + Webhook Telegram
+# ------------------------------------------------------------------------------------------
+.PHONY: setup-ngrok
+setup-ngrok:
+	@echo "🌐 Configurando Ngrok..."
+	bash polaris_setup/scripts/setup_ngrok.sh
+	@echo "✅ Ngrok e Webhook do Telegram configurados!"
 
-docker-down:
-	$(DOCKER_COMPOSE) down
+# ------------------------------------------------------------------------------------------
+# 🔄 Rodar tudo
+# ------------------------------------------------------------------------------------------
+.PHONY: start-all
+start-all:
+	@echo "🔄 Iniciando tudo..."
+	make start-api &
+	make start-bot &
+	@echo "✅ Todos os serviços iniciados!"
 
-version:
-	git tag $(shell date +"v%Y.%m.%d-%H%M%S")
-	git push origin --tags
+# ------------------------------------------------------------------------------------------
+# 🛑 Parar todos os processos
+# ------------------------------------------------------------------------------------------
+.PHONY: stop-all
+stop-all:
+	@echo "🛑 Parando todos os serviços..."
+	pkill -f "python3 main.py"
+	@echo "✅ Todos os processos parados!"
 
-#
-#
-#
+# ------------------------------------------------------------------------------------------
+# 🔄 Reiniciar tudo
+# ------------------------------------------------------------------------------------------
+.PHONY: restart-all
+restart-all:
+	@echo "🔄 Reiniciando tudo..."
+	make stop-all
+	sleep 2
+	make start-all
+	@echo "✅ API e Telegram Bot reiniciados!"
