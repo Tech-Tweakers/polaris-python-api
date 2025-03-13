@@ -122,18 +122,28 @@ def analyze_rework(commits):
     print(f"   🔄 Alterações repetidas: {rework_changes_total}")
     print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%\n")
 
-    # 🔥 ACUMULAR DADOS NO JSON
+    # 🔥 ACUMULAR DADOS NO JSON SEM DUPLICAR
     json_file = "rework_rate.json"
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
     if os.path.exists(json_file):
         with open(json_file, "r") as f:
             rework_rate_data = json.load(f)
     else:
         rework_rate_data = []
 
-    rework_rate_data.append({"data": datetime.utcnow().strftime("%Y-%m-%d"), "rework_rate": rework_rate_total})
+    # Remover qualquer entrada existente para hoje antes de adicionar
+    rework_rate_data = [entry for entry in rework_rate_data if entry["data"] != today]
 
+    # Adicionar a nova entrada
+    rework_rate_data.append({"data": today, "rework_rate": rework_rate_total})
+
+    # Salvar atualizado
     with open(json_file, "w") as f:
         json.dump(rework_rate_data, f, indent=4)
+
+    print(f"📊 JSON atualizado sem duplicatas: {json_file}")
+
 
     # 🔥 GERAR O GRÁFICO
     df = pd.DataFrame(rework_rate_data)
