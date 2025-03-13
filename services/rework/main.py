@@ -9,9 +9,9 @@ import os
 
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Pega o token do ambiente do GitHub Actions
-OWNER = "seu_usuário_ou_organização"
-REPO = "seu_repositório"
-BRANCH = "seu_branch"
+OWNER = "Tech-Tweakers"
+REPO = "polaris-python-api"
+BRANCH = "main" 
 
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
