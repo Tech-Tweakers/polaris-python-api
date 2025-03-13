@@ -126,26 +126,34 @@ def analyze_rework(commits):
     print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%")
     print(f"   📊 Rework Rate nos últimos {REWORK_DAYS} dias: {rework_rate_recent:.2f}%\n")
 
-    # 🔥 ACUMULAR DADOS NO JSON SEM DUPLICAR
+    # 🔥 ACUMULAR DADOS NO JSON SEM REMOVER ENTRADAS ANTERIORES
     json_file = "rework_rate.json"
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
+    # Carregar JSON existente para não sobrescrever os dados antigos
     if os.path.exists(json_file):
         with open(json_file, "r") as f:
             rework_rate_data = json.load(f)
     else:
         rework_rate_data = []
 
-    rework_rate_data = [entry for entry in rework_rate_data if entry["data"] != today]
+    # 📌 Verificar se a data já existe no JSON para evitar duplicação no mesmo dia
+    existing_dates = {entry["data"] for entry in rework_rate_data}
 
-    rework_rate_data.append({
-        "data": today,
-        "rework_rate_total": rework_rate_total,
-        "rework_rate_recent": rework_rate_recent
-    })
+    # Adicionar uma nova entrada APENAS se ainda não houver uma entrada para o dia atual
+    if today not in existing_dates:
+        rework_rate_data.append({
+            "data": today,
+            "rework_rate_total": rework_rate_total,
+            "rework_rate_recent": rework_rate_recent
+        })
 
+    # Salvar atualizado
     with open(json_file, "w") as f:
         json.dump(rework_rate_data, f, indent=4)
+
+    print("📊 JSON atualizado com histórico completo!")
+
 
     # 🔥 GERAR O GRÁFICO COM TODOS OS PONTOS DE TEMPO
     df = pd.DataFrame(rework_rate_data)
