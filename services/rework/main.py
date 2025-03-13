@@ -11,8 +11,6 @@ import argparse
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-OWNER = "Tech-Tweakers"
-REPO = "polaris-python-api"
 
 # 🔧 Parâmetros para definir retrabalho
 REWORK_THRESHOLD = 3  # Número mínimo de alterações para contar como retrabalho
@@ -120,53 +118,44 @@ def analyze_rework(commits):
     rework_rate_total = (rework_changes_total / total_changes) * 100 if total_changes > 0 else 0
     rework_rate_recent = (rework_changes_recent / total_changes) * 100 if total_changes > 0 else 0
 
-    print("\n📊 RESULTADO FINAL:")
-    print(f"   🔢 Total de alterações no código: {total_changes}")
-    print(f"   🔄 Alterações repetidas: {rework_changes_total}")
-    print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%")
-    print(f"   📊 Rework Rate nos últimos {REWORK_DAYS} dias: {rework_rate_recent:.2f}%\n")
-
     # 🔥 JSON para armazenar TODOS os dados e permitir consultas flexíveis
     json_file = "rework_analysis.json"
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
-    # 📌 Função para carregar JSON existente ou criar um novo
     def load_json(filename):
-        if os.path.exists(filename):
+        if os.path.exists(filename) and os.path.getsize(filename) > 0:
             with open(filename, "r") as f:
-                return json.load(f)
+                try:
+                    return json.load(f)
+                except json.JSONDecodeError:
+                    print(f"⚠️ Erro ao carregar {filename}, recriando arquivo...")
+                    return []
         return []
 
-    # 📌 Função para salvar JSON atualizado
     def save_json(filename, data):
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
 
-    # 📌 Carregar dados existentes
     rework_data = load_json(json_file)
 
-    # 📌 Criar uma nova entrada para hoje
     new_entry = {
         "data": today,
-        "total_changes": total_changes,  # 🔢 Total de alterações no código
-        "rework_changes_total": rework_changes_total,  # 🔄 Quantidade de alterações repetidas
-        "rework_rate_total": rework_rate_total,  # 📊 Rework Rate Geral (%)
-        "rework_changes_recent": rework_changes_recent,  # 🔄 Alterações repetidas (últimos 21 dias)
-        "rework_rate_recent": rework_rate_recent,  # 📊 Rework Rate (Últimos 21 dias) (%)
+        "total_changes": total_changes,
+        "rework_changes_total": rework_changes_total,
+        "rework_rate_total": rework_rate_total,
+        "rework_changes_recent": rework_changes_recent,
+        "rework_rate_recent": rework_rate_recent,
     }
 
-    # 📌 Atualizar o JSON adicionando a nova entrada
-    existing_dates = {entry["data"] for entry in rework_data}
+    if isinstance(rework_data, list):
+        existing_dates = {entry["data"] for entry in rework_data if "data" in entry}
+        if today not in existing_dates:
+            rework_data.append(new_entry)
+            save_json(json_file, rework_data)
+            print(f"📊 JSON atualizado com histórico completo para análises: {json_file}")
 
-    if today not in existing_dates:
-        rework_data.append(new_entry)
-        save_json(json_file, rework_data)
-
-    print(f"📊 JSON atualizado com histórico completo para análises: {json_file}")
-
-
-    # 🔥 GERAR O GRÁFICO COM TODOS OS PONTOS DE TEMPO
-    df = pd.DataFrame(rework_rate_data)
+    # 🔥 GERAR O GRÁFICO COMPLETO
+    df = pd.DataFrame(rework_data)
     df["data"] = pd.to_datetime(df["data"])
     df = df.sort_values("data")
 
@@ -180,8 +169,6 @@ def analyze_rework(commits):
     plt.plot(df["data"], df["rework_rate_recent"], marker="o", linestyle="--", color="r", label="Rework Rate (Últimos 21 dias)")
 
     plt.xticks(rotation=45, ticks=df["data"][::max(1, len(df) // 10)])
-    plt.ylim(max(0, df[["rework_rate_total", "rework_rate_recent"]].min().min() - 5), df[["rework_rate_total", "rework_rate_recent"]].max().max() + 5)
-
     plt.xlabel("Data")
     plt.ylabel("Rework Rate (%)")
     plt.title("Evolução do Rework Rate ao longo do tempo")
@@ -193,5 +180,5 @@ def analyze_rework(commits):
 
 
 if __name__ == "__main__":
-    commits = get_commits("Tech-Tweakers", "polaris-python-api", "main")
+    commits = get_commits("seu_usuário_ou_organização", "seu_repositorio", "main")
     analyze_rework(commits)
