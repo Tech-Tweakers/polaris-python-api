@@ -145,18 +145,26 @@ def analyze_rework(commits):
     with open(json_file, "w") as f:
         json.dump(rework_rate_data, f, indent=4)
 
-    # 🔥 GERAR O GRÁFICO
+    # 🔥 GERAR O GRÁFICO COM TODOS OS PONTOS DE TEMPO
     df = pd.DataFrame(rework_rate_data)
-    plt.figure(figsize=(10, 5))
+    df["data"] = pd.to_datetime(df["data"])
+    df = df.sort_values("data")
+
+    date_range = pd.date_range(start=df["data"].min(), end=datetime.utcnow().strftime("%Y-%m-%d"))
+    df = df.set_index("data").reindex(date_range, method="ffill").reset_index()
+    df.rename(columns={"index": "data"}, inplace=True)
+    df["data"] = df["data"].dt.strftime("%Y-%m-%d")
+
+    plt.figure(figsize=(12, 6))
     plt.plot(df["data"], df["rework_rate_total"], marker="o", linestyle="-", color="b", label="Rework Rate Geral")
     plt.plot(df["data"], df["rework_rate_recent"], marker="o", linestyle="--", color="r", label="Rework Rate (Últimos 21 dias)")
-    
+
+    plt.xticks(rotation=45, ticks=df["data"][::max(1, len(df) // 10)])
     plt.ylim(max(0, df[["rework_rate_total", "rework_rate_recent"]].min().min() - 5), df[["rework_rate_total", "rework_rate_recent"]].max().max() + 5)
 
     plt.xlabel("Data")
     plt.ylabel("Rework Rate (%)")
     plt.title("Evolução do Rework Rate ao longo do tempo")
-    plt.xticks(rotation=45)
     plt.grid()
     plt.legend()
 
@@ -165,16 +173,5 @@ def analyze_rework(commits):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--repo", required=True)
-    parser.add_argument("--branch", required=True)
-    parser.add_argument("--threshold", required=True, type=int)
-    args = parser.parse_args()
-
-    OWNER = "Tech-Tweakers"
-    REPO = args.repo
-    BRANCH = args.branch
-    REWORK_THRESHOLD = args.threshold
-
-    commits = get_commits(OWNER, REPO, BRANCH)
+    commits = get_commits("Tech-Tweakers", "polaris-api-python", "main")
     analyze_rework(commits)
