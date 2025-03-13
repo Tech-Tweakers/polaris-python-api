@@ -150,6 +150,36 @@ create-env-bot:
 	fi
 
 # ------------------------------------------------------------------------------------------
+# 🌐 Configuração do Ngrok e Webhook do Telegram
+# ------------------------------------------------------------------------------------------
+
+# 🌍 Iniciar o Ngrok e configurar o Webhook do Telegram (executa o script com variáveis exportadas)
+.PHONY: setup-ngrok
+setup-ngrok:
+	@echo "🌐 Exportando variáveis e iniciando Ngrok..."
+	@export TELEGRAM_BOT_PORT=8000; \
+	export TELEGRAM_TOKEN="7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s"; \
+	bash polaris_setup/scripts/setup_ngrok.sh
+	@echo "✅ Ngrok e Webhook configurados!"
+
+# 🛑 Parar Ngrok
+.PHONY: stop-ngrok
+stop-ngrok:
+	@echo "🛑 Parando Ngrok..."
+	@pkill -f ngrok || true
+	@echo "✅ Ngrok parado!"
+
+# 🔄 Reiniciar Ngrok
+.PHONY: restart-ngrok
+restart-ngrok:
+	@echo "🔄 Reiniciando Ngrok..."
+	make stop-ngrok
+	sleep 2
+	make setup-ngrok
+	@echo "✅ Ngrok reiniciado!"
+
+
+# ------------------------------------------------------------------------------------------
 # 🔄 Rodar tudo
 # ------------------------------------------------------------------------------------------
 .PHONY: start-all
