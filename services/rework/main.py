@@ -11,7 +11,7 @@ import argparse
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-OWNER = "itau-corp"
+OWNER = "Tech-Tweakers"
 REPO = "polaris-python-api"
 
 # 🔧 Parâmetros para definir retrabalho
