@@ -126,33 +126,43 @@ def analyze_rework(commits):
     print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%")
     print(f"   📊 Rework Rate nos últimos {REWORK_DAYS} dias: {rework_rate_recent:.2f}%\n")
 
-    # 🔥 ACUMULAR DADOS NO JSON SEM REMOVER ENTRADAS ANTERIORES
-    json_file = "rework_rate.json"
+    # 🔥 JSON para armazenar TODOS os dados e permitir consultas flexíveis
+    json_file = "rework_analysis.json"
     today = datetime.utcnow().strftime("%Y-%m-%d")
 
-    # Carregar JSON existente para não sobrescrever os dados antigos
-    if os.path.exists(json_file):
-        with open(json_file, "r") as f:
-            rework_rate_data = json.load(f)
-    else:
-        rework_rate_data = []
+    # 📌 Função para carregar JSON existente ou criar um novo
+    def load_json(filename):
+        if os.path.exists(filename):
+            with open(filename, "r") as f:
+                return json.load(f)
+        return []
 
-    # 📌 Verificar se a data já existe no JSON para evitar duplicação no mesmo dia
-    existing_dates = {entry["data"] for entry in rework_rate_data}
+    # 📌 Função para salvar JSON atualizado
+    def save_json(filename, data):
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
 
-    # Adicionar uma nova entrada APENAS se ainda não houver uma entrada para o dia atual
+    # 📌 Carregar dados existentes
+    rework_data = load_json(json_file)
+
+    # 📌 Criar uma nova entrada para hoje
+    new_entry = {
+        "data": today,
+        "total_changes": total_changes,  # 🔢 Total de alterações no código
+        "rework_changes_total": rework_changes_total,  # 🔄 Quantidade de alterações repetidas
+        "rework_rate_total": rework_rate_total,  # 📊 Rework Rate Geral (%)
+        "rework_changes_recent": rework_changes_recent,  # 🔄 Alterações repetidas (últimos 21 dias)
+        "rework_rate_recent": rework_rate_recent,  # 📊 Rework Rate (Últimos 21 dias) (%)
+    }
+
+    # 📌 Atualizar o JSON adicionando a nova entrada
+    existing_dates = {entry["data"] for entry in rework_data}
+
     if today not in existing_dates:
-        rework_rate_data.append({
-            "data": today,
-            "rework_rate_total": rework_rate_total,
-            "rework_rate_recent": rework_rate_recent
-        })
+        rework_data.append(new_entry)
+        save_json(json_file, rework_data)
 
-    # Salvar atualizado
-    with open(json_file, "w") as f:
-        json.dump(rework_rate_data, f, indent=4)
-
-    print("📊 JSON atualizado com histórico completo!")
+    print(f"📊 JSON atualizado com histórico completo para análises: {json_file}")
 
 
     # 🔥 GERAR O GRÁFICO COM TODOS OS PONTOS DE TEMPO
