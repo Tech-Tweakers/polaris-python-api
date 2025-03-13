@@ -11,6 +11,8 @@ import argparse
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
+OWNER = "itau-corp"
+REPO = "polaris-python-api"
 
 # 🔧 Parâmetros para definir retrabalho
 REWORK_THRESHOLD = 3  # Número mínimo de alterações para contar como retrabalho
