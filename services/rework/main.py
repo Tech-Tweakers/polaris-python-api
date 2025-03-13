@@ -11,8 +11,6 @@ import argparse
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-OWNER = "itau-corp"
-REPO = "polaris-python-api"
 
 # 🔧 Parâmetros para definir retrabalho
 REWORK_THRESHOLD = 3  # Número mínimo de alterações para contar como retrabalho
@@ -182,5 +180,5 @@ def analyze_rework(commits):
 
 
 if __name__ == "__main__":
-    commits = get_commits("Tech-Tweakers", "polaris-python-api", "main")
+    commits = get_commits("seu_usuário_ou_organização", "seu_repositorio", "main")
     analyze_rework(commits)
