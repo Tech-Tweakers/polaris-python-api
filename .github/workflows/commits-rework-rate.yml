@@ -6,7 +6,7 @@ on:
       repo:
         description: 'Repositório a ser analisado'
         required: true
-        default: 'seu_repositorio'
+        default: 'polaris-python-api'
       branch:
         description: 'Branch a ser analisada'
         required: true
@@ -39,10 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ls -l
-          cd service
-          cd rework
-          python main.py --repo "${{ github.event.inputs.repo }}" \
+          python services/rework/main.py --repo "${{ github.event.inputs.repo }}" \
                                     --branch "${{ github.event.inputs.branch }}" \
                                     --threshold "${{ github.event.inputs.threshold }}"
 
