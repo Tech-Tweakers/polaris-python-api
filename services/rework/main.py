@@ -116,11 +116,13 @@ def analyze_rework(commits):
                 rework_changes_recent += 1
 
     rework_rate_total = (rework_changes_total / total_changes) * 100 if total_changes > 0 else 0
+    rework_rate_recent = (rework_changes_recent / total_changes) * 100 if total_changes > 0 else 0
 
     print("\n📊 RESULTADO FINAL:")
     print(f"   🔢 Total de alterações no código: {total_changes}")
     print(f"   🔄 Alterações repetidas: {rework_changes_total}")
-    print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%\n")
+    print(f"   📊 Rework Rate Geral: {rework_rate_total:.2f}%")
+    print(f"   📊 Rework Rate nos últimos {REWORK_DAYS} dias: {rework_rate_recent:.2f}%\n")
 
     # 🔥 ACUMULAR DADOS NO JSON SEM DUPLICAR
     json_file = "rework_rate.json"
@@ -132,24 +134,24 @@ def analyze_rework(commits):
     else:
         rework_rate_data = []
 
-    # Remover qualquer entrada existente para hoje antes de adicionar
     rework_rate_data = [entry for entry in rework_rate_data if entry["data"] != today]
 
-    # Adicionar a nova entrada
-    rework_rate_data.append({"data": today, "rework_rate": rework_rate_total})
+    rework_rate_data.append({
+        "data": today,
+        "rework_rate_total": rework_rate_total,
+        "rework_rate_recent": rework_rate_recent
+    })
 
-    # Salvar atualizado
     with open(json_file, "w") as f:
         json.dump(rework_rate_data, f, indent=4)
-
-    print(f"📊 JSON atualizado sem duplicatas: {json_file}")
-
 
     # 🔥 GERAR O GRÁFICO
     df = pd.DataFrame(rework_rate_data)
     plt.figure(figsize=(10, 5))
-    plt.plot(df["data"], df["rework_rate"], marker="o", linestyle="-", color="b", label="Rework Rate")
-    plt.ylim(max(0, df["rework_rate"].min() - 5), df["rework_rate"].max() + 5)  # Ajusta a escala
+    plt.plot(df["data"], df["rework_rate_total"], marker="o", linestyle="-", color="b", label="Rework Rate Geral")
+    plt.plot(df["data"], df["rework_rate_recent"], marker="o", linestyle="--", color="r", label="Rework Rate (Últimos 21 dias)")
+    
+    plt.ylim(max(0, df[["rework_rate_total", "rework_rate_recent"]].min().min() - 5), df[["rework_rate_total", "rework_rate_recent"]].max().max() + 5)
 
     plt.xlabel("Data")
     plt.ylabel("Rework Rate (%)")
