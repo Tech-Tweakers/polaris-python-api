@@ -159,7 +159,7 @@ if __name__ == "__main__":
     parser.add_argument("--threshold", required=True, type=int)
     args = parser.parse_args()
 
-    OWNER = "seu_usuário_ou_organização"
+    OWNER = "Tech-Tweakers"
     REPO = args.repo
     BRANCH = args.branch
     REWORK_THRESHOLD = args.threshold
