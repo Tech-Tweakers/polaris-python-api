@@ -4100,5 +4100,65 @@
         "arquivos_modificados": [
             "rework_analysis.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "d8289528b886d30291f5df6cb65bef1559aa6cec",
+        "total_changes": 42,
+        "rework_changes_total": 42,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 42,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "12cfc35f85671c92eb5418f4459e628635ce0826",
+        "total_changes": 13,
+        "rework_changes_total": 13,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 13,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "b58d153e282efa73653ba735a2acb95640ed7bf7",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "4170ff820260a9cd69338d1be98db5fa6723d068",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e9edef13e4d625eebaf1a4d463ebdb436e299d99",
+        "total_changes": 19,
+        "rework_changes_total": 19,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 19,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
     }
 ]
