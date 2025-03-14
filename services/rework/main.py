@@ -180,5 +180,5 @@ def analyze_rework(commits):
 
 
 if __name__ == "__main__":
-    commits = get_commits("Tech-Tweakers", "polaris-python-main", "main")
+    commits = get_commits("Tech-Tweakers", "polaris-python-api", "main")
     analyze_rework(commits)
