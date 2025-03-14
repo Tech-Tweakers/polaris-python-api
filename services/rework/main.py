@@ -157,7 +157,6 @@ def analyze_rework(commits):
             save_json(json_file, rework_data)
             print(f"📊 JSON atualizado com histórico completo para análises: {json_file}")
 
-    # 🔥 GERAR O GRÁFICO COMPLETO
     df = pd.DataFrame(rework_data)
     df["data"] = pd.to_datetime(df["data"])
     df = df.sort_values("data")
