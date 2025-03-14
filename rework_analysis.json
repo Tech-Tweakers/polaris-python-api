@@ -4076,5 +4076,29 @@
         "arquivos_modificados": [
             "rework_analysis.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e3836f018535d4e0e8a5ee8c07c49a5860500e3b",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "a30a27e0d3877a5d1bf9fc171282cfe32de29485",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
     }
 ]
