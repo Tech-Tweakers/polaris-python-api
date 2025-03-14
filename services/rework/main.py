@@ -161,10 +161,10 @@ def analyze_rework(commits):
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
 
 
-def load_json(filename):
-    """Carrega os dados do JSON."""
-    with open(filename, "r") as f:
-        return json.load(f)
+# def load_json(filename):
+#     """Carrega os dados do JSON."""
+#     with open(filename, "r") as f:
+#         return json.load(f)
 
 
 # def generate_graph():
