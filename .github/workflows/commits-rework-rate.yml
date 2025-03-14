@@ -50,6 +50,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'actions@github.com'
-          git add rework_rate.json rework_rate.png
-          git commit -m "🔄 Atualizando métricas de retrabalho para ${{ github.event.inputs.repo }} - ${{ github.event.inputs.branch }}" || echo "⚠️ Nenhuma alteração para commitar"
+          git add rework_analysis.json || echo "⚠️ Nada para adicionar"
+          git commit -m "🔄 Atualizando métricas de retrabalho" || echo "⚠️ Nenhuma alteração para commitar"
           git push || echo "⚠️ Nenhuma alteração para push"
+
