@@ -15,7 +15,7 @@ HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 REWORK_THRESHOLD = 3
 REWORK_DAYS = 21
 
-json_file = "rework_analysis.json"
+json_file = f"rework_analysis-{REPO}.json"
 
 
 def load_json(filename):
