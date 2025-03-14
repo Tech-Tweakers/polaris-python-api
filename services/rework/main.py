@@ -6,18 +6,15 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import os
 
-# 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 OWNER = os.getenv("OWNER")
 REPO = os.getenv("REPO")
 
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
-# 🔧 Parâmetros para definir retrabalho
-REWORK_THRESHOLD = 3  # Número mínimo de alterações para contar como retrabalho
-REWORK_DAYS = 21  # Período máximo para considerar um ofensor recente
+REWORK_THRESHOLD = 3
+REWORK_DAYS = 21
 
-# 🔧 Arquivo JSON para armazenar histórico completo
 json_file = "rework_analysis.json"
 
 
@@ -140,8 +137,6 @@ def analyze_rework(commits):
     save_json(json_file, rework_data)
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
 
-
-json_file = "rework_analysis.json"
 
 def load_json(filename):
     """Carrega os dados do JSON."""
