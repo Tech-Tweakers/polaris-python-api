@@ -146,7 +146,13 @@ def generate_graph():
     df["data"] = pd.to_datetime(df["data"])
     df = df.sort_values("data")
 
+    # 📌 Remover duplicatas mantendo o último valor registrado para cada data
+    df = df.drop_duplicates(subset="data", keep="last")
+
+    # 📌 Criar um intervalo de datas contínuo desde o primeiro commit até hoje
     date_range = pd.date_range(start=df["data"].min(), end=datetime.utcnow().strftime("%Y-%m-%d"))
+
+    # 📌 Preencher dias vazios com o último valor conhecido
     df = df.set_index("data").reindex(date_range, method="ffill").reset_index()
     df.rename(columns={"index": "data"}, inplace=True)
     df["data"] = df["data"].dt.strftime("%Y-%m-%d")
