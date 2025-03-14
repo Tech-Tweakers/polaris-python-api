@@ -1,0 +1,4224 @@
+[
+    {
+        "data": "2025-03-14",
+        "sha": "52f93f81911dbd8c19c3cd7e3de995076ef57b0f",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "13d5757f91fb6db03f3539be20e73de4bbcfea83",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "1bffd11d6e72f78beed8860c87f78fb14462a07f",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e5c9cbca3dd7c500462b493a59bfa887a6539717",
+        "total_changes": 129,
+        "rework_changes_total": 129,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 129,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "a143509a1519261e283ac999dda989b688cb5421",
+        "total_changes": 31,
+        "rework_changes_total": 31,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 31,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "d8289528b886d30291f5df6cb65bef1559aa6cec",
+        "total_changes": 42,
+        "rework_changes_total": 42,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 42,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "12cfc35f85671c92eb5418f4459e628635ce0826",
+        "total_changes": 13,
+        "rework_changes_total": 13,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 13,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "b58d153e282efa73653ba735a2acb95640ed7bf7",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "4170ff820260a9cd69338d1be98db5fa6723d068",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e9edef13e4d625eebaf1a4d463ebdb436e299d99",
+        "total_changes": 19,
+        "rework_changes_total": 19,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 19,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e3836f018535d4e0e8a5ee8c07c49a5860500e3b",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "a30a27e0d3877a5d1bf9fc171282cfe32de29485",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "0dac08eefc97409654c95fdb4ac0e9fc279dcd8b",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "f0cbcccee121cd63b77299f2890b0844750fdff5",
+        "total_changes": 19,
+        "rework_changes_total": 19,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 19,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "89e4aafe92412039cd1dc994647dc264385358f4",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "e3617a1938caf2665ec8525eaa37bd59b2a26619",
+        "total_changes": 17,
+        "rework_changes_total": 17,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 17,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "41066a89b2b1823547a8594d80da5345525e41c0",
+        "total_changes": 20,
+        "rework_changes_total": 20,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 20,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "de0964927172033577e1e261591b33e16f4949ce",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "357505e14146c386a05eb68dd4ca50d991bf5534",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "008414b8bfbe92ab8d61bf59c2f90ac9ea4e8b47",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "2f376f3b651e9bb26ae9b4129917ab1313b3407e",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "0a402a67a1c2e94e208e1b7a175786937f533606",
+        "total_changes": 113,
+        "rework_changes_total": 113,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 113,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "4b5d449630267b0d5bde219d07decf8e69b33a5e",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "c15b03e4aeff9b4143db134e8b01fd2c84a48379",
+        "total_changes": 5,
+        "rework_changes_total": 3,
+        "rework_rate_total": 60.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 60.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml",
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "5a481c79b321e751dedf0d133c80cf4778b1fd35",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "14c59b5032e815c49100c0511d3150403f3cd046",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "f65ba2df981533d666ddf7fb6ecf0b06b7f4a102",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "0fe9ef9eb4aac21524d59d76f5b69bc88ef8998c",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "94cf7ec96015a764e6e3daccc5c8f9e2046a68c9",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "a1430bd9502c45cc7023ce075d1ca317e899f87a",
+        "total_changes": 49,
+        "rework_changes_total": 49,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 49,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "6c3bfc318e5c27db1d5cf462ad3ace83bdfa5435",
+        "total_changes": 50,
+        "rework_changes_total": 50,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 50,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "d17e3d81e2cc153840f37271bed7fb62048f3f0e",
+        "total_changes": 21,
+        "rework_changes_total": 21,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 21,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "50ed93c932b3d42f92984670b2085f540213a9de",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "aaa9b62b18dddab528fb606b671ff1a7b0691318",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "7d4b483ced9edaa32ee06768cb3aa3bf3fb8ce9c",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "4a0d1ecb8ce9c97b1db8ae27b8a90fcbfe06a186",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "0a6a5972a7833dc0fa8786240c5fe579a9070677",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "cc5ff34f079dc4b4084e4c44a581490c9516d642",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "31a8c4d19bf0955c582cbc734cc6e2ebd0eec197",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "1640ef3ee230884b0a09d8ecd6ba1812a2e04c5f",
+        "total_changes": 26,
+        "rework_changes_total": 26,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 26,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "bf270a14f3320ac3ecbd2e33d4aedd4bcf80e5b3",
+        "total_changes": 21,
+        "rework_changes_total": 21,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 21,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "daefadf37b09a087844dfc164b7fa3536b5dfafd",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "69ab77ecec1303d6838d7464085b9e20f8c9269d",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "c27ab15e3f1938ef0910174c2fcb5425b3f45707",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "9635d923395dbc37e2313c480158cb566558abb1",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "d0b6b729cde2f6842dd5916e1a969750dfbded7a",
+        "total_changes": 3,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml",
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "81fe024f4ddf97bc1a7e68d76c25aef95212d0a6",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "4bf39a7283d0984f997e20d3f549fb71f639c7ef",
+        "total_changes": 66,
+        "rework_changes_total": 66,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 66,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "1b1e6d61fa228b8067223f8d859c4b0e9544ac29",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_rate.json"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "c477acab0403dca957cda6d7bb52c2def0bc2171",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "0ae2fae887fc8bad36f481383e653899e4d7845a",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "b72f40aabf2129487e37c864615ce38f5b1963fa",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "ec370996f12dc0e2c45e608b104906173da01dd6",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-13",
+        "sha": "8703e6c2b100865c11be436650543c42621b9b6a",
+        "total_changes": 240,
+        "rework_changes_total": 240,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 240,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml",
+            "Makefile",
+            "local-setup.sh",
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "37eebfed48bbe3293c22eab70500913ec77ac616",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "b9abe0f819f09d2fe1b9dc0d7bbe08ec1ca4e6fd",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_setup/setup_ngrok.sh"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "7b115462481b86ac232428302606a0f24115d415",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "79bcf2ada184ce2121e247201b186858cbd2338e",
+        "total_changes": 127,
+        "rework_changes_total": 123,
+        "rework_rate_total": 96.8503937007874,
+        "rework_changes_recent": 123,
+        "rework_rate_recent": 96.8503937007874,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "Makefile",
+            "local-setup.sh",
+            "polaris_api/main.py",
+            "telegram_bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "eac40e1be842c71d7108dcb33cce9828fae4b46a",
+        "total_changes": 59,
+        "rework_changes_total": 59,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 59,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_setup/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "c713c251d49363750b3c9131f3fa0ac5c2e87073",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "7b35948d3c06bcf41666a918ff0db5472db7c8aa",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "a3f38053754060ea7114b7174c01608761c4bde5",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-12",
+        "sha": "b18146a909e400197d0c6fe64b031861658d0b51",
+        "total_changes": 95,
+        "rework_changes_total": 95,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 95,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Makefile"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "d82e237a21895490816ecaaacb6df310808159d5",
+        "total_changes": 70,
+        "rework_changes_total": 68,
+        "rework_rate_total": 97.14285714285714,
+        "rework_changes_recent": 68,
+        "rework_rate_recent": 97.14285714285714,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "366c194dcc2f26b5be5f357872b6ce852a6c09c6",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Makefile"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "dab1fa244a854192f66ffd8650630daf39ebafc9",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_setup/scripts/setup_ngrok.sh"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "3720cfce3ffc2f23cd88ea8aef9ff7daf11a91c3",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "0f5eb3c6e0c0cef03dd8dd00507630bd0c150693",
+        "total_changes": 32,
+        "rework_changes_total": 32,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 32,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "c4cdf0a7e65dc9157c98d1731d1ee7e723ff4415",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "9005868271236721772b3edbb764fa1de93e1766",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "73f72686565b3045e0db3d415042f2c5faea70fb",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "c4f75d9e18cde9d2ea4bc889de9195f0445e3edd",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_setup/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "26892b5bbbfa3a326c1326c8e48cb2f8387829d8",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "1d1f2787c5d62c96afab2e6d44e36527db68a00c",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "e42e3ed2ab11b612da5e43f2e3b2aa4132db715f",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "dc1bf72f8e2e301e0eb726d5a67f767a65781b67",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "7ce5dd0dc10aadd1654f36c5f2617e837e2a558f",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "537e734971c4fb4515828b3bd1f1c5bfca18da69",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "5d68e11fde2507a7c62136effb962f774d2a2c1a",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "a53c57aeaa85691130b27fa21360e9f06882185c",
+        "total_changes": 1049,
+        "rework_changes_total": 1049,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 1049,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_iac/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.3/linux_amd64/LICENSE.txt",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/CHANGELOG.md",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/LICENSE",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/README.md",
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/deploy.sh",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "905e0a50b59910f277fab651041fb5e04d742cfc",
+        "total_changes": 21,
+        "rework_changes_total": 21,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 21,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "a26dcbdb87c30ef0ffc4f056efdc91704ea21c49",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "7c522555361f38d619c71b043ed6198ed00a8b89",
+        "total_changes": 16,
+        "rework_changes_total": 16,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 16,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "e0c1add7d68accdf2cb45ae44c31dc78a5e80930",
+        "total_changes": 40,
+        "rework_changes_total": 40,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 40,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "b1621a4880b76d7d3a549a8bd068fce2b7352bb8",
+        "total_changes": 48,
+        "rework_changes_total": 48,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 48,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "78bb4397e4a34ab116b637da7b04bcd5bc00557b",
+        "total_changes": 44,
+        "rework_changes_total": 44,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 44,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "3d8f57f56cb5b8c97543f24541258cdc94dcfc9d",
+        "total_changes": 17,
+        "rework_changes_total": 17,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 17,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "0a63a5e5a9c26e08c1e442be21b3d75651ddaae1",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "c57c2b7569eb1a294d2d74d6903b310579f5823b",
+        "total_changes": 18,
+        "rework_changes_total": 18,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 18,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "ac855e53a6fc518e1fbfdcfa8fd7284bb6d10a8f",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "10bf32942a718d95d7e2dede39bcc9125f9bbc61",
+        "total_changes": 40,
+        "rework_changes_total": 40,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 40,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "c51eae43627d2a0cb5df3e52ae560b77b27c3db0",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "26cc0fa8fe9b4b8ef5aebc9a007b3ec8f40ef573",
+        "total_changes": 56,
+        "rework_changes_total": 56,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 56,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "6495e56fee6f59df0bc6894e319176e1bc19af98",
+        "total_changes": 120,
+        "rework_changes_total": 120,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 120,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "9b352e337c94cd6fbc4b8766b916bf71875e3c0c",
+        "total_changes": 51,
+        "rework_changes_total": 51,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 51,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "30698fc689646e4155bc09ab8a9ee4938755dbc7",
+        "total_changes": 50,
+        "rework_changes_total": 50,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 50,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "02e6c9ca05b51c53bacf2525b9e03f388516c1ab",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "9a653f8599479a5aa1f7b31207378eb0abcc477e",
+        "total_changes": 48,
+        "rework_changes_total": 48,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 48,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-11",
+        "sha": "e153711df84cc0a1ae057e05fc184a53dd586f5c",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "f6e8df5ba8d209eacfbcc7087ecf67060c3ef5ac",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "5cf0f92d4c15a2c69547684b29a03876061e44a6",
+        "total_changes": 6,
+        "rework_changes_total": 5,
+        "rework_rate_total": 83.33333333333334,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 83.33333333333334,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "00357ebd238331dc27d7f00c0e3973d1de6dfa2c",
+        "total_changes": 50,
+        "rework_changes_total": 50,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 50,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "7c985a7cd72e8e9df33cc95cc00d0a86bbb5872c",
+        "total_changes": 12,
+        "rework_changes_total": 11,
+        "rework_rate_total": 91.66666666666666,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 91.66666666666666,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_iac/main.tf",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "5393e1561a38ecc525debcb0104abc04856c7780",
+        "total_changes": 44,
+        "rework_changes_total": 44,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 44,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "polaris_iac/scripts/setup_ngrok.sh"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "ef3b1426762989795ef383e49c182d7ca0016a58",
+        "total_changes": 4,
+        "rework_changes_total": 3,
+        "rework_rate_total": 75.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 75.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "bd84c0248f4dd504b9a9d33f8f090d608e75722b",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "3a32377cb42a8d22283c8770fa7c25fac6e3dec1",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "39c23942f6698c9af56812a9120e39d491f75f06",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "6d40c9212c0683e05350ef671aff0b30adea349f",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "aa9e6dae0492f8dd50f11fd7511e740e3e9f4c3e",
+        "total_changes": 89,
+        "rework_changes_total": 89,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 89,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_api/Dockerfile",
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "b1cd5764f58e08b46a32c3fe42abc7d8a9f103e9",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "74bff4d2fa17a33f8b2806b0fdfed1e241834084",
+        "total_changes": 15,
+        "rework_changes_total": 15,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 15,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "d6119d6e10d68d03a7236d01d74de348f359ef48",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "b3dc3b0d91c3ad1f69a121b2deb0b81b81c23288",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "34bdd106b9485440987365265c9703ca5d0ea0d5",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "f4663538c19b1dde77ffec987bc181da9e0f99d1",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "3136dc68d6fde966b2e26cbaaa5621163f3f2b2c",
+        "total_changes": 11,
+        "rework_changes_total": 8,
+        "rework_rate_total": 72.72727272727273,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 72.72727272727273,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "c81f9a2e80c9af136546df4dff0946a2b6ac356b",
+        "total_changes": 35,
+        "rework_changes_total": 35,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 35,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "28142939994c3b6df9ba3828b1e368629aa9b994",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "5d1c92883989a53ec1033b4f034b70fb8e75299d",
+        "total_changes": 8,
+        "rework_changes_total": 6,
+        "rework_rate_total": 75.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 75.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "485e6950d145cb43fc81b92731c86273fcb064a8",
+        "total_changes": 47,
+        "rework_changes_total": 44,
+        "rework_rate_total": 93.61702127659575,
+        "rework_changes_recent": 44,
+        "rework_rate_recent": 93.61702127659575,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/deploy.sh",
+            "polaris_iac/scripts/setup_ngrok.sh",
+            "polaris_iac/variables.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "41e40dae29cfd89a9087e22d221ed11b7fedb653",
+        "total_changes": 17,
+        "rework_changes_total": 15,
+        "rework_rate_total": 88.23529411764706,
+        "rework_changes_recent": 15,
+        "rework_rate_recent": 88.23529411764706,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/deploy.sh"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "af378229e4056cb19d819d94df97c4ff34cdf475",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "904b4e05245b660520e483e15032590e303b1c3d",
+        "total_changes": 4,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "de14398258a4fdf2d19aaf6eb4ef975cce07a750",
+        "total_changes": 4,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/scripts/deploy.sh"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "ffa9941c5aebf8e327b30d025541fbdc3b39f018",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "188f0d2a3e8db25708334c5414973117ec6d5ec1",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/scripts/setup_ngrok.sh"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "ae14e8b47ca555df1f3c2c169790c2ebfa9dc845",
+        "total_changes": 3,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/setup_ngrok.sh"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "a80be0f9d74c1068c1bc82c392f02d154f6fea70",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "6a97d95d9de9e808ccd34a6e82f970ed59422f97",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "88e2c7eaea861fbf2cb19ebef71289a52cc4acaf",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-10",
+        "sha": "64a742771cca93390681bd4499d7781cd8f21854",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "07a02369fa5a622986a9056d301050e7e1668001",
+        "total_changes": 27,
+        "rework_changes_total": 27,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 27,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "48ccec983cc156e16a35321ae72b98bdf3e22b3e",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "8b9e2a212aafb5c62e239ec73bc7f1e63b18467e",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d2ffc83ae1a0e3f2bc72a64dde856539b715ddee",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "bcd8f4b4dd028d1a3eeb3740dea2fcd54f607a27",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "2ff12382010a541837e1e0f461b4d330f275dcef",
+        "total_changes": 20,
+        "rework_changes_total": 20,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 20,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "2928939f768a41af20cfcebac4888ddcf57ed20f",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "c1761ba35d9b6004cc55cb0b2524f3147b3eceff",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "74d3b9cdf33317335a70ff2e9383ff40f3d4e6b6",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "e62d7b7bf896ff0f02132dc459e28bbe5d8c71e2",
+        "total_changes": 23,
+        "rework_changes_total": 23,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 23,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "082985c7581f825c0e941c83ea229180ebb8a4b4",
+        "total_changes": 23,
+        "rework_changes_total": 23,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 23,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "4d66e27806a61b63a53fe8fcd246f73276da3963",
+        "total_changes": 13,
+        "rework_changes_total": 13,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 13,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "bbfb35b8136bf533eff15ea57c65da9ab585ea0f",
+        "total_changes": 13,
+        "rework_changes_total": 13,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 13,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "188bce35a772bbcb4d3fafb8b086dafc38e61a4f",
+        "total_changes": 52,
+        "rework_changes_total": 52,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 52,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "bd8d5a84409daf3c0242f3dea50851f2028c6f02",
+        "total_changes": 52,
+        "rework_changes_total": 52,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 52,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3eba5cb66f5d3084b3506841f5b1de7f293d2d08",
+        "total_changes": 28,
+        "rework_changes_total": 28,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 28,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "8c969a24bb32542525eec93276ed6c86107ede8b",
+        "total_changes": 27,
+        "rework_changes_total": 27,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 27,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "4b53b8da347fc7108daa17532c37a0748f2778cc",
+        "total_changes": 15,
+        "rework_changes_total": 15,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 15,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "7611da3becb3850ab2e0b1a54b49e94c01d298b0",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ea0244e43adfc888f01f530c8ba95eec7bfc0ec9",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3e0f7dec1e36458992ac09bbfab198a9f08769b5",
+        "total_changes": 28,
+        "rework_changes_total": 28,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 28,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "fb0618a3ce689a72bee59d1e033d92cca56a160e",
+        "total_changes": 28,
+        "rework_changes_total": 28,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 28,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "4f3ae35571d65f05f5856fc271a6f65f119498fb",
+        "total_changes": 35,
+        "rework_changes_total": 35,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 35,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ff37601edb91b827540fe0f57353dc32079309ce",
+        "total_changes": 35,
+        "rework_changes_total": 35,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 35,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "f48fcc40ff15ff949d0f2b25c4b598516b04a985",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "50dc0ab4c6eaa887dc44c94682b64cba0cdf93a5",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "8925aa01e198f672d4f4a099bf8646fb8ea026b7",
+        "total_changes": 22,
+        "rework_changes_total": 22,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 22,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "5434fadd3cb2338df08ef3a14ebe9e8180206f4a",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ad97f2777700421cb38da8d17a509809a06f278e",
+        "total_changes": 16,
+        "rework_changes_total": 16,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 16,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "380d005dc0a93034245fd525e8bc839f56093330",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "61c238c689a0549647bb40fd2e82b49faa5978ee",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "5e572a757a3048e8d49c28a2a5f3712595ea84f0",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "6a58aef41fe40aa52b695bc22d4fe70d2d499468",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "72754cd0e22b6e87c7d8597ecf796ac46dc0225d",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "325c06dc95ca999eaabfd79192d3fcfc9370946d",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3c87ea2ffa1c3ce21ff2ed0520b113f9c7245d31",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "080f40a03226f017df670374ea6163b4796f1f02",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "e359f966073945778b5d165e675d90f04ab61b93",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "5271f94f21a68306f2c4cef6ad886351f1c63d42",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "0b86e1179d19d55f3946523fb066216d33c1f959",
+        "total_changes": 57,
+        "rework_changes_total": 57,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 57,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3960b88732bb3b45395f36e62e71c709896907d0",
+        "total_changes": 57,
+        "rework_changes_total": 57,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 57,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "bf02bc89cb027d29164957bf71c9eeba11eba417",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "9a6e0590024dc76230cb06326124b78c7a94050b",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d1daf6b80bd0668e48e361aa30c9e33bb42656cf",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "284fe943f859e2358c4add8ab12f9a3eecbf7e9c",
+        "total_changes": 9,
+        "rework_changes_total": 7,
+        "rework_rate_total": 77.77777777777779,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 77.77777777777779,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "edbca6e75ecf4cf8cafecfb206c7f1c1c3c442b5",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "dde0042114cef9d775531a46de8d900bcc9352ea",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "601d553b986e7a50c969d11af1f568515572f8bb",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "e3d92a63a61475d32386e6ee17941f3ba7072bf4",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "7557ac3478381a508437d553c0c2e25108932563",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "755fe48e71e3142fcc84cd708be645a569d3db59",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "512e8b868abad4d1563b0918190617c902e7bb95",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ec6c89694e3df3879662ed1f74a2838964b1fedf",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "838bf9683c9289d8dd9239b7d718c5f3031caa7c",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "9fe307546b61852aa96beb77c3cdcf1783762c21",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "839dadc73d226571e62b41f767383f12ba6cb32d",
+        "total_changes": 9,
+        "rework_changes_total": 7,
+        "rework_rate_total": 77.77777777777779,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 77.77777777777779,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile",
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "54901cbf121f3ebaa26f205d3b4194c96c7ef863",
+        "total_changes": 9,
+        "rework_changes_total": 7,
+        "rework_rate_total": 77.77777777777779,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 77.77777777777779,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile",
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "7a3dada9440dd1e16c83e4d39249e4c0058d9bf2",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "252d958533914c5505a2d25998a13102b38b9557",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "443e4dba1b39db79cbe46e7b41360231654c937a",
+        "total_changes": 8,
+        "rework_changes_total": 6,
+        "rework_rate_total": 75.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 75.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile",
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "e391905fb89a1f0eaee19688057f12a279fedecb",
+        "total_changes": 8,
+        "rework_changes_total": 6,
+        "rework_rate_total": 75.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 75.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile",
+            "polaris_iac/docker-compose.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "a9e6426fc6478d8a5093f88ef739d9d4aa31b42c",
+        "total_changes": 88,
+        "rework_changes_total": 88,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 88,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "9ab667d09578e621e0856b7fc7d0e58beb99823e",
+        "total_changes": 88,
+        "rework_changes_total": 88,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 88,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "55c01a9157a07dc372847c3ea7d86bbf6b2bf3af",
+        "total_changes": 80,
+        "rework_changes_total": 80,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 80,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "09c8d3b1f788eded9ecea86751e551a703a6132d",
+        "total_changes": 80,
+        "rework_changes_total": 80,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 80,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "polaris_api/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "96fd38701e43a9397180921eb3c9d026311f98fc",
+        "total_changes": 1150,
+        "rework_changes_total": 1150,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 1150,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml",
+            ".gitignore",
+            "polaris_api/Dockerfile",
+            "polaris_iac/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.3/linux_amd64/LICENSE.txt",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/CHANGELOG.md",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/LICENSE",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/README.md",
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/deploy.sh",
+            "polaris_iac/scripts/setup_ngrok.sh",
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d735574c6fe52f64c23b255cafa6324415028758",
+        "total_changes": 42,
+        "rework_changes_total": 42,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 42,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/deploy.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "68d5c1e49bf4b47a4e059469b94cd2ee0ff81d83",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "0897a478766c28da348b031c22873343ce4f52a3",
+        "total_changes": 1106,
+        "rework_changes_total": 1106,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 1106,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "polaris_api/Dockerfile",
+            "polaris_iac/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.3/linux_amd64/LICENSE.txt",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/CHANGELOG.md",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/LICENSE",
+            "polaris_iac/.terraform/providers/registry.terraform.io/kreuzwerker/docker/3.0.2/linux_amd64/README.md",
+            "polaris_iac/docker-compose.yml",
+            "polaris_iac/main.tf",
+            "polaris_iac/scripts/deploy.sh",
+            "polaris_iac/scripts/setup_ngrok.sh",
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "c65c6b84bcd5f93e0c43e99d60e4542d9c2417aa",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "69b31c34d03b8e9d7c970afa045e1e012c729a8d",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "a7767dbd059273293a22012271a10613700bcb15",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "221cf219e52d57f417f436ff919e64e78943cd7e",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "05b83938d922854b63f64328969ec13952a14fc2",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "5e833a302c2857d40e4ec7a72ff0395049cb0b9d",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "f0d76689e4722768b0b38266dc43f7d0eb39e756",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "0cade1ef49c329e8314b98f235832c17ca23f088",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "2f8fa687983b679ed1df87d0dd8d6be814e2e513",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d29b3c0649ae6878ffe60cb9fec7fa966ff2bb08",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d64dbe2fda749641666155c79e9c858ca806762e",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "386794fb9635c70d57f92c341148037701436315",
+        "total_changes": 68,
+        "rework_changes_total": 68,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 68,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml",
+            "docs/README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "a1d075e723eb349b4c78893fad9e7347f066f51c",
+        "total_changes": 68,
+        "rework_changes_total": 68,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 68,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml",
+            "docs/README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "6629f89a786e4e708c23bd5871d849185ed7c7c6",
+        "total_changes": 167,
+        "rework_changes_total": 167,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 167,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml",
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "e8dfd49c829fc4cc8217ef1d5f00d1d20165ef8c",
+        "total_changes": 14,
+        "rework_changes_total": 14,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 14,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "0b4573d0c31d1dcc22d250caebd3c1e49374fc29",
+        "total_changes": 153,
+        "rework_changes_total": 153,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 153,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3c0c7a31c4ce4e5aad779e58ea44af5d5ee8210a",
+        "total_changes": 129,
+        "rework_changes_total": 129,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 129,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "docs/README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ef3f1444d6c69959e6a1101de9b1d112a144cd74",
+        "total_changes": 129,
+        "rework_changes_total": 129,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 129,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "docs/README.md"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "1ae77a82f6c8a4b6f8c5f71ace318f7e1eccdf89",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "Makefile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "9bf8798af305542123727938677e67f470229d9f",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "9c8bc68f3f1fe910b59bb5dc60e665acc1c524fb",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Makefile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "c2b0760293d623cab17344084cc0da1de29f5aa5",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Makefile"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "4a11cf8a4c786b1f34833db13ecef1a63b4b56b3",
+        "total_changes": 88,
+        "rework_changes_total": 88,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 88,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml",
+            ".gitignore",
+            "Makefile",
+            "tests/test_polaris_api.py",
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "6f874adc909ec3497ce1b8a87314b2aba147d7fe",
+        "total_changes": 78,
+        "rework_changes_total": 78,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 78,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "Makefile",
+            "tests/test_polaris_api.py",
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "a61f54c6a2089f5f24510c5db25114829884b351",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "68023f8d21258879c79e35821aea67ebaca06a68",
+        "total_changes": 47,
+        "rework_changes_total": 45,
+        "rework_rate_total": 95.74468085106383,
+        "rework_changes_recent": 45,
+        "rework_rate_recent": 95.74468085106383,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            ".github/workflows/semantic-version.yml",
+            "docker-compose.yml",
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ec93ebd02e5088bd85c030e3fc459b7db47d6c69",
+        "total_changes": 41,
+        "rework_changes_total": 41,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 41,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            ".github/workflows/semantic-version.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "fd835091367f54c3e1180b32db4d4c315a1a0704",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "772cb663225b6ad9d0832f52c699f949aed4ac24",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "fc707aafae318458953b73350da31dd13b2e826e",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "a9bd8dd42edf5cb691a0f87927f24404b6e74003",
+        "total_changes": 43,
+        "rework_changes_total": 43,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 43,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "adc63a17dec0168a5aba43cecf631046795ee8e8",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "3fe9b2dfb94e6cf2f1ab5a1f307cd098df93a92e",
+        "total_changes": 45,
+        "rework_changes_total": 43,
+        "rework_rate_total": 95.55555555555556,
+        "rework_changes_recent": 43,
+        "rework_rate_recent": 95.55555555555556,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "docker-compose.yml",
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "605e0c1a9ba2caf797bf42b64d694d3392d51dcb",
+        "total_changes": 82,
+        "rework_changes_total": 82,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 82,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "telegram_bot/main.py",
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "314cd736df21d87fcdfb9351d3b43392b158a49e",
+        "total_changes": 3,
+        "rework_changes_total": 3,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "ecb7ec078e65fd778aa078d68afd4439b3ca6262",
+        "total_changes": 33,
+        "rework_changes_total": 33,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 33,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "43379918bd73323b65e26533ea524c455e6f6d49",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "b6360ec8713bc9e7daa98713cb57cecf18a2a678",
+        "total_changes": 18,
+        "rework_changes_total": 18,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 18,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "309db1d3d80a7163be86da3943231bd4bfaa0067",
+        "total_changes": 26,
+        "rework_changes_total": 26,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 26,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "d6f0ada2b1b44d186881160719e4396c4e251089",
+        "total_changes": 7,
+        "rework_changes_total": 7,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 7,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram_bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-09",
+        "sha": "24e4677e791733b207a2242c7e729f241d11db10",
+        "total_changes": 16,
+        "rework_changes_total": 16,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 16,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram_bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "6ee7897cd8dfc09049112af7119ee770f5bec4fd",
+        "total_changes": 359,
+        "rework_changes_total": 359,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 359,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            ".gitignore",
+            "docker-compose.yml",
+            "polaris-api/.env",
+            "polaris-api/Dockerfile",
+            "polaris_api/Dockerfile",
+            "polaris_api/main.py",
+            "telegram_bot/Dockerfile",
+            "telegram_bot/main.py",
+            "telegram_bot/requirements.txt",
+            "tests/test_polaris_api.py",
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "2bd1a26de9dd441b3da8b6e38661f44113a25099",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "267ad43aae239344ff04f93947e274946d203a7a",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "fb28c711980454552dffbe550c10fce97ae59191",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "d943577bd09ccbc1c565c0710da1bc3139006b60",
+        "total_changes": 54,
+        "rework_changes_total": 54,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 54,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "c696d5b3643f8b5cc79cf324479df76435b620fa",
+        "total_changes": 21,
+        "rework_changes_total": 21,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 21,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-07",
+        "sha": "68bffcc0049b2ff99245d8a6fa87e520be00b2e0",
+        "total_changes": 67,
+        "rework_changes_total": 67,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 67,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "b5b2d5acc41c611e2b8a393ffb2229e048bdd434",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "99244f496d8586c2ca4e5f7f1440a2e960db2c6c",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "9fe94032438e030a15686e15407c7ebb2e55f5cc",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "82f534985c84d6b40904e0862f3d650dd6144127",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "f34fdecd4964f25c9d07dae2dca8e88a1d05f48f",
+        "total_changes": 9,
+        "rework_changes_total": 9,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 9,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api/Dockerfile",
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "944443aab84753da1fe31684062ebddc31d7af71",
+        "total_changes": 8,
+        "rework_changes_total": 8,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 8,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram_bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "77c4a969719a53b6edaa238d1b56bdb14a2cc616",
+        "total_changes": 140,
+        "rework_changes_total": 140,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 140,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram_bot/Dockerfile",
+            "telegram_bot/main.py",
+            "telegram_bot/requirements.txt",
+            "tests/test_telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "a4aa10228627571cac300dfc1da26ed7083c49d9",
+        "total_changes": 80,
+        "rework_changes_total": 80,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 80,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/Dockerfile",
+            "telegram-bot/main.py",
+            "telegram-bot/requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "44a208bebf778f22711b4c07d7e90f9416493e72",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "37e5d9ed44dea7300e5f3e7df723c59ce0c9445f",
+        "total_changes": 18,
+        "rework_changes_total": 18,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 18,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "ead3e67b77f4d9f7119e41bce45821865bab5cb7",
+        "total_changes": 19,
+        "rework_changes_total": 19,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 19,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "8558455141e27b6f93c6865173fa2dfdf8e64313",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "30516ba829495dec584b421251f964766a9d7fd0",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-06",
+        "sha": "279015c788339385878a4721199e66c06c45c7d3",
+        "total_changes": 39,
+        "rework_changes_total": 37,
+        "rework_rate_total": 94.87179487179486,
+        "rework_changes_recent": 37,
+        "rework_rate_recent": 94.87179487179486,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "docker-compose.yml",
+            "polaris_api/Dockerfile",
+            "telegram-bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "56a4d4c8366282784596152238fc35b3348a2255",
+        "total_changes": 5,
+        "rework_changes_total": 3,
+        "rework_rate_total": 60.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 60.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "9d47d7f1f53faafc03b6ee702c811c2f2808bc34",
+        "total_changes": 575,
+        "rework_changes_total": 575,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 575,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "polaris_api/Dockerfile",
+            "polaris_api/keywords.txt",
+            "polaris_api/main.py",
+            "polaris_api/polaris_prompt.txt",
+            "polaris_api/requirements.txt",
+            "tests/test_polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "9ce1ee57dde6391a69204af58cce5d5b3ebe6080",
+        "total_changes": 542,
+        "rework_changes_total": 542,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 542,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris-api/.env",
+            "polaris-api/Dockerfile",
+            "polaris-api/keywords.txt",
+            "polaris-api/polaris_api.py",
+            "polaris-api/polaris_prompt.txt",
+            "polaris-api/requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "752f62803224155cf11492f056184d3ffe7a8cda",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "7f40c7a79c550bf202ca4f4d1d62cb3fb3181a83",
+        "total_changes": 108,
+        "rework_changes_total": 108,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 108,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris-api/polaris_api.py",
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "fe70f94a563f9b3e08cc05931fb8c801b3e36fc4",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "4fdc276a838bced8cb2c111f011aedd643f12fee",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "b362cb6cc21d4315ef1d729dc4968fa32d8eafa7",
+        "total_changes": 34,
+        "rework_changes_total": 34,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 34,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "ea6758563569316aa0fe4e4314ed4da7f861940a",
+        "total_changes": 5,
+        "rework_changes_total": 3,
+        "rework_rate_total": 60.0,
+        "rework_changes_recent": 3,
+        "rework_rate_recent": 60.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "polaris-api/polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "0265ca1fca513add219f92f77c14caa37f4fbd74",
+        "total_changes": 180,
+        "rework_changes_total": 178,
+        "rework_rate_total": 98.88888888888889,
+        "rework_changes_recent": 178,
+        "rework_rate_recent": 98.88888888888889,
+        "arquivos_modificados": [
+            ".github/workflows/polaris-ci-cd.yml",
+            "README.md",
+            "docker-compose.yml",
+            "polaris-api/.env",
+            "polaris-api/Dockerfile",
+            "polaris-api/polaris_api.py",
+            "polaris-api/polaris_prompt.txt"
+        ]
+    },
+    {
+        "data": "2025-03-04",
+        "sha": "32fa9b01f2526d4f603c12926b8e38ddf4bd600e",
+        "total_changes": 13,
+        "rework_changes_total": 11,
+        "rework_rate_total": 84.61538461538461,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 84.61538461538461,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-03",
+        "sha": "04b0f933c4bdaf2759d279b8fb6877aed12c621b",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "195742bffc7cde58372a1db1911f7ddd969b711a",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "55feedb8c7e4ba0c33d74e047549ac4a7774998a",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "821141de1891c7441cdce4e983cbcb66622604d5",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "78997bb64a733041513e27f487522a6d2fe7cb75",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "95d987f69ed679dfe7ad74f6e4a826b1a856b9d7",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "de0a93d4fe48d69b5146a4ecdc3ec0b8a9f11b47",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "62a8b2de93fce29188c2aa92516a587ff1d85569",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "290dd8497eebcd27b9fb83355d060264c99a5097",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "b369f32e659a206a97458748f3da6f5ad6d9cb31",
+        "total_changes": 10,
+        "rework_changes_total": 10,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 10,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "8c2dc40391cc0a63cf9725d3dbf228d2b262a2ab",
+        "total_changes": 4,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "988afe366b7daf09b4b9fea089cc2ccd13c186a4",
+        "total_changes": 4,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "c34bfa1db5927168942da89e9cc784c2a6c15ef0",
+        "total_changes": 54,
+        "rework_changes_total": 54,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 54,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "c03b50f8011ee6bec2088d74f0ebfaed9fa5ca3e",
+        "total_changes": 54,
+        "rework_changes_total": 54,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 54,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "3f68eaadc7eb85b3ca47a230a824ff3819054abe",
+        "total_changes": 54,
+        "rework_changes_total": 54,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 54,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "c7190bce62e3a816f7a8a9f343e19609c5a89719",
+        "total_changes": 54,
+        "rework_changes_total": 54,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 54,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "ca9ddc2b44cdced36af7855fc1c3932367b85164",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "e5b8526783cad27916eccea1418bfb8fcc56bc44",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "d74b71ba3ee5b7870734fba91b933c3f25d855eb",
+        "total_changes": 80,
+        "rework_changes_total": 78,
+        "rework_rate_total": 97.5,
+        "rework_changes_recent": 78,
+        "rework_rate_recent": 97.5,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "telegram-bot/Dockerfile",
+            "telegram-bot/requirements.txt",
+            "telegram-bot/telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "a7ca3099ec6a3bc4e802043038e57baab9a4043a",
+        "total_changes": 78,
+        "rework_changes_total": 78,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 78,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "telegram-bot/Dockerfile",
+            "telegram-bot/requirements.txt",
+            "telegram-bot/telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "b6e732acdc7d75e473907ada8c0ab407fe8e71cd",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "9a59f9920cb746b761610f4b4ce73e5d2a579bac",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "61df303349cd7f9d32ce7c8818edd2fdc827d144",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "58afd29fa4975885296ee709885e237816cc8c20",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "c66b0913d624bf97bcc7ee278b5bf19b5c06fb2f",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "522a4c36566eb0d5936a402a88f98e0ecb1f3862",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "8a9ab30a798b14117de08342723d807617261e84",
+        "total_changes": 4,
+        "rework_changes_total": 4,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 4,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "9156ece3f8aebde264b42239818abdd29208f4bc",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "2791930139b21339243ae74787e1a90467a919ae",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "56b433f68916e8ccaaa58455dcee4f264878ca61",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "a4545daef03d08daa9725c46f07fb96a806b0d13",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "b83cca92007bc2e6ffc10dc464cdd2648ad8689f",
+        "total_changes": 91,
+        "rework_changes_total": 90,
+        "rework_rate_total": 98.9010989010989,
+        "rework_changes_recent": 90,
+        "rework_rate_recent": 98.9010989010989,
+        "arquivos_modificados": [
+            ".gitignore",
+            "Dockerfile",
+            "docker-compose.yml",
+            "polaris_api.py",
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "36381c8e9309001c7969230dbd67cb32a55df022",
+        "total_changes": 1,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile"
+        ]
+    },
+    {
+        "data": "2025-03-02",
+        "sha": "b6d9da2d0946cd0c2535e80f931bd3cd012bc620",
+        "total_changes": 132,
+        "rework_changes_total": 132,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 132,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "docker-compose.yml",
+            "polaris_api.py",
+            "requirements.txt",
+            "telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-03-01",
+        "sha": "d56a0cfb4e4ffd238ed3b79d84b75bf593f84d04",
+        "total_changes": 56,
+        "rework_changes_total": 56,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 56,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "telegram_bot.py"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "891c4681c13c1cc80f69ebe843e6e1bab21eb9ea",
+        "total_changes": 154,
+        "rework_changes_total": 152,
+        "rework_rate_total": 98.7012987012987,
+        "rework_changes_recent": 152,
+        "rework_rate_recent": 98.7012987012987,
+        "arquivos_modificados": [
+            "README.md",
+            "polaris_api.py",
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "e523ddba26fd1ed45b1827010d2a205b1ae482e8",
+        "total_changes": 20,
+        "rework_changes_total": 20,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 20,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "1bfae355e86ecd463a019628771e3c1d7813cf5f",
+        "total_changes": 35,
+        "rework_changes_total": 35,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 35,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "720dfcbb19186b9d953251bb28f0a8071ef035b8",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "0a54f8d9f8194d62c4454244800b7be95b89b30d",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-02-27",
+        "sha": "312322de0aa4ba413888d134f2f6fda7b452105d",
+        "total_changes": 122,
+        "rework_changes_total": 122,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 122,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "2d40c2eb16e998252242e5523bbced542a9e8a2e",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "ef3fdd057e421a7209bf93b5e5948691ad5f629e",
+        "total_changes": 5,
+        "rework_changes_total": 5,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 5,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "d3197098ac99d32f34ad99b8abfe844ac793ed1c",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "6b2e2148353b3a0d018ab1f34976c3d5c9f71a38",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "e9986765102d097f84b4c647210ab8a5c0e71dee",
+        "total_changes": 729,
+        "rework_changes_total": 729,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 729,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "Dockerfile",
+            "README.md",
+            "docker-compose.yml",
+            "keywords.txt",
+            "polaris_api.py",
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "c607de781461456c268ded75b21e37e974c538c6",
+        "total_changes": 202,
+        "rework_changes_total": 202,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 202,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "README.md",
+            "keywords.txt",
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "5902f07e2c71f87f8bff02ca471044effb536747",
+        "total_changes": 97,
+        "rework_changes_total": 97,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 97,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "keywords.txt"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "e65dbeff0d18675dd67ef5783cb7f86f892c4750",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "101b1fadfc3bd573180b6508560136a24c0f017b",
+        "total_changes": 136,
+        "rework_changes_total": 136,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 136,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "keywords.txt",
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "899ca54ba5de648a96e63dfd2a4c61deb3031bae",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "bea76f296344a6514e37097a426513ae62d810d2",
+        "total_changes": 11,
+        "rework_changes_total": 11,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 11,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "525237e695c35461ab24bec613a35ffa36aeea36",
+        "total_changes": 247,
+        "rework_changes_total": 247,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 247,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "docker-compose.yml",
+            "keywords.txt",
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "8fefa178dc68defb613863eaebf0456b62712bd9",
+        "total_changes": 140,
+        "rework_changes_total": 140,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-21",
+        "sha": "52dc4930712fb7b9459a48ac32e5f2044fa3e413",
+        "total_changes": 225,
+        "rework_changes_total": 225,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-20",
+        "sha": "561a63bf3a4b415adce1ba61e48cbfff3e78e299",
+        "total_changes": 183,
+        "rework_changes_total": 183,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile",
+            "docker-compose.yml",
+            "polaris_api.py",
+            "requirements.txt"
+        ]
+    },
+    {
+        "data": "2025-02-17",
+        "sha": "f5b80b3448aa74b890b3bb0e1b4b5387e4fa95a0",
+        "total_changes": 134,
+        "rework_changes_total": 134,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-16",
+        "sha": "c313077ddbd5e4462c2688e07f0e85f0406fac53",
+        "total_changes": 27,
+        "rework_changes_total": 27,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "polaris_prompt.txt"
+        ]
+    },
+    {
+        "data": "2025-02-15",
+        "sha": "750dbb7641710cce797e5c892beb7b0ba2bc1354",
+        "total_changes": 55,
+        "rework_changes_total": 55,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris_api.py",
+            "polaris_prompt.txt"
+        ]
+    },
+    {
+        "data": "2025-02-15",
+        "sha": "f6bf75b37938470d176fc32e6fdf5be1c81e3846",
+        "total_changes": 225,
+        "rework_changes_total": 223,
+        "rework_rate_total": 99.11111111111111,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            ".gitignore",
+            "docker-compose.yml",
+            "polaris_api.py",
+            "polaris_prompt.txt",
+            "test-model.py"
+        ]
+    },
+    {
+        "data": "2025-02-10",
+        "sha": "3c29ee567f26ddb16484dd099327b680f56b5179",
+        "total_changes": 113,
+        "rework_changes_total": 113,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "Dockerfile",
+            "docker-compose.yml",
+            "polaris_api.py"
+        ]
+    },
+    {
+        "data": "2025-02-03",
+        "sha": "1f6b3ffdbb7548f9e098c72beb9eee725a4077ad",
+        "total_changes": 259,
+        "rework_changes_total": 259,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "docker-compose.yml",
+            "polaris.py",
+            "polaris_api.py",
+            "polaris_prompt.txt",
+            "test-model.py"
+        ]
+    },
+    {
+        "data": "2025-01-07",
+        "sha": "6d5e12cf7b2272c6255c70ec87e2d50f5da6c116",
+        "total_changes": 83,
+        "rework_changes_total": 82,
+        "rework_rate_total": 98.79518072289156,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "polaris.py",
+            "polaris_prompt.txt"
+        ]
+    }
+]
