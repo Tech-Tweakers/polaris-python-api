@@ -32,9 +32,6 @@ jobs:
       - name: 📦 Instalar dependências
         run: pip install requests pandas matplotlib
 
-      - name: 🕵️ Verificar estrutura do repositório
-        run: ls -R
-
       - name: 🚀 Rodar análise de retrabalho
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
