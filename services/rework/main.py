@@ -12,7 +12,7 @@ REPO = os.getenv("REPO")
 
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
-REWORK_THRESHOLD = 3 
+REWORK_THRESHOLD = 3
 REWORK_DAYS = 21
 
 json_file = f"rework_analysis_{REPO}.json"
@@ -25,16 +25,15 @@ def load_json(filename):
             try:
                 data = json.load(f)
                 if isinstance(data, list):
-                    return data  
+                    return data
                 else:
                     print(f"⚠️ {filename} estava no formato errado. Recriando...")
             except json.JSONDecodeError:
                 print(f"⚠️ Erro ao carregar {filename}, recriando arquivo...")
 
-    
     with open(filename, "w") as f:
         json.dump([], f, indent=4)
-    return []  
+    return []
 
 
 def save_json(filename, data):
@@ -106,6 +105,14 @@ def analyze_rework(commits):
 
     existing_shas = {entry["sha"] for entry in rework_data if "sha" in entry}
 
+    total_rework_rate = 0
+    total_rework_rate_recent = 0
+    total_commits = 0
+
+    total_lines_analyzed = 0
+    total_lines_rework = 0
+    total_lines_rework_recent = 0
+
     for i, commit in enumerate(commits, 1):
         sha = commit["sha"]
         date = commit["commit"]["author"]["date"]
@@ -157,83 +164,38 @@ def analyze_rework(commits):
 
         rework_data.append(new_entry)
 
+        # Somando os resultados para o print final
+        total_rework_rate += rework_rate_total
+        total_rework_rate_recent += rework_rate_recent
+        total_commits += 1
+
+        total_lines_analyzed += total_changes
+        total_lines_rework += rework_changes_total
+        total_lines_rework_recent += rework_changes_recent
+
     save_json(json_file, rework_data)
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
 
+    # Exibir as métricas no final
+    if total_commits > 0:
+        average_rework_rate = total_rework_rate / total_commits
+        average_rework_rate_recent = total_rework_rate_recent / total_commits
 
-# def load_json(filename):
-#     """Carrega os dados do JSON."""
-#     with open(filename, "r") as f:
-#         return json.load(f)
-
-
-# def generate_graph():
-#     """Gera um gráfico com base no JSON existente."""
-#     rework_data = load_json(json_file)
-
-#     # 📌 Criar um DataFrame a partir dos dados
-#     df = pd.DataFrame(rework_data)
-
-#     # 📌 Converter a data para formato datetime e ordenar
-#     df["data"] = pd.to_datetime(df["data"])
-#     df = df.sort_values("data")
-
-#     # 📌 Remover duplicatas mantendo o último valor registrado para cada data
-#     df = df.drop_duplicates(subset="data", keep="last")
-
-#     # 📌 Criar um intervalo contínuo de datas desde o primeiro commit até hoje
-#     date_range = pd.date_range(
-#         start=df["data"].min(), end=datetime.utcnow().strftime("%Y-%m-%d")
-#     )
-
-#     # 📌 Preencher dias vazios com o último valor conhecido
-#     df = df.set_index("data").reindex(date_range, method="ffill").reset_index()
-#     df.rename(columns={"index": "data"}, inplace=True)
-#     df["data"] = df["data"].dt.strftime("%Y-%m-%d")
-
-#     # 📌 Aplicar média móvel para suavizar oscilações extremas
-#     df["rework_rate_total"] = (
-#         df["rework_rate_total"].rolling(window=3, min_periods=1).mean()
-#     )
-#     df["rework_rate_recent"] = (
-#         df["rework_rate_recent"].rolling(window=3, min_periods=1).mean()
-#     )
-
-#     # 📊 Criar o gráfico
-#     plt.figure(figsize=(12, 6))
-#     plt.plot(
-#         df["data"],
-#         df["rework_rate_total"],
-#         marker="o",
-#         linestyle="-",
-#         color="b",
-#         label="Rework Rate Geral",
-#     )
-#     plt.plot(
-#         df["data"],
-#         df["rework_rate_recent"],
-#         marker="o",
-#         linestyle="--",
-#         color="r",
-#         label="Rework Rate (Últimos 21 dias)",
-#     )
-
-#     # 📌 Melhorar visualização do eixo X
-#     plt.xticks(rotation=45, ticks=df["data"][:: max(1, len(df) // 10)])
-
-#     # 📌 Labels e título
-#     plt.xlabel("Data")
-#     plt.ylabel("Rework Rate (%)")
-#     plt.title("Evolução do Rework Rate ao longo do tempo")
-#     plt.grid()
-#     plt.legend()
-
-#     # 📌 Salvar gráfico
-#     plt.savefig("rework_rate.png", dpi=300)
-#     print("📊 Gráfico salvo como rework_rate.png")
+        print("\n📊 **RESULTADOS FINAIS:**")
+        print(f"🔹 Total de Commits analisados: {total_commits}")
+        print(f"🔹 Total de Linhas Analisadas: {total_lines_analyzed}")
+        print(f"🔹 Total de Linhas de Retrabalho: {total_lines_rework}")
+        print(
+            f"🔹 Total de Linhas de Retrabalho nos últimos {REWORK_DAYS} dias: {total_lines_rework_recent}"
+        )
+        print(f"🔹 Rework Rate Geral: {average_rework_rate:.2f}%")
+        print(
+            f"🔹 Rework Rate nos últimos {REWORK_DAYS} dias: {average_rework_rate_recent:.2f}%"
+        )
+    else:
+        print("⚠️ Nenhum commit foi analisado.")
 
 
 if __name__ == "__main__":
     commits = get_commits(OWNER, REPO, "main")
     analyze_rework(commits)
-    # generate_graph()
