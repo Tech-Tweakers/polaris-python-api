@@ -4064,5 +4064,17 @@
         "arquivos_modificados": [
             "rework_analysis.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "0dac08eefc97409654c95fdb4ac0e9fc279dcd8b",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
     }
 ]
