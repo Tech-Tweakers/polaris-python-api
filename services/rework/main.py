@@ -141,18 +141,28 @@ def analyze_rework(commits):
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
 
 
+json_file = "rework_analysis.json"
+
+def load_json(filename):
+    """Carrega os dados do JSON."""
+    with open(filename, "r") as f:
+        return json.load(f)
+
 def generate_graph():
-    """Gera um gráfico com base no histórico salvo no JSON."""
+    """Gera um gráfico com base no JSON existente."""
     rework_data = load_json(json_file)
 
+    # 📌 Criar um DataFrame a partir dos dados
     df = pd.DataFrame(rework_data)
+
+    # 📌 Converter a data para formato datetime e ordenar
     df["data"] = pd.to_datetime(df["data"])
     df = df.sort_values("data")
 
     # 📌 Remover duplicatas mantendo o último valor registrado para cada data
     df = df.drop_duplicates(subset="data", keep="last")
 
-    # 📌 Criar um intervalo de datas contínuo desde o primeiro commit até hoje
+    # 📌 Criar um intervalo contínuo de datas desde o primeiro commit até hoje
     date_range = pd.date_range(start=df["data"].min(), end=datetime.utcnow().strftime("%Y-%m-%d"))
 
     # 📌 Preencher dias vazios com o último valor conhecido
@@ -160,16 +170,26 @@ def generate_graph():
     df.rename(columns={"index": "data"}, inplace=True)
     df["data"] = df["data"].dt.strftime("%Y-%m-%d")
 
+    # 📌 Aplicar média móvel para suavizar oscilações extremas
+    df["rework_rate_total"] = df["rework_rate_total"].rolling(window=3, min_periods=1).mean()
+    df["rework_rate_recent"] = df["rework_rate_recent"].rolling(window=3, min_periods=1).mean()
+
+    # 📊 Criar o gráfico
     plt.figure(figsize=(12, 6))
     plt.plot(df["data"], df["rework_rate_total"], marker="o", linestyle="-", color="b", label="Rework Rate Geral")
     plt.plot(df["data"], df["rework_rate_recent"], marker="o", linestyle="--", color="r", label="Rework Rate (Últimos 21 dias)")
 
+    # 📌 Melhorar visualização do eixo X
     plt.xticks(rotation=45, ticks=df["data"][::max(1, len(df) // 10)])
+    
+    # 📌 Labels e título
     plt.xlabel("Data")
     plt.ylabel("Rework Rate (%)")
     plt.title("Evolução do Rework Rate ao longo do tempo")
     plt.grid()
     plt.legend()
+
+    # 📌 Salvar gráfico
     plt.savefig("rework_rate.png", dpi=300)
     print("📊 Gráfico salvo como rework_rate.png")
 
