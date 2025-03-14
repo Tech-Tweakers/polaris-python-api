@@ -4004,5 +4004,29 @@
         "arquivos_modificados": [
             "services/rework/main.py"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "41066a89b2b1823547a8594d80da5345525e41c0",
+        "total_changes": 20,
+        "rework_changes_total": 20,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 20,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "de0964927172033577e1e261591b33e16f4949ce",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis.json"
+        ]
     }
 ]
