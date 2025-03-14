@@ -9,11 +9,9 @@ import os
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 OWNER = os.getenv("OWNER")
 REPO = os.getenv("REPO")
-
-HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
-
-REWORK_THRESHOLD = 3 
+THRESHOLD = os.getenv("THRESHOLD")
 REWORK_DAYS = 21
+HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
 json_file = f"rework_analysis_{REPO}.json"
 
@@ -129,13 +127,13 @@ def analyze_rework(commits):
                 1
                 for file in changes
                 for line in changes[file]
-                if len(changes[file]) >= REWORK_THRESHOLD
+                if len(changes[file]) >= THRESHOLD
             )
             rework_changes_recent = sum(
                 1
                 for file in changes
                 for line in changes[file]
-                if len(changes[file]) >= REWORK_THRESHOLD
+                if len(changes[file]) >= THRESHOLD
                 and commit_date >= datetime.utcnow() - timedelta(days=REWORK_DAYS)
             )
 
