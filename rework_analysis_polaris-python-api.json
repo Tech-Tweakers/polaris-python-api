@@ -4281,5 +4281,29 @@
         "arquivos_modificados": [
             "rework_analysis_polaris-python-api.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "2a35bed76ed4afbfc3e39a85408e531430691546",
+        "total_changes": 6,
+        "rework_changes_total": 6,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 6,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            ".github/workflows/commits-rework-rate.yml"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "f72cc40754aed6d2b8a11f5d108cf2ace110da47",
+        "total_changes": 12,
+        "rework_changes_total": 12,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 12,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis_polaris-python-api.json"
+        ]
     }
 ]
