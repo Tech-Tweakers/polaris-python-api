@@ -139,9 +139,18 @@ def analyze_rework(commits):
 
 
 def load_json(filename):
-    """Carrega os dados do JSON."""
+    """Carrega os dados do JSON. Se não existir, cria um arquivo vazio."""
+    if not os.path.exists(filename):
+        print(f"⚠️ {filename} não encontrado. Criando um novo arquivo...")
+        with open(filename, "w") as f:
+            json.dump({"last_update": "", "jobs": []}, f, indent=4)
+
     with open(filename, "r") as f:
-        return json.load(f)
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            print(f"⚠️ Erro ao carregar {filename}, recriando arquivo...")
+            return {"last_update": "", "jobs": []}
 
 def generate_graph():
     """Gera um gráfico com base no JSON existente."""
