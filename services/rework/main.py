@@ -10,6 +10,9 @@ import argparse
 
 # 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+OWNER = os.getenv("OWNER")
+REPO = os.getenv("REPO")
+
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
 # 🔧 Parâmetros para definir retrabalho

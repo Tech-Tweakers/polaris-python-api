@@ -40,6 +40,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          export OWNER="Tech-Tweakers"
+          export REPO="polaris-python-api"
           python services/rework/main.py --repo "${{ github.event.inputs.repo }}" \
                                     --branch "${{ github.event.inputs.branch }}" \
                                     --threshold "${{ github.event.inputs.threshold }}"
