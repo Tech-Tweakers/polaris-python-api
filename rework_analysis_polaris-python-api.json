@@ -4305,5 +4305,41 @@
         "arquivos_modificados": [
             "rework_analysis_polaris-python-api.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "5a1f27ac6f838e66aef6daa68ce063332fe4faff",
+        "total_changes": 2,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "50889338754f4bc94fc6e16623d44dd8eb6b9707",
+        "total_changes": 7,
+        "rework_changes_total": 0,
+        "rework_rate_total": 0.0,
+        "rework_changes_recent": 0,
+        "rework_rate_recent": 0.0,
+        "arquivos_modificados": [
+            "services/rework/main.py"
+        ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "4fa4a53bc122853e5dbd81d48411c92fa9e7ae58",
+        "total_changes": 17,
+        "rework_changes_total": 17,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 17,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis_polaris-python-api.json"
+        ]
     }
 ]
