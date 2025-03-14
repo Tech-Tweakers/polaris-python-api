@@ -4341,5 +4341,17 @@
         "arquivos_modificados": [
             "rework_analysis_polaris-python-api.json"
         ]
+    },
+    {
+        "data": "2025-03-14",
+        "sha": "03f8e36ba2be115bf8a096ca90fd54967a75677f",
+        "total_changes": 21,
+        "rework_changes_total": 21,
+        "rework_rate_total": 100.0,
+        "rework_changes_recent": 21,
+        "rework_rate_recent": 100.0,
+        "arquivos_modificados": [
+            "rework_analysis_polaris-python-api.json"
+        ]
     }
 ]
