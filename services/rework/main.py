@@ -6,28 +6,38 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import os
 
+# 🔧 Configuração (token vem dos secrets do GitHub)
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 OWNER = os.getenv("OWNER")
 REPO = os.getenv("REPO")
 
 HEADERS = {"Authorization": f"token {GITHUB_TOKEN}"}
 
-REWORK_THRESHOLD = 3
-REWORK_DAYS = 21
+# 🔧 Parâmetros para definir retrabalho
+REWORK_THRESHOLD = 3  # Número mínimo de alterações para contar como retrabalho
+REWORK_DAYS = 21  # Período máximo para considerar um ofensor recente
 
-json_file = f"rework_analysis-{REPO}.json"
+# 🔧 Arquivo JSON para armazenar histórico completo
+json_file = "rework_analysis.json"
 
 
 def load_json(filename):
-    """Carrega JSON existente ou cria um novo."""
+    """Carrega JSON existente ou cria um novo como uma lista vazia."""
     if os.path.exists(filename) and os.path.getsize(filename) > 0:
         with open(filename, "r") as f:
             try:
-                return json.load(f)
+                data = json.load(f)
+                if isinstance(data, list):
+                    return data  # Retorna como lista (correto)
+                else:
+                    print(f"⚠️ {filename} estava no formato errado. Recriando...")
             except json.JSONDecodeError:
                 print(f"⚠️ Erro ao carregar {filename}, recriando arquivo...")
-                return []
-    return []
+    
+    # Se deu erro ou estava no formato errado, cria um JSON válido
+    with open(filename, "w") as f:
+        json.dump([], f, indent=4)
+    return []  # Retorna lista vazia para evitar erro no append()
 
 
 def save_json(filename, data):
@@ -90,8 +100,8 @@ def get_commit_changes(owner, repo, sha):
 
 
 def analyze_rework(commits):
-    """Armazena no JSON cada commit com todas as informações necessárias para cálculo de métricas futuras."""
-    rework_data = load_json(json_file)
+    """Analisa commits e salva no JSON."""
+    rework_data = load_json(json_file)  # Agora sempre retorna uma lista
 
     existing_shas = {entry["sha"] for entry in rework_data if "sha" in entry}
 
@@ -138,19 +148,12 @@ def analyze_rework(commits):
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
 
 
-def load_json(filename):
-    """Carrega os dados do JSON. Se não existir, cria um arquivo vazio."""
-    if not os.path.exists(filename):
-        print(f"⚠️ {filename} não encontrado. Criando um novo arquivo...")
-        with open(filename, "w") as f:
-            json.dump({"last_update": "", "jobs": []}, f, indent=4)
+json_file = "rework_analysis.json"
 
+def load_json(filename):
+    """Carrega os dados do JSON."""
     with open(filename, "r") as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            print(f"⚠️ Erro ao carregar {filename}, recriando arquivo...")
-            return {"last_update": "", "jobs": []}
+        return json.load(f)
 
 def generate_graph():
     """Gera um gráfico com base no JSON existente."""
