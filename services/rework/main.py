@@ -127,13 +127,13 @@ def analyze_rework(commits):
                 1
                 for file in changes
                 for line in changes[file]
-                if len(changes[file]) >= THRESHOLD
+                if len(changes[file]) >= int(THRESHOLD)
             )
             rework_changes_recent = sum(
                 1
                 for file in changes
                 for line in changes[file]
-                if len(changes[file]) >= THRESHOLD
+                if len(changes[file]) >= int(THRESHOLD)
                 and commit_date >= datetime.utcnow() - timedelta(days=REWORK_DAYS)
             )
 
