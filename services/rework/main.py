@@ -96,10 +96,16 @@ def analyze_rework(commits):
     """Armazena no JSON cada commit com todas as informações necessárias para cálculo de métricas futuras."""
     rework_data = load_json(json_file)
 
+    existing_shas = {entry["sha"] for entry in rework_data if "sha" in entry}
+
     for i, commit in enumerate(commits, 1):
         sha = commit["sha"]
         date = commit["commit"]["author"]["date"]
         commit_date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+
+        if sha in existing_shas:
+            print(f"🔄 Commit {sha[:7]} já analisado, pulando...")
+            continue
 
         print(f"\n🔹 [{i}/{len(commits)}] Processando commit {sha[:7]} ({date})")
 
@@ -129,10 +135,7 @@ def analyze_rework(commits):
             "arquivos_modificados": list(changes.keys())
         }
 
-        # Evitar duplicação no JSON
-        existing_shas = {entry["sha"] for entry in rework_data if "sha" in entry}
-        if sha not in existing_shas:
-            rework_data.append(new_entry)
+        rework_data.append(new_entry)
 
     save_json(json_file, rework_data)
     print(f"📊 JSON atualizado com histórico completo de commits: {json_file}")
