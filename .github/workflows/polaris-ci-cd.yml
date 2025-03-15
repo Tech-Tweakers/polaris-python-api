@@ -82,7 +82,7 @@ jobs:
 
   create-pr:
     name: 🔀 Criar PR para Main
-    # needs: [test-lint-polaris-api, test-lint-polaris-telegram]
+    needs: [test-lint-polaris-api, test-lint-polaris-telegram]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref_name, 'feature/')
     steps:
