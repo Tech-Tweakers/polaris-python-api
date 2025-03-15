@@ -46,18 +46,20 @@ def log_info(message: str):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logging.info(f"🔹 [{timestamp}] {message}")
 
+
 def log_success(message: str):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logging.info(f"✅ [{timestamp}] {message}")
+
 
 def log_warning(message: str):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logging.warning(f"⚠️ [{timestamp}] {message}")
 
+
 def log_error(message: str):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logging.error(f"❌ [{timestamp}] {message}")
-
 
 
 load_dotenv()
@@ -168,7 +170,9 @@ app = FastAPI(lifespan=lifespan)
 
 
 class InferenceRequest(BaseModel):
-    prompt: str = Field(..., min_length=1, description="Texto de entrada para inferência")
+    prompt: str = Field(
+        ..., min_length=1, description="Texto de entrada para inferência"
+    )
     session_id: Optional[str] = "default_session"
 
     @validator("prompt")
@@ -180,16 +184,21 @@ class InferenceRequest(BaseModel):
 
 def get_memories(session_id):
     """Recupera memórias armazenadas no MongoDB, limitando a um período de 30 dias."""
-    cutoff_date = datetime.utcnow() - timedelta(days=30)  # Recupera apenas os últimos 30 dias
-    memories = collection.find(
-        {"session_id": session_id, "timestamp": {"$gte": cutoff_date}}
-    ).sort("timestamp", -1).limit(MONGODB_HISTORY)
+    cutoff_date = datetime.utcnow() - timedelta(
+        days=30
+    )  # Recupera apenas os últimos 30 dias
+    memories = (
+        collection.find({"session_id": session_id, "timestamp": {"$gte": cutoff_date}})
+        .sort("timestamp", -1)
+        .limit(MONGODB_HISTORY)
+    )
 
     texts = [mem["text"] for mem in memories]
-    log_info(f"📌 {len(texts)} memórias recuperadas para sessão {session_id} (últimos 30 dias).")
+    log_info(
+        f"📌 {len(texts)} memórias recuperadas para sessão {session_id} (últimos 30 dias)."
+    )
 
     return texts
-
 
 
 def get_recent_memories(session_id):
@@ -314,10 +323,14 @@ def trim_langchain_memory(session_id):
         history = memory_store[session_id].chat_memory.messages
 
         if len(history) > LANGCHAIN_HISTORY:
-            log_warning(f"🧹 Memória cheia para sessão {session_id}, removendo mensagens antigas...")
+            log_warning(
+                f"🧹 Memória cheia para sessão {session_id}, removendo mensagens antigas..."
+            )
             memory_store[session_id].chat_memory.messages = history[-LANGCHAIN_HISTORY:]
 
-            log_info(f"📂 Memória ajustada, mantendo as últimas {LANGCHAIN_HISTORY} mensagens.")
+            log_info(
+                f"📂 Memória ajustada, mantendo as últimas {LANGCHAIN_HISTORY} mensagens."
+            )
 
 
 from langchain.schema import HumanMessage, AIMessage
@@ -357,7 +370,7 @@ async def inference(request: InferenceRequest):
 Usuário: {request.prompt}
 
 Polaris:"""
-    
+
     log_info(f"📝 Prompt final enviado ao modelo:\n{full_prompt}")
 
     resposta = llm.invoke(full_prompt)
