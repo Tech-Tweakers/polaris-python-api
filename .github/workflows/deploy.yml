@@ -204,6 +204,8 @@ jobs:
               ${{ secrets.SERVER_USER }}@localhost <<EOF
           set -e  # Interrompe o script se houver erro
           export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          export TELEGRAM_BOT_PORT=${{ secrets.TELEGRAM_BOT_PORT}}
+          export NGROK_URL=${{secrets.NGROK_URL}}
           bash /home/${{ secrets.SERVER_USER }}/polaris-prod/polaris_setup/setup_ngrok.sh
           EOF
 
