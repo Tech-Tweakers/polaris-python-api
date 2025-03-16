@@ -162,6 +162,7 @@ llm = LlamaRunnable(model_path=MODEL_PATH)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     llm.load()
+    store_instruction_prompt()  # Armazena o prompt vetorizado ao iniciar
     yield
     llm.close()
 
@@ -283,13 +284,15 @@ def save_to_mongo(user_input, session_id):
         log_error(f"Erro ao salvar no MongoDB: {str(e)}")
 
 
-def load_prompt_from_file(file_path="polaris_prompt.txt"):
+def store_instruction_prompt():
+    """Lê o prompt do arquivo, armazena no LangChain e só atualiza se houver mudança."""
+    prompt_path = "polaris_prompt.txt"
     try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            return file.read().strip()
+        with open(prompt_path, "r", encoding="utf-8") as file:
+            new_prompt = file.read().strip()
     except FileNotFoundError:
-        log_warning(f"Arquivo {file_path} não encontrado! Usando um prompt padrão.")
-        return """\
+        log_warning(f"Arquivo {prompt_path} não encontrado! Usando um prompt padrão.")
+        new_prompt = """\
         ### Instruções:
         Você é Polaris, um assistente inteligente.
         Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
@@ -297,6 +300,33 @@ def load_prompt_from_file(file_path="polaris_prompt.txt"):
 
         Agora, aqui está a conversa atual:
         """
+
+    # Verifica se já temos o prompt armazenado no vetorstore
+    existing_docs = vectorstore.similarity_search("INSTRUCTION_PROMPT", k=1)
+    if existing_docs and existing_docs[0].page_content == new_prompt:
+        log_info("📌 O prompt já está atualizado no LangChain. Nenhuma alteração necessária.")
+        return
+
+    # Se o prompt mudou, armazenamos no vetorstore
+    vectorstore.add_texts([new_prompt], metadatas=[{"type": "instruction_prompt"}])
+    log_success("✅ Prompt de instrução armazenado/vetorizado no LangChain!")
+
+
+def get_instruction_prompt():
+    """Recupera o prompt vetorizado armazenado no LangChain."""
+    docs = vectorstore.similarity_search("INSTRUCTION_PROMPT", k=1)
+    if docs:
+        return docs[0].page_content
+
+    log_warning("⚠️ Nenhum prompt encontrado no LangChain! Usando fallback.")
+    return """\
+    ### Instruções:
+    Você é Polaris, um assistente inteligente.
+    Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
+    Se não souber a resposta, seja honesto e não invente informações.
+
+    Agora, aqui está a conversa atual:
+    """
 
 
 def load_keywords_from_file(file_path="keywords.txt"):
@@ -359,8 +389,9 @@ async def inference(request: InferenceRequest):
     if recent_memories:
         context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
+    prompt_instrucoes = get_instruction_prompt()
+
     context = "\n\n".join(context_pieces)
-    prompt_instrucoes = load_prompt_from_file()
     full_prompt = f"""{prompt_instrucoes}
 
 --- CONTEXTO ---
