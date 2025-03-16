@@ -1,5 +1,9 @@
 fastapi
 uvicorn
 requests
+requests-mock
 python-dotenv
 httpx
+pytest-asyncio
+aioresponses
+python-telegram-bot

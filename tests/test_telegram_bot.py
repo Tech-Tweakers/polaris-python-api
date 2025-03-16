@@ -1,83 +1,84 @@
+import os
 import pytest
-from unittest.mock import patch, MagicMock
-from fastapi.testclient import TestClient
-from telegram_bot.main import app, send_message
+import requests
+import requests_mock
+from dotenv import load_dotenv
+from telegram import Update, Message, Chat
+from telegram.ext import Application, CallbackContext
+from unittest.mock import AsyncMock, MagicMock
+from telegram_bot.main import start, handle_message  # Import correto do seu bot
 
-# Cliente de teste para FastAPI
-client = TestClient(app)
+# 🔧 Carregar variáveis de ambiente
+load_dotenv()
 
+POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://mocked-api/polaris")
 
-@pytest.fixture
-def mock_polaris_response():
-    """Mocka a resposta da API Polaris"""
-    with patch("telegram_bot.main.requests.post") as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"resposta": "Resposta da Polaris"}
-        mock_post.return_value = mock_response
-        yield mock_post
+# Configuração do pytest para testes assíncronos
+pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture
-def mock_telegram_response():
-    """Mocka a resposta do envio de mensagem do Telegram"""
-    with patch("telegram_bot.main.requests.post") as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_post.return_value = mock_response
-        yield mock_post
+def mock_update():
+    """Cria um mock de Update do Telegram"""
+    message = MagicMock(spec=Message)
+    message.chat_id = 12345
+    message.text = "Teste Polaris"
+    message.reply_text = AsyncMock()
+
+    update = MagicMock(spec=Update)
+    update.message = message
+
+    return update
 
 
-@patch("telegram_bot.main.requests.post")
-def test_message_forwarded_to_polaris(mock_post):
-    """Testa se uma mensagem normal é enviada corretamente para a Polaris e a resposta é reenviada ao Telegram"""
+@pytest.fixture
+def mock_context():
+    """Cria um mock de CallbackContext do Telegram"""
+    return MagicMock(spec=CallbackContext)
 
-    # Criamos dois mocks diferentes
-    mock_polaris_response = MagicMock()
-    mock_polaris_response.status_code = 200
-    mock_polaris_response.json.return_value = {"resposta": "Resposta da Polaris"}
 
-    mock_telegram_response = MagicMock()
-    mock_telegram_response.status_code = 200
+async def test_start(mock_update, mock_context):
+    """Testa se o comando /start retorna a resposta correta"""
+    await start(mock_update, mock_context)
 
-    # O primeiro mock será para a Polaris, o segundo para o Telegram
-    mock_post.side_effect = lambda *args, **kwargs: (
-        mock_polaris_response if "inference" in args[0] else mock_telegram_response
+    mock_update.message.reply_text.assert_called_once_with(
+        "🤖 Olá! Meu nome é Polaris e sou sua assistente privada. Como posso ajudar?"
     )
 
-    payload = {
-        "update_id": 123,
-        "message": {"chat": {"id": 456}, "text": "Qual a capital da França?"},
-    }
 
-    response = client.post("/telegram-webhook/", json=payload)
+async def test_handle_message_success(mock_update, mock_context):
+    """Testa se a resposta da Polaris é processada corretamente"""
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, json={"resposta": "Resposta da Polaris"})
 
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+        await handle_message(mock_update, mock_context)
 
-    print("Chamadas registradas:", mock_post.call_args_list)  # Debugging
+        mock_update.message.reply_text.assert_called_once_with("Resposta da Polaris")
 
-    # Captura a URL que foi chamada de fato para evitar erro de hardcoded
-    if mock_post.call_args_list:
-        polaris_call_url = mock_post.call_args_list[0][0][0]  # URL da primeira chamada
-        polaris_call_data = mock_post.call_args_list[0][1]["json"]  # JSON enviado
-        assert (
-            "/inference/" in polaris_call_url
-        ), f"Chamada inesperada: {polaris_call_url}"
-        assert polaris_call_data == {
-            "prompt": "Qual a capital da França?",
-            "session_id": "456",
-        }, f"Payload inesperado: {polaris_call_data}"
 
-        # Testa se a resposta foi enviada ao Telegram sem validar o token na URL
-        telegram_call_url = mock_post.call_args_list[1][0][
-            0
-        ]  # Obtém a URL da segunda chamada
-        assert telegram_call_url.endswith(
-            "/sendMessage"
-        ), f"Chamada inesperada: {telegram_call_url}"
+async def test_handle_message_error(mock_update, mock_context):
+    """Testa se o bot lida corretamente com erro na API da Polaris"""
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, status_code=500)
 
-        # Garante que **duas** chamadas foram feitas (Polaris + Telegram)
-        assert mock_post.call_count == 2
-    else:
-        pytest.fail("Nenhuma chamada a requests.post foi registrada.")
+        await handle_message(mock_update, mock_context)
+
+        mock_update.message.reply_text.assert_called_once_with(
+            "⚠️ Erro ao se comunicar com a Polaris."
+        )
+
+
+async def test_handle_message_no_response(mock_update, mock_context):
+    """Testa quando a Polaris retorna uma resposta vazia"""
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, json={})  # Resposta sem "resposta"
+
+        await handle_message(mock_update, mock_context)
+
+        mock_update.message.reply_text.assert_called_once_with(
+            "⚠️ Erro ao processar a resposta."
+        )
+
+
+if __name__ == "__main__":
+    pytest.main()
