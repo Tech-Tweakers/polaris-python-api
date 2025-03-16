@@ -1,6 +1,7 @@
 fastapi
 uvicorn
 requests
+requests-mock
 python-dotenv
 httpx
 pytest-asyncio

@@ -1,16 +1,17 @@
 import os
 import pytest
 import requests
-import asyncio
+import requests_mock
 from dotenv import load_dotenv
-from aioresponses import aioresponses
 from telegram import Update, Message, Chat
 from telegram.ext import Application, CallbackContext
 from unittest.mock import AsyncMock, MagicMock
-from telegram_bot.main import start, handle_message
+from telegram_bot.main import start, handle_message  # Import correto do seu bot
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-POLARIS_API_URL = os.getenv("POLARIS_API_URL")
+# 🔧 Carregar variáveis de ambiente
+load_dotenv()
+
+POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://mocked-api/polaris")
 
 # Configuração do pytest para testes assíncronos
 pytestmark = pytest.mark.asyncio
@@ -47,10 +48,8 @@ async def test_start(mock_update, mock_context):
 
 async def test_handle_message_success(mock_update, mock_context):
     """Testa se a resposta da Polaris é processada corretamente"""
-    with aioresponses() as mock_requests:
-        mock_requests.post(
-            POLARIS_API_URL, payload={"resposta": "Resposta da Polaris"}
-        )
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, json={"resposta": "Resposta da Polaris"})
 
         await handle_message(mock_update, mock_context)
 
@@ -59,8 +58,8 @@ async def test_handle_message_success(mock_update, mock_context):
 
 async def test_handle_message_error(mock_update, mock_context):
     """Testa se o bot lida corretamente com erro na API da Polaris"""
-    with aioresponses() as mock_requests:
-        mock_requests.post(POLARIS_API_URL, status=500)
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, status_code=500)
 
         await handle_message(mock_update, mock_context)
 
@@ -71,8 +70,8 @@ async def test_handle_message_error(mock_update, mock_context):
 
 async def test_handle_message_no_response(mock_update, mock_context):
     """Testa quando a Polaris retorna uma resposta vazia"""
-    with aioresponses() as mock_requests:
-        mock_requests.post(POLARIS_API_URL, payload={})  # Resposta sem "resposta"
+    with requests_mock.Mocker() as mock_requests:
+        mock_requests.post(POLARIS_API_URL, json={})  # Resposta sem "resposta"
 
         await handle_message(mock_update, mock_context)
 
