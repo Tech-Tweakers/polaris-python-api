@@ -1,6 +1,6 @@
 import time
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -348,7 +348,7 @@ async def inference(request: InferenceRequest):
     if any(kw in request.prompt.lower() for kw in keywords):
         save_to_mongo(request.prompt, session_id)
 
-    trim_langchain_memory()
+    trim_langchain_memory(session_id)
 
     mongo_memories = get_memories(session_id)
     recent_memories = get_recent_memories(session_id)
