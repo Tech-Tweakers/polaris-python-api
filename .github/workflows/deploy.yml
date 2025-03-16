@@ -152,7 +152,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
               -o ProxyCommand="cloudflared access ssh --hostname ${{ secrets.CLOUDFLARE_SSH_HOST }}" \
               -i ~/.ssh/id_polaris \
-              ${{ secrets.SERVER_USER }}@localhost "echo '🔥 Conexão estabelecida!' && ls -l"
+              ${{ secrets.SERVER_USER }}@localhost "echo '🔥 Conexão estabelecida!'"
 
           echo "📌 Configurando servidor e rodando API..."
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
