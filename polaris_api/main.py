@@ -126,40 +126,43 @@ class LlamaRunnable:
             self.llm = None
             log_success("Modelo LLaMA fechado com sucesso!")
 
+    def invoke(self, prompt: str):
+        if self.llm is None:
+            log_error("Erro: Modelo não carregado!")
+            raise HTTPException(status_code=500, detail="Modelo não carregado!")
 
-def invoke(self, prompt: str):
-    if self.llm is None:
-        log_error("Erro: Modelo não carregado!")
-        raise HTTPException(status_code=500, detail="Modelo não carregado!")
+        log_info(
+            f"📜 Enviando prompt ao modelo:\n{prompt[:500]}..."
+        )  # Evita logs longos
 
-    log_info(f"📜 Enviando prompt ao modelo:\n{prompt[:500]}...")  # Evita logs longos
+        start_time = time.time()
+        response = self.llm(
+            prompt,
+            stop=["---", "```"],
+            max_tokens=1024,
+            echo=False,
+            temperature=TEMPERATURE,
+            top_p=TOP_P,
+            top_k=TOP_K,
+            repeat_penalty=FREQUENCY_PENALTY,
+            min_p=MIN_P,
+            n_probs=N_PROBS,
+            seed=SEED,
+        )
+        end_time = time.time()
 
-    start_time = time.time()
-    response = self.llm(
-        prompt,
-        stop=["---", "```"],
-        max_tokens=1024,
-        echo=False,
-        temperature=TEMPERATURE,
-        top_p=TOP_P,
-        top_k=TOP_K,
-        repeat_penalty=FREQUENCY_PENALTY,
-        min_p=MIN_P,
-        n_probs=N_PROBS,
-        seed=SEED,
-    )
-    end_time = time.time()
+        elapsed_time = end_time - start_time
+        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
 
-    elapsed_time = end_time - start_time
-    log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
+        if "choices" in response and response["choices"]:
+            resposta = response["choices"][0]["text"].strip()
+            log_success(
+                f"✅ Resposta gerada: {resposta[:500]}..."
+            )  # Evita logs gigantes
+            return resposta
 
-    if "choices" in response and response["choices"]:
-        resposta = response["choices"][0]["text"].strip()
-        log_success(f"✅ Resposta gerada: {resposta[:500]}...")  # Evita logs gigantes
-        return resposta
-
-    log_error("❌ Erro: Resposta vazia ou inválida!")
-    return "Erro ao gerar resposta."
+        log_error("❌ Erro: Resposta vazia ou inválida!")
+        return "Erro ao gerar resposta."
 
 
 llm = LlamaRunnable(model_path=MODEL_PATH)
