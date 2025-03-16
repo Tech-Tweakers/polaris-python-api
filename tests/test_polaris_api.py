@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 from polaris_api.main import app
+from unittest.mock import patch
 import sys
 import os
 
@@ -83,3 +84,14 @@ async def test_model_not_loaded():
         assert response.json()["detail"] == "Modelo não carregado!"
 
     llm.load()
+
+@pytest.mark.asyncio
+@patch("polaris_api.main.trim_langchain_memory")
+async def test_inference_calls_trim_memory(mock_trim_memory):
+    """Testa se a inferência chama trim_langchain_memory corretamente"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        payload = {"prompt": "Teste chamada trim", "session_id": "user_test"}
+        response = await client.post("/inference/", json=payload)
+
+        assert response.status_code == 200
+        mock_trim_memory.assert_called_once_with("user_test")  # Confirma que foi chamado com o session_id correto
