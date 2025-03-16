@@ -353,15 +353,13 @@ async def inference(request: InferenceRequest):
 
     context = "\n\n".join(context_pieces)
     prompt_instrucoes = load_prompt_from_file()
-    full_prompt = f"""{prompt_instrucoes}
 
---- CONTEXTO ---
-{context}
-
---- CONVERSA ATUAL ---
-Usuário: {request.prompt}
-
-Polaris:"""
+    full_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+    {prompt_instrucoes}<|eot_id|>
+    <|start_header_id|>user<|end_header_id|>
+    {request.prompt}<|eot_id|>
+    <|start_header_id|>assistant<|end_header_id|>
+    """
 
     resposta = llm.invoke(full_prompt)
     save_to_langchain_memory(request.prompt, resposta, session_id)
