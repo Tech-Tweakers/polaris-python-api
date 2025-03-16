@@ -3,3 +3,6 @@ uvicorn
 requests
 python-dotenv
 httpx
+pytest-asyncio
+aioresponses
+python-telegram-bot
