@@ -110,9 +110,7 @@ class LlamaRunnable:
                     batch_size=MODEL_BATCH_SIZE,
                     verbose=False,
                     use_mlock=True,
-                    min_p=0.01,
                     seed=42,
-                    n_probs=3,
                 )
                 log_success("Modelo LLaMA carregado com sucesso!")
         except Exception as e:
@@ -145,8 +143,6 @@ class LlamaRunnable:
             top_p=TOP_P,
             top_k=TOP_K,
             repeat_penalty=FREQUENCY_PENALTY,
-            min_p=MIN_P,
-            n_probs=N_PROBS,
             seed=SEED,
         )
         end_time = time.time()
