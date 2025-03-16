@@ -54,7 +54,9 @@ def send_message(chat_id, text):
     url = f"{TELEGRAM_API_URL}/sendMessage"
     payload = {"chat_id": chat_id, "text": text}
     try:
-        requests.post(url, json=payload, timeout=120)  # 🔥 Tempo máximo de resposta: 10s
+        requests.post(
+            url, json=payload, timeout=120
+        )  # 🔥 Tempo máximo de resposta: 10s
     except requests.Timeout:
         log.warning(f"⚠️ Timeout ao tentar responder {chat_id}.")
     except requests.RequestException as e:
