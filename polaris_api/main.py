@@ -1,13 +1,12 @@
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import Optional
-from pydantic import Field, validator
 from llama_cpp import Llama
 from langchain_chroma import Chroma
 from langchain.memory import ConversationBufferMemory
@@ -43,23 +42,19 @@ logging.basicConfig(
 
 
 def log_info(message: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(f"🔹 [{timestamp}] {message}")
+    logging.info(f"🔹 {message}")
 
 
 def log_success(message: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.info(f"✅ [{timestamp}] {message}")
+    logging.info(f"✅ {message}")
 
 
 def log_warning(message: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.warning(f"⚠️ [{timestamp}] {message}")
+    logging.warning(f"⚠️ {message}")
 
 
 def log_error(message: str):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logging.error(f"❌ [{timestamp}] {message}")
+    logging.error(f"❌ {message}")
 
 
 load_dotenv()
@@ -162,7 +157,6 @@ llm = LlamaRunnable(model_path=MODEL_PATH)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     llm.load()
-    store_instruction_prompt()  # Armazena o prompt vetorizado ao iniciar
     yield
     llm.close()
 
@@ -171,34 +165,20 @@ app = FastAPI(lifespan=lifespan)
 
 
 class InferenceRequest(BaseModel):
-    prompt: str = Field(
-        ..., min_length=1, description="Texto de entrada para inferência"
-    )
+    prompt: str
     session_id: Optional[str] = "default_session"
-
-    @validator("prompt")
-    def validate_prompt(cls, v):
-        if not v.strip():
-            raise ValueError("⚠️ O prompt não pode ser vazio.")
-        return v
 
 
 def get_memories(session_id):
-    """Recupera memórias armazenadas no MongoDB, limitando a um período de 30 dias."""
-    cutoff_date = datetime.utcnow() - timedelta(
-        days=30
-    )  # Recupera apenas os últimos 30 dias
     memories = (
-        collection.find({"session_id": session_id, "timestamp": {"$gte": cutoff_date}})
+        collection.find({"session_id": session_id})
         .sort("timestamp", -1)
         .limit(MONGODB_HISTORY)
     )
-
     texts = [mem["text"] for mem in memories]
     log_info(
-        f"📌 {len(texts)} memórias recuperadas para sessão {session_id} (últimos 30 dias)."
+        f"📌 Recuperadas {len(texts)} memórias do MongoDB para sessão {session_id}."
     )
-
     return texts
 
 
@@ -284,15 +264,13 @@ def save_to_mongo(user_input, session_id):
         log_error(f"Erro ao salvar no MongoDB: {str(e)}")
 
 
-def store_instruction_prompt():
-    """Lê o prompt do arquivo, armazena no LangChain e só atualiza se houver mudança."""
-    prompt_path = "polaris_prompt.txt"
+def load_prompt_from_file(file_path="polaris_prompt.txt"):
     try:
-        with open(prompt_path, "r", encoding="utf-8") as file:
-            new_prompt = file.read().strip()
+        with open(file_path, "r", encoding="utf-8") as file:
+            return file.read().strip()
     except FileNotFoundError:
-        log_warning(f"Arquivo {prompt_path} não encontrado! Usando um prompt padrão.")
-        new_prompt = """\
+        log_warning(f"Arquivo {file_path} não encontrado! Usando um prompt padrão.")
+        return """\
         ### Instruções:
         Você é Polaris, um assistente inteligente.
         Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
@@ -300,33 +278,6 @@ def store_instruction_prompt():
 
         Agora, aqui está a conversa atual:
         """
-
-    # Verifica se já temos o prompt armazenado no vetorstore
-    existing_docs = vectorstore.similarity_search("INSTRUCTION_PROMPT", k=1)
-    if existing_docs and existing_docs[0].page_content == new_prompt:
-        log_info("📌 O prompt já está atualizado no LangChain. Nenhuma alteração necessária.")
-        return
-
-    # Se o prompt mudou, armazenamos no vetorstore
-    vectorstore.add_texts([new_prompt], metadatas=[{"type": "instruction_prompt"}])
-    log_success("✅ Prompt de instrução armazenado/vetorizado no LangChain!")
-
-
-def get_instruction_prompt():
-    """Recupera o prompt vetorizado armazenado no LangChain."""
-    docs = vectorstore.similarity_search("INSTRUCTION_PROMPT", k=1)
-    if docs:
-        return docs[0].page_content
-
-    log_warning("⚠️ Nenhum prompt encontrado no LangChain! Usando fallback.")
-    return """\
-    ### Instruções:
-    Você é Polaris, um assistente inteligente.
-    Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
-    Se não souber a resposta, seja honesto e não invente informações.
-
-    Agora, aqui está a conversa atual:
-    """
 
 
 def load_keywords_from_file(file_path="keywords.txt"):
@@ -347,20 +298,21 @@ def load_keywords_from_file(file_path="keywords.txt"):
         return ["meu nome é", "eu moro em", "eu gosto de"]
 
 
-def trim_langchain_memory(session_id):
-    """Garante que a memória temporária do LangChain não ultrapasse o limite configurado."""
-    if session_id in memory_store:
-        history = memory_store[session_id].chat_memory.messages
+def trim_langchain_memory():
+    try:
+        history = memory.load_memory_variables({})["history"]
+
+        if not isinstance(history, list):
+            return
 
         if len(history) > LANGCHAIN_HISTORY:
-            log_warning(
-                f"🧹 Memória cheia para sessão {session_id}, removendo mensagens antigas..."
-            )
-            memory_store[session_id].chat_memory.messages = history[-LANGCHAIN_HISTORY:]
+            log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
+            memory.chat_memory.messages = history[-LANGCHAIN_HISTORY:]
 
-            log_info(
-                f"📂 Memória ajustada, mantendo as últimas {LANGCHAIN_HISTORY} mensagens."
-            )
+        log_info("📂 Memória temporária ajustada sem perda de formato!")
+
+    except Exception as e:
+        log_error(f"Erro ao ajustar memória temporária do LangChain: {str(e)}")
 
 
 from langchain.schema import HumanMessage, AIMessage
@@ -378,7 +330,7 @@ async def inference(request: InferenceRequest):
     if any(kw in request.prompt.lower() for kw in keywords):
         save_to_mongo(request.prompt, session_id)
 
-    trim_langchain_memory(session_id)
+    trim_langchain_memory()
 
     mongo_memories = get_memories(session_id)
     recent_memories = get_recent_memories(session_id)
@@ -389,9 +341,8 @@ async def inference(request: InferenceRequest):
     if recent_memories:
         context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
-    prompt_instrucoes = get_instruction_prompt()
-
     context = "\n\n".join(context_pieces)
+    prompt_instrucoes = load_prompt_from_file()
     full_prompt = f"""{prompt_instrucoes}
 
 --- CONTEXTO ---
@@ -401,8 +352,6 @@ async def inference(request: InferenceRequest):
 Usuário: {request.prompt}
 
 Polaris:"""
-
-    log_info(f"📝 Prompt final enviado ao modelo:\n{full_prompt}")
 
     resposta = llm.invoke(full_prompt)
     save_to_langchain_memory(request.prompt, resposta, session_id)

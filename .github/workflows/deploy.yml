@@ -19,6 +19,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          
+      - name: 🔄 Buscar todas as tags
+        run: git fetch --tags --force
 
       - name: 🔎 Exibir mensagens de commit recentes
         run: git log --oneline -n 10

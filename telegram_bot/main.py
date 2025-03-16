@@ -53,7 +53,12 @@ async def telegram_webhook(update: TelegramMessage):
 def send_message(chat_id, text):
     url = f"{TELEGRAM_API_URL}/sendMessage"
     payload = {"chat_id": chat_id, "text": text}
-    requests.post(url, json=payload)
+    try:
+        requests.post(url, json=payload, timeout=120)  # 🔥 Tempo máximo de resposta: 10s
+    except requests.Timeout:
+        log.warning(f"⚠️ Timeout ao tentar responder {chat_id}.")
+    except requests.RequestException as e:
+        log.error(f"❌ Erro ao enviar mensagem para {chat_id}: {e}")
 
 
 if __name__ == "__main__":
