@@ -126,6 +126,7 @@ class LlamaRunnable:
             self.llm = None
             log_success("Modelo LLaMA fechado com sucesso!")
 
+
 def invoke(self, prompt: str):
     if self.llm is None:
         log_error("Erro: Modelo não carregado!")
