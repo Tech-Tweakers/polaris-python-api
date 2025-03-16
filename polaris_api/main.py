@@ -60,17 +60,21 @@ def log_error(message: str):
 load_dotenv()
 
 MODEL_PATH = os.getenv("MODEL_PATH")
-NUM_CORES = int(os.getenv("NUM_CORES", 4))
+NUM_CORES = int(os.getenv("NUM_CORES", 16))
 MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE", 512))
 MODEL_BATCH_SIZE = int(os.getenv("MODEL_BATCH_SIZE", 8))
 
-MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY", 0))
-LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY", 0))
+MONGODB_HISTORY = int(os.getenv("MONGODB_HISTORY", 4))
+LANGCHAIN_HISTORY = int(os.getenv("LANGCHAIN_HISTORY", 6))
 
-TEMPERATURE = float(os.getenv("TEMPERATURE", 0.5))
+TEMPERATURE = float(os.getenv("TEMPERATURE", 0.2))
 TOP_P = float(os.getenv("TOP_P", 0.7))
-TOP_K = int(os.getenv("TOP_K", 40))
-FREQUENCY_PENALTY = int(os.getenv("FREQUENCY_PENALTY", 3))
+TOP_K = int(os.getenv("TOP_K", 30))
+FREQUENCY_PENALTY = int(os.getenv("FREQUENCY_PENALTY", 2))
+
+MIN_P = float(os.getenv("MIN_P", 0.01))
+N_PROBS = int(os.getenv("N_PROBS", 3))
+SEED = int(os.getenv("SEED", 42))
 
 MONGO_URI = os.getenv("MONGO_URI")
 
@@ -106,6 +110,9 @@ class LlamaRunnable:
                     batch_size=MODEL_BATCH_SIZE,
                     verbose=False,
                     use_mlock=True,
+                    min_p=0.01,
+                    seed=42,
+                    n_probs=3,
                 )
                 log_success("Modelo LLaMA carregado com sucesso!")
         except Exception as e:
@@ -119,36 +126,39 @@ class LlamaRunnable:
             self.llm = None
             log_success("Modelo LLaMA fechado com sucesso!")
 
-    def invoke(self, prompt: str):
-        if self.llm is None:
-            log_error("Erro: Modelo não carregado!")
-            raise HTTPException(status_code=500, detail="Modelo não carregado!")
+def invoke(self, prompt: str):
+    if self.llm is None:
+        log_error("Erro: Modelo não carregado!")
+        raise HTTPException(status_code=500, detail="Modelo não carregado!")
 
-        log_info(f"📜 Enviando prompt ao modelo:\n{prompt}")
+    log_info(f"📜 Enviando prompt ao modelo:\n{prompt[:500]}...")  # Evita logs longos
 
-        start_time = time.time()
-        response = self.llm(
-            prompt,
-            stop=["---", "```"],
-            max_tokens=1024,
-            echo=False,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            top_k=TOP_K,
-            repeat_penalty=FREQUENCY_PENALTY,
-        )
-        end_time = time.time()
+    start_time = time.time()
+    response = self.llm(
+        prompt,
+        stop=["---", "```"],
+        max_tokens=1024,
+        echo=False,
+        temperature=TEMPERATURE,
+        top_p=TOP_P,
+        top_k=TOP_K,
+        repeat_penalty=FREQUENCY_PENALTY,
+        min_p=MIN_P,
+        n_probs=N_PROBS,
+        seed=SEED,
+    )
+    end_time = time.time()
 
-        elapsed_time = end_time - start_time
-        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
+    elapsed_time = end_time - start_time
+    log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
 
-        if "choices" in response and response["choices"]:
-            resposta = response["choices"][0]["text"].strip()
-            log_success(f"Resposta gerada pelo modelo: {resposta}")
-            return resposta
+    if "choices" in response and response["choices"]:
+        resposta = response["choices"][0]["text"].strip()
+        log_success(f"✅ Resposta gerada: {resposta[:500]}...")  # Evita logs gigantes
+        return resposta
 
-        log_error("Erro: Resposta do modelo vazia ou inválida!")
-        return "Erro ao gerar resposta."
+    log_error("❌ Erro: Resposta vazia ou inválida!")
+    return "Erro ao gerar resposta."
 
 
 llm = LlamaRunnable(model_path=MODEL_PATH)
