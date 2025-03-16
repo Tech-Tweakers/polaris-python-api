@@ -129,7 +129,7 @@ class LlamaRunnable:
         start_time = time.time()
         response = self.llm(
             prompt,
-            stop=["---"],
+            stop=["---", "```"],
             max_tokens=1024,
             echo=False,
             temperature=TEMPERATURE,

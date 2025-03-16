@@ -1,68 +1,56 @@
 import os
 import logging
 import requests
-import uvicorn
-from fastapi import FastAPI
-from pydantic import BaseModel
 from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 
+# 🔧 Carregar variáveis de ambiente
 load_dotenv()
 
-TELEGRAM_API_URL = os.getenv("TELEGRAM_API_URL")
-
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
-app = FastAPI()
-
+# 📝 Configuração de logs
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-
-class TelegramMessage(BaseModel):
-    update_id: int
-    message: dict
+# 🚀 Inicializa a aplicação do bot
+app = Application.builder().token(TELEGRAM_TOKEN).read_timeout(240).write_timeout(240).build()
 
 
-@app.post("/telegram-webhook/")
-async def telegram_webhook(update: TelegramMessage):
-    chat_id = update.message["chat"]["id"]
-    text = update.message.get("text", "")
+async def start(update: Update, context: CallbackContext):
+    """Comando /start"""
+    await update.message.reply_text("🤖 Olá! Meu nome é Polaris e sou sua assistente privada. Como posso ajudar?")
+
+
+async def handle_message(update: Update, context: CallbackContext):
+    """Manipula mensagens enviadas pelo usuário"""
+    chat_id = update.message.chat_id
+    text = update.message.text
 
     log.info(f"📩 Mensagem recebida de {chat_id}: {text}")
 
-    if text.startswith("/start"):
-        reply_text = "🤖 Olá! Meu nome é Polaris e sou sua assistente privada. Como posso ajudar?"
+    # 🔥 Enviar para Polaris
+    response = requests.post(POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)})
+
+    if response.status_code == 200:
+        resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
     else:
-        polaris_response = requests.post(
-            POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)}
-        )
+        resposta = "⚠️ Erro ao se comunicar com a Polaris."
 
-        if polaris_response.status_code == 200:
-            response_data = polaris_response.json()
-            reply_text = response_data.get(
-                "resposta", "⚠️ Erro ao processar a resposta."
-            )
-        else:
-            reply_text = "⚠️ Erro ao se comunicar com a Polaris."
-
-    # Enviar a resposta de volta para o Telegram
-    send_message(chat_id, reply_text)
-    return {"status": "ok"}
+    # 🔥 Responde ao usuário
+    await update.message.reply_text(resposta)
 
 
-def send_message(chat_id, text):
-    url = f"{TELEGRAM_API_URL}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text}
-    try:
-        requests.post(
-            url, json=payload, timeout=120
-        )  # 🔥 Tempo máximo de resposta: 10s
-    except requests.Timeout:
-        log.warning(f"⚠️ Timeout ao tentar responder {chat_id}.")
-    except requests.RequestException as e:
-        log.error(f"❌ Erro ao enviar mensagem para {chat_id}: {e}")
+def main():
+    """Inicia o bot"""
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    log.info("🚀 Bot está rodando...")
+    app.run_polling()
 
 
 if __name__ == "__main__":
-    log.info("🚀 Iniciando Telegram Bot Handler...")
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    main()
