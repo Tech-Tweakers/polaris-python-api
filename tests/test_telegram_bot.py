@@ -9,9 +9,6 @@ from telegram.ext import Application, CallbackContext
 from unittest.mock import AsyncMock, MagicMock
 from telegram_bot.main import start, handle_message
 
-# 🔧 Carregar variáveis de ambiente
-load_dotenv()
-
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
