@@ -136,7 +136,7 @@ class LlamaRunnable:
         start_time = time.time()
         response = self.llm(
             prompt,
-            stop=["---", "```"],
+            stop=["---"],
             max_tokens=1024,
             echo=False,
             temperature=TEMPERATURE,
@@ -351,11 +351,13 @@ async def inference(request: InferenceRequest):
     if recent_memories:
         context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
-    context = "\n\n".join(context_pieces)
+    context = "\n".join(context_pieces)  # 🔥 Melhor formatação do contexto!
+
     prompt_instrucoes = load_prompt_from_file()
 
-    full_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-    {prompt_instrucoes}<|eot_id|>
+    full_prompt = f"""<|start_header_id|>system<|end_header_id|>
+    {prompt_instrucoes}
+    {context} <|eot_id|>
     <|start_header_id|>user<|end_header_id|>
     {request.prompt}<|eot_id|>
     <|start_header_id|>assistant<|end_header_id|>
