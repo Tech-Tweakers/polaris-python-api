@@ -357,7 +357,7 @@ async def inference(request: InferenceRequest):
 
     full_prompt = f"""<|start_header_id|>system<|end_header_id|>
     {prompt_instrucoes}
-    {context}  # 🔥 O histórico da conversa entra aqui!<|eot_id|>
+    {context} <|eot_id|>
     <|start_header_id|>user<|end_header_id|>
     {request.prompt}<|eot_id|>
     <|start_header_id|>assistant<|end_header_id|>
