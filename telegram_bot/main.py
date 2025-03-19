@@ -11,24 +11,13 @@ from telegram.ext import (
     CallbackContext,
 )
 
-# 🔧 Carregar variáveis de ambiente
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
-# 📝 Configuração de logs
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-
-# 🚀 Inicializa a aplicação do bot
-app = (
-    Application.builder()
-    .token(TELEGRAM_TOKEN)
-    .read_timeout(240)
-    .write_timeout(240)
-    .build()
-)
 
 
 async def start(update: Update, context: CallbackContext):
@@ -45,26 +34,36 @@ async def handle_message(update: Update, context: CallbackContext):
 
     log.info(f"📩 Mensagem recebida de {chat_id}: {text}")
 
-    # 🔥 Enviar para Polaris
-    response = requests.post(
-        POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)}
-    )
-
-    if response.status_code == 200:
+    try:
+        response = requests.post(
+            POLARIS_API_URL,
+            json={"prompt": text, "session_id": str(chat_id)},
+            timeout=30,
+        )
+        response.raise_for_status()
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
-    else:
+    except requests.exceptions.RequestException as e:
+        log.error(f"Erro na requisição: {e}")
         resposta = "⚠️ Erro ao se comunicar com a Polaris."
 
-    # 🔥 Responde ao usuário
+    log.info(f"📤 Resposta enviada para {chat_id}: {resposta}")
     await update.message.reply_text(resposta)
 
 
 def main():
     """Inicia o bot"""
+    app = (
+        Application.builder()
+        .token(TELEGRAM_TOKEN)
+        .read_timeout(240)
+        .write_timeout(240)
+        .build()
+    )
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    log.info("🚀 Bot está rodando...")
+    log.info("🚀 Polaris Bot iniciado com sucesso!")
     app.run_polling()
 
 
