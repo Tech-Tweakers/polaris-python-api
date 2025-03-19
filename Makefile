@@ -90,8 +90,16 @@ start-api:
 .PHONY: start-bot
 start-bot:
 	@echo "🤖 Iniciando Telegram Bot..."
+	@if [ -f telegram_bot/.env ]; then \
+		export TELEGRAM_TOKEN=$$(grep "^TELEGRAM_TOKEN" telegram_bot/.env | cut -d '=' -f2); \
+		export TELEGRAM_API_URL="https://api.telegram.org/bot$${TELEGRAM_TOKEN}"; \
+	else \
+		echo "⚠️  .env do Telegram Bot não encontrado!"; \
+		exit 1; \
+	fi
 	cd telegram_bot && $(PYTHON) main.py
 	@echo "✅ Telegram Bot rodando!"
+
 
 # ------------------------------------------------------------------------------------------
 # 🌍 Configurar Ngrok + Webhook Telegram
@@ -128,7 +136,7 @@ create-env-api:
 		echo "" >> polaris_api/.env; \
 		echo "# Configuração do MongoDB" >> polaris_api/.env; \
 		echo "MONGO_URI=\"mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin\"" >> polaris_api/.env; \
-		echo "✅ .env da API criado! Edite-o se precisar ajustar os valores."; \
+		echo "✅ .env da API criado! Edite-o para ajustar os valores."; \
 	else \
 		echo "✅ .env da API já existe!"; \
 	fi
@@ -142,12 +150,13 @@ create-env-bot:
 	@if [ ! -f telegram_bot/.env ]; then \
 		echo "⚠️  .env do Bot não encontrado! Criando um novo..."; \
 		touch telegram_bot/.env; \
-		echo "TELEGRAM_API_URL=\"https://api.telegram.org/bot7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s\"" >> telegram_bot/.env; \
+		echo "TELEGRAM_TOKEN=\"0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"" >> telegram_bot/.env; \
 		echo "POLARIS_API_URL=\"http://192.168.2.48:8000/inference/\"" >> telegram_bot/.env; \
-		echo "✅ .env do Telegram Bot criado! Edite-o se precisar ajustar os valores."; \
+		echo "✅ .env do Telegram Bot criado! Edite-o para ajustar os valores."; \
 	else \
 		echo "✅ .env do Telegram Bot já existe!"; \
 	fi
+
 
 # ------------------------------------------------------------------------------------------
 # 🌐 Configuração do Ngrok e Webhook do Telegram
@@ -157,10 +166,15 @@ create-env-bot:
 .PHONY: setup-ngrok
 setup-ngrok:
 	@echo "🌐 Exportando variáveis e iniciando Ngrok..."
-	@export TELEGRAM_BOT_PORT=8000; \
-	export TELEGRAM_TOKEN="7892223046:AAFyfB9HHMOtZKAeIEnGomc6tkdQFJKsH7s"; \
-	bash polaris_setup/scripts/setup_ngrok.sh
-	@echo "✅ Ngrok e Webhook configurados!"
+	@if [ -f telegram_bot/.env ]; then \
+		export TELEGRAM_BOT_PORT=8000; \
+		export TELEGRAM_TOKEN=$$(grep "^TELEGRAM_TOKEN" telegram_bot/.env | cut -d '=' -f2); \
+		bash polaris_setup/scripts/setup_ngrok.sh; \
+		echo "✅ Ngrok e Webhook configurados!"; \
+	else \
+		echo "⚠️ .env do Telegram Bot não encontrado! Certifique-se de rodar 'make create-env-bot' primeiro."; \
+		exit 1; \
+	fi
 
 # 🛑 Parar Ngrok
 .PHONY: stop-ngrok

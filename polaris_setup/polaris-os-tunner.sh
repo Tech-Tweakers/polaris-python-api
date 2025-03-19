@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # Polaris-Tuner: Otimizador de Performance para Ubuntu 🚀
-# Criado para elevar o desempenho do sistema ao máximo
+# USE POR SUA PROPRIA CONTA E RISCO!!! <3
 
-set -e  # Interrompe a execução em caso de erro
+set -e
 
-# Cores para saída elegante
 green="\e[32m"
 yellow="\e[33m"
 red="\e[31m"
@@ -13,7 +12,6 @@ nc="\e[0m"
 
 echo -e "${green}🔥 Polaris-Tuner: Otimizador de Performance para Ubuntu 🔥${nc}\n"
 
-# Requer permissões de superusuário
 if [[ $EUID -ne 0 ]]; then
     echo -e "${red}❌ Este script deve ser executado como root!${nc}"
     exit 1
@@ -84,7 +82,6 @@ install_essentials() {
     echo -e "${green}✅ Pacotes instalados!${nc}"
 }
 
-# Execução das funções
 echo -e "${yellow}🚀 Iniciando otimizações...${nc}"
 optimize_cpu
 optimize_memory
