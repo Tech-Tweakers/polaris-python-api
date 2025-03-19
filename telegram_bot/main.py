@@ -38,7 +38,7 @@ async def handle_message(update: Update, context: CallbackContext):
         response = requests.post(
             POLARIS_API_URL,
             json={"prompt": text, "session_id": str(chat_id)},
-            timeout=30,
+            timeout=360,
         )
         response.raise_for_status()
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
