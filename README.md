@@ -165,7 +165,3 @@ make test
 
 ## 📄 Licença
 Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-### 🚀 **Agora é só começar a usar o Polaris AI!** 😃
