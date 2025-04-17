@@ -12,23 +12,25 @@ jobs:
   semantic-version:
     name: 🏷️ Gerar versão semântica
     runs-on: ubuntu-latest
+
     outputs:
       version: ${{ steps.semantic_version.outputs.version }}
+
     steps:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          
-      - name: 🔄 Buscar todas as tags
+          fetch-depth: 0  # necessário pra ver todas as tags e commits
+
+      - name: 🔄 Buscar todas as tags do repositório
         run: git fetch --tags --force
 
-      - name: 🔎 Exibir mensagens de commit recentes
+      - name: 🔍 Exibir últimos commits (debug)
         run: git log --oneline -n 10
 
-      - name: 🔖 Gerar nova versão semântica
+      - name: 🔖 Calcular versão semântica
         id: semantic_version
-        uses: paulhatch/semantic-version@v5.3.0
+        uses: paulhatch/semantic-version@v5
         with:
           tag_prefix: "v"
           major_pattern: "(BREAKING CHANGE|major:)"
@@ -39,17 +41,19 @@ jobs:
           debug: true
           ignore_patterns: "wip|WIP"
 
-      - name: 📌 Criar tag da versão
+      - name: 📌 Criar nova tag (se necessário)
         run: |
-          NEW_VERSION="v${{ steps.semantic_version.outputs.version }}"
-          echo "Nova versão calculada: ${NEW_VERSION}"
+          VERSION="v${{ steps.semantic_version.outputs.version }}"
+          echo "🔢 Versão calculada: $VERSION"
 
-          if git ls-remote --tags origin | grep -q "refs/tags/${NEW_VERSION}"; then
-            echo "🔹 A tag ${NEW_VERSION} já existe. Nada a fazer!"
+          if git tag | grep -q "^${VERSION}$"; then
+            echo "🟡 Tag $VERSION já existe. Nenhuma ação necessária."
           else
-            git tag ${NEW_VERSION}
-            git push origin ${NEW_VERSION}
-            echo "✅ Nova versão ${NEW_VERSION} criada!"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag $VERSION
+            git push origin $VERSION
+            echo "✅ Tag $VERSION criada e enviada com sucesso!"
           fi
 
   deploy:
