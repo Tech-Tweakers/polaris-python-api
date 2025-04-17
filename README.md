@@ -1,7 +1,8 @@
+
 # 🌟 Polaris AI v2 - Assistente Virtual Inteligente
 
 ## 📌 Sobre o Projeto
-Polaris é um **assistente inteligente** que interage com os usuários via **Telegram**, processando mensagens e fornecendo respostas contextuais utilizando um **modelo de linguagem avançado**. O sistema é baseado em **FastAPI, Llama.cpp, LangChain e MongoDB**, garantindo escalabilidade e precisão nas respostas.
+Polaris é um **assistente inteligente** que interage com os usuários via **Telegram**, processando mensagens e fornecendo respostas contextuais utilizando o modelo **llama3**. O sistema é baseado em **FastAPI, Llama.cpp, LangChain e MongoDB**, garantindo escalabilidade e precisão nas respostas.
 
 ---
 
@@ -33,7 +34,7 @@ Polaris segue o **modelo C4**, organizado nos seguintes módulos:
 ## 🔧 Como Executar o Projeto
 ### **1️⃣ Clonar o Repositório**
 ```bash
-git clone https://github.com/seu-usuario/polaris.git
+git clone https://github.com/Tech-Tweakers/polaris-python-api.git
 cd polaris
 ```
 
@@ -45,8 +46,14 @@ Para conectar o Polaris ao Telegram, siga estes passos:
 4. Após a criação, o BotFather fornecerá um **TOKEN de API**.
 5. Copie esse token e adicione no arquivo `.env` conforme o próximo passo.
 
-### **3️⃣ Configurar Variáveis de Ambiente**
-Crie um arquivo `.env` e adicione as configurações necessárias:
+### **3️⃣ Configurar o Bot na pasta `telegram_bot/.env`**
+```env
+TELEGRAM_API_URL="https://api.telegram.org/bot00000000000:AAFCCCCCCCCCCCCBBJKsH7s"
+POLARIS_API_URL="http://192.168.2.48:8000/inference/"
+```
+
+### **3️⃣ Configurar Variáveis de Ambiente Polaris API **
+Crie um arquivo `polaris_api/.env` e adicione as configurações necessárias:
 ```env
 # Configuração do modelo
 MODEL_PATH="../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
@@ -68,19 +75,24 @@ FREQUENCY_PENALTY=3
 MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 ```
 
-### **4️⃣ Subir os Containers com Docker**
+### **4️⃣ Subir os Containers do MongoDB e MongoDB Express com Docker**
 ```bash
+cd polaris_setup
 docker-compose up -d --build
 ```
 
 ### **5️⃣ Testar a API**
-Acesse no navegador ou use `curl`:
+Utilizando `curl`:
 ```bash
-curl http://localhost:8000/ping
+curl -X POST http://localhost:8000/inference/ \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Qual é a capital da França?", "session_id": "teste123"}'
 ```
 Saída esperada:
 ```json
-{"message": "Polaris API online!"}
+{
+  "resposta": "A capital da França é Paris."
+}
 ```
 
 ### **6️⃣ Testar o Bot do Telegram**
@@ -101,67 +113,80 @@ make test
 ### 🔹 Inferência com o Modelo
 **POST** `/inference/`
 - **Descrição**: Envia um prompt para o modelo e recebe uma resposta inteligente.
-- **Body (JSON)**:
-  ```json
-  {
-    "prompt": "Qual é a capital da França?",
-    "session_id": "usuario123"
-  }
-  ```
-- **Resposta (JSON)**:
-  ```json
-  {
-    "resposta": "A capital da França é Paris."
-  }
-  ```
 
 ### 🔹 Webhook do Telegram
 **POST** `/telegram-webhook/`
 - **Descrição**: Recebe mensagens do Telegram e retorna respostas geradas pela Polaris.
-- **Body (JSON)**:
-  ```json
-  {
-    "update_id": 123456,
-    "message": {
-      "chat": { "id": 987654321 },
-      "text": "Olá, Polaris!"
-    }
-  }
-  ```
-- **Resposta (JSON)**:
-  ```json
-  {
-    "status": "ok"
-  }
-  ```
 
 ---
 
-## 📜 Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 ```bash
-📂 polaris
-├── 📂 polaris_api          # API FastAPI
-├── 📂 telegram_bot         # Bot do Telegram
-├── 📂 models               # Modelos LLaMA para inferência
-├── 📂 tests                # Testes unitários
-├── 📜 docker-compose.yml   # Infraestrutura Docker
-├── 📜 Makefile             # Automação de comandos
-└── 📜 README.md            # Documentação inicial
+📂 polaris_api
+│   ├── main.py           # Lógica da API FastAPI
+│   ├── .env              # Variáveis de ambiente
+│   ├── polaris_prompt.txt
+│   └── requirements.txt
+📂 telegram_bot
+│   ├── main.py           # Lógica do Bot
+│   ├── .env
+│   └── requirements.txt
+📂 polaris_setup
+│   ├── docker-compose.yml
+│   ├── setup_ngrok.sh
+│   └── polaris-os-tunner.sh
+📂 models                 # Modelos LLaMA
+📂 docs                   # Documentação
+📂 tests                  # Testes automatizados
+📄 Makefile               # Comandos automatizados
+📄 local-setup.sh         # Menu interativo de instalação
 ```
 
 ---
 
-## 📌 Tecnologias Utilizadas
-- **Python 3.10**
-- **FastAPI**
-- **Llama.cpp**
-- **LangChain**
-- **MongoDB**
-- **ChromaDB**
-- **Docker & Docker Compose**
-- **PlantUML (Documentação C4)**
+## 🛠️ Setup Interativo e Automação
+
+Para facilitar a instalação e o uso da Polaris, o projeto conta com um menu interativo (`local-setup.sh`) e um `Makefile` com comandos automatizados. Essa abordagem reduz a complexidade da configuração manual e garante que todos os componentes sejam inicializados corretamente.
+
+### ✅ Pré-requisitos
+- Python 3.10+
+- pip
+- docker e docker-compose
+
+### 📦 Instalação com menu interativo
+```bash
+./local-setup.sh
+```
+
+### 📋 Opções disponíveis
+
+| Opção | Descrição |
+|-------|-----------|
+| 1     | Instala dependências via `pip` |
+| 2     | Cria arquivos `.env` para API e Bot |
+| 3     | Baixa o modelo Meta-LLaMA-3 |
+| 4     | Sobe MongoDB e Mongo Express |
+| 5     | Configura Ngrok e Webhook |
+| 6     | Inicia API |
+| 7     | Inicia Bot |
+| 8     | Inicia tudo |
+| 9     | Para tudo |
+| 10    | Reinicia tudo |
+
+### ⚙️ Comandos manuais úteis
+```bash
+make install
+make create-env-api
+make create-env-bot
+make download-model
+make start-db
+make start-api
+make start-bot
+make start-all
+make stop-all
+```
 
 ---
 
 ## 📄 Licença
-Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está licenciado sob a **MIT License**.
