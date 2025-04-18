@@ -119,7 +119,7 @@ create-env-api:
 	@if [ ! -f polaris_api/.env ]; then \
 		echo "⚠️  .env da API não encontrado! Criando um novo..."; \
 		touch polaris_api/.env; \
-		echo "MODEL_PATH=\"../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf\"" >> polaris_api/.env; \
+		echo "MODEL_PATH=\"../models/llama-3-8b-uncensored.Q4_K_M.gguf\"" >> polaris_api/.env; \
 		echo "NUM_CORES=16" >> polaris_api/.env; \
 		echo "MODEL_CONTEXT_SIZE=4096" >> polaris_api/.env; \
 		echo "MODEL_BATCH_SIZE=8" >> polaris_api/.env; \

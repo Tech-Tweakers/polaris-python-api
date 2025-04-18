@@ -5,7 +5,7 @@ from unittest.mock import patch
 import sys
 import os
 
-MODEL_PATH = "../models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf"
+MODEL_PATH = "../models/llama-3-8b-uncensored.Q4_K_M.gguf"
 NUM_CORES = 2
 MODEL_CONTEXT_SIZE = 512
 MODEL_BATCH_SIZE = 8

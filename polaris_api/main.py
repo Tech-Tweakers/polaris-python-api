@@ -16,6 +16,8 @@ from pymongo import MongoClient
 import uvicorn
 import os
 from colorama import Fore, Style, init
+from fastapi import Body
+from typing import Dict, Any
 
 init(autoreset=True)
 TEXT_COLOR = Fore.LIGHTCYAN_EX
@@ -368,6 +370,69 @@ async def inference(request: InferenceRequest):
 
     return {"resposta": resposta}
 
+from fastapi import FastAPI, Body, HTTPException
+from typing import Dict, Any
+import json
+import re  
+
+@app.post("/estruturar-meta/")
+async def estruturar_meta(payload: Dict[str, Any] = Body(...)):
+    meta_curta = payload.get("meta")
+    session_id = payload.get("session_id", "default_session")
+
+    if not meta_curta:
+        raise HTTPException(status_code=400, detail="Campo 'meta' é obrigatório.")
+
+    log_info(f"🧩 Estruturando meta: {meta_curta}")
+
+    # Prompt simplificado e mais direto
+    prompt_estrutura = f"""
+STRICT JSON OUTPUT REQUIRED - FOLLOW THIS EXACT FORMAT:
+
+{{
+  "meta_principal": "string",
+  "categorias": ["string", "string"],
+  "submetas": [
+    {{
+      "descricao": "string",
+      "prazo": "string"
+    }}
+  ],
+  "plano_acao": [
+    {{
+      "acao": "string",
+      "prazo": "string",
+      "prioridade": "string"
+    }}
+  ]
+}}
+
+Input: "{meta_curta}"
+"""
+
+    full_prompt = f"""<|start_header_id|>system<|end_header_id|>
+You are a strict JSON generator. You MUST:
+1. Return ONLY valid JSON
+2. Use double quotes
+3. Follow the EXACT structure provided
+4. No additional text or comments
+5. No trailing commas
+6. Escape special characters properly
+<|eot_id|>
+<|start_header_id|>user<|end_header_id|>
+{prompt_estrutura}<|eot_id|>
+<|start_header_id|>assistant<|end_header_id|>
+"""
+
+    resposta_json = llm.invoke(full_prompt)
+    
+    # Retorna a resposta bruta para análise
+    return {
+        "resposta_bruta": resposta_json,
+        "status": "raw_output"
+    }
+
+    
 
 app.add_middleware(
     CORSMiddleware,
