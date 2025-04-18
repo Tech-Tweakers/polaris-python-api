@@ -11,31 +11,45 @@ from telegram.ext import (
     filters,
     CallbackContext,
 )
+from TTS.api import TTS  # TTS da Coqui.ai
 
-# Carrega variáveis de ambiente
+# Carrega .env
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
-# Logger
+# Logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# Carrega modelo Whisper local
+# Carrega modelo Whisper
 log.info("🧠 Carregando modelo Whisper...")
-model = whisper.load_model("base")  # você pode trocar por "small", "medium" ou "large"
+model = whisper.load_model("base")
+
+# Carrega modelo TTS
+log.info("🗣️ Carregando modelo de voz...")
+tts = TTS(
+    model_name="tts_models/multilingual/multi-dataset/your_tts",
+    progress_bar=False,
+    gpu=False,
+)
+
+
+def gerar_audio(texto: str, path: str):
+    """Gera arquivo de voz a partir de texto"""
+    tts.tts_to_file(text=texto, file_path=path)
 
 
 async def start(update: Update, context: CallbackContext):
-    """Comando /start"""
-    await update.message.reply_text("🤖 Olá! Em que posso ajudar? 💫")
+    await update.message.reply_text(
+        "🤖 Olá! Eu sou a Polaris, sua assistente privada.\n"
+        "Me mande uma mensagem de texto ou um áudio e eu te respondo com amor e inteligência. 💫"
+    )
 
 
 async def handle_message(update: Update, context: CallbackContext):
-    """Manipula mensagens de texto"""
     chat_id = update.message.chat_id
     text = update.message.text
-
     log.info(f"📩 Texto recebido de {chat_id}: {text}")
 
     try:
@@ -50,12 +64,13 @@ async def handle_message(update: Update, context: CallbackContext):
         log.error(f"Erro na requisição: {e}")
         resposta = "⚠️ Erro ao se comunicar com a Polaris."
 
-    log.info(f"📤 Resposta enviada para {chat_id}: {resposta}")
+    log.info(f"📤 Resposta para {chat_id}: {resposta}")
     await update.message.reply_text(resposta)
+
+    # 🔇 Não envia áudio aqui — só texto mesmo.
 
 
 async def handle_audio(update: Update, context: CallbackContext):
-    """Manipula mensagens de voz ou áudio"""
     chat_id = update.message.chat_id
     file = update.message.voice or update.message.audio
 
@@ -78,11 +93,10 @@ async def handle_audio(update: Update, context: CallbackContext):
     try:
         result = model.transcribe(file_path)
         texto_transcrito = result["text"].strip()
-        log.info(f"📝 Transcrição de {chat_id}: {texto_transcrito}")
+        log.info(f"📝 Transcrição: {texto_transcrito}")
 
         await update.message.reply_text(f"🗣️ Transcrição:\n\n{texto_transcrito}")
 
-        # Envia para a Polaris, como se fosse uma mensagem de texto
         response = requests.post(
             POLARIS_API_URL,
             json={"prompt": texto_transcrito, "session_id": str(chat_id)},
@@ -91,16 +105,20 @@ async def handle_audio(update: Update, context: CallbackContext):
         response.raise_for_status()
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
 
-        log.info(f"📤 Resposta da Polaris para {chat_id}: {resposta}")
+        log.info(f"📤 Resposta da Polaris: {resposta}")
         await update.message.reply_text(resposta)
 
+        # 🎧 Resposta em voz (só se veio áudio antes)
+        audio_path = f"audios/resposta_{chat_id}.wav"
+        gerar_audio(resposta, audio_path)
+        await update.message.reply_voice(voice=open(audio_path, "rb"))
+
     except Exception as e:
-        log.error(f"Erro ao transcrever ou enviar para a Polaris: {e}")
-        await update.message.reply_text("⚠️ Ocorreu um erro ao processar o áudio.")
+        log.error(f"Erro no fluxo de áudio: {e}")
+        await update.message.reply_text("⚠️ Erro ao processar o áudio.")
 
 
 def main():
-    """Inicia o bot"""
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
@@ -113,11 +131,9 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_audio))
 
-    log.info("🚀 Polaris Bot iniciado com sucesso!")
+    log.info("🚀 Polaris Bot com audição e fala ativadas!")
     app.run_polling()
 
 
 if __name__ == "__main__":
     main()
-
-#

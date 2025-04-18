@@ -226,6 +226,7 @@ jobs:
 
           echo "📌 Instalando dependências..."
           pip3 install -r requirements.txt
+          sudo apt install -y ffmpeg
 
           echo "📌 Criando serviço systemd para manter o Telegram Bot rodando..."
           cat <<EOL | sudo tee /etc/systemd/system/polaris-telegram-bot.service > /dev/null
