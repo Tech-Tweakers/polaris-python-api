@@ -28,7 +28,9 @@ model = whisper.load_model("base")
 
 # Carrega modelo TTS
 log.info("🗣️ Carregando modelo de voz...")
-tts = TTS(model_name="tts_models/pt/cv-corpus-6/espeak-ng", progress_bar=False, gpu=False)
+tts = TTS(
+    model_name="tts_models/pt/cv-corpus-6/espeak-ng", progress_bar=False, gpu=False
+)
 
 
 def gerar_audio(texto: str, path: str):
