@@ -12,51 +12,42 @@ jobs:
   semantic-version:
     name: 🏷️ Gerar versão semântica
     runs-on: ubuntu-latest
-
     outputs:
       version: ${{ steps.semantic_version.outputs.version }}
-
     steps:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: 🔄 Buscar todas as tags do repositório
+          
+      - name: 🔄 Buscar todas as tags
         run: git fetch --tags --force
 
-      - name: 🔍 Exibir últimos commits (debug)
+      - name: 🔎 Exibir mensagens de commit recentes
         run: git log --oneline -n 10
 
-      - name: 🔖 Calcular versão semântica
+      - name: 🔖 Gerar nova versão semântica
         id: semantic_version
-        uses: paulhatch/semantic-version@v5
+        uses: paulhatch/semantic-version@v5.3.0
         with:
-          # The prefix to use to identify tags
           tag_prefix: "v"
-          major_pattern: "(MAJOR)"
-          major_regexp_flags: ""
-          minor_pattern: "(MINOR)"
-          patch_pattern: "(fix:|patch:)"
+          major_pattern: "(BREAKING CHANGE|major:)"
+          minor_pattern: "(feat:|minor:)"
           change_path: "."
-          minor_regexp_flags: ""
-          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
+          version_format: "${major}.${minor}.${patch}"
           debug: true
-          ignore_patterns: "wip|WIP"
 
-      - name: 📌 Criar nova tag (se necessário)
+      - name: 📌 Criar tag da versão
         run: |
-          VERSION="v${{ steps.semantic_version.outputs.version }}"
-          echo "🔢 Versão calculada: $VERSION"
+          NEW_VERSION="v${{ steps.semantic_version.outputs.version }}"
+          echo "Nova versão calculada: ${NEW_VERSION}"
 
-          if git tag | grep -q "^${VERSION}$"; then
-            echo "🟡 Tag $VERSION já existe. Nenhuma ação necessária."
+          if git ls-remote --tags origin | grep -q "refs/tags/${NEW_VERSION}"; then
+            echo "🔹 A tag ${NEW_VERSION} já existe. Nada a fazer!"
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag $VERSION
-            git push origin $VERSION
-            echo "✅ Tag $VERSION criada e enviada com sucesso!"
+            git tag ${NEW_VERSION}
+            git push origin ${NEW_VERSION}
+            echo "✅ Nova versão ${NEW_VERSION} criada!"
           fi
 
   deploy:
