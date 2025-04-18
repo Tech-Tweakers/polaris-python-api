@@ -32,13 +32,13 @@ Polaris segue o **modelo C4**, organizado nos seguintes módulos:
 ---
 
 ## 🔧 Como Executar o Projeto
-### **1️⃣ Clonar o Repositório**
+### **Clonar o Repositório**
 ```bash
 git clone https://github.com/Tech-Tweakers/polaris-python-api.git
 cd polaris
 ```
 
-### **2️⃣ Criar um Bot no Telegram**
+### **Criar um Bot no Telegram**
 Para conectar o Polaris ao Telegram, siga estes passos:
 1. Acesse o **Telegram** e procure por `@BotFather`.
 2. Envie o comando `/newbot` e siga as instruções.
@@ -46,13 +46,13 @@ Para conectar o Polaris ao Telegram, siga estes passos:
 4. Após a criação, o BotFather fornecerá um **TOKEN de API**.
 5. Copie esse token e adicione no arquivo `.env` conforme o próximo passo.
 
-### **3️⃣ Configurar o Bot na pasta `telegram_bot/.env`**
+### **Configurar o Bot na pasta `telegram_bot/.env`**
 ```env
 TELEGRAM_API_URL="https://api.telegram.org/bot00000000000:AAFCCCCCCCCCCCCBBJKsH7s"
 POLARIS_API_URL="http://192.168.2.48:8000/inference/"
 ```
 
-### **3️⃣ Configurar Variáveis de Ambiente Polaris API **
+### **Configurar Variáveis de Ambiente Polaris API **
 Crie um arquivo `polaris_api/.env` e adicione as configurações necessárias:
 ```env
 # Configuração do modelo
@@ -75,13 +75,13 @@ FREQUENCY_PENALTY=3
 MONGO_URI="mongodb://admin:admin123@localhost:27017/polaris_db?authSource=admin"
 ```
 
-### **4️⃣ Subir os Containers do MongoDB e MongoDB Express com Docker**
+### **Subir os Containers do MongoDB e MongoDB Express com Docker**
 ```bash
 cd polaris_setup
 docker-compose up -d --build
 ```
 
-### **5️⃣ Testar a API**
+### **Testar a API**
 Utilizando `curl`:
 ```bash
 curl -X POST http://localhost:8000/inference/ \
@@ -95,28 +95,8 @@ Saída esperada:
 }
 ```
 
-### **6️⃣ Testar o Bot do Telegram**
+### **Testar o Bot do Telegram**
 Envie uma mensagem para o bot e verifique a resposta!
-
----
-
-## 🧪 Executar Testes
-Para rodar os testes unitários:
-```bash
-make test
-```
-
----
-
-## 🔥 Endpoints Disponíveis
-
-### 🔹 Inferência com o Modelo
-**POST** `/inference/`
-- **Descrição**: Envia um prompt para o modelo e recebe uma resposta inteligente.
-
-### 🔹 Webhook do Telegram
-**POST** `/telegram-webhook/`
-- **Descrição**: Recebe mensagens do Telegram e retorna respostas geradas pela Polaris.
 
 ---
 
