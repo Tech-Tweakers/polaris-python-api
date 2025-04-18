@@ -29,8 +29,7 @@ model = whisper.load_model("base")  # você pode trocar por "small", "medium" ou
 async def start(update: Update, context: CallbackContext):
     """Comando /start"""
     await update.message.reply_text(
-        "🤖 Olá! Eu sou a Polaris, sua assistente privada.\n"
-        "Me mande uma mensagem de texto ou um áudio e eu te respondo com amor e inteligência. 💫"
+        "🤖 Olá! Em que posso ajudar? 💫"
     )
 
 
