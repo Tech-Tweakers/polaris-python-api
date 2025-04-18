@@ -69,7 +69,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r telegram_bot/requirements.txt
-          pip install black pytest
+          pip install black pytest requests_mock
 
       - name: 🎨 Rodar Linter
         run: black --check telegram_bot
