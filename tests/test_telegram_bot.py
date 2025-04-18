@@ -2,14 +2,13 @@ import os
 import pytest
 import requests_mock
 from dotenv import load_dotenv
-from telegram import Update, Message, Voice, Chat
+from telegram import Update, Message, Voice
 from telegram.ext import CallbackContext
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch, mock_open
 
 from telegram_bot.main import start, handle_message, handle_audio
 
 load_dotenv()
-
 POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://mocked-api/polaris")
 
 pytestmark = pytest.mark.asyncio
@@ -35,7 +34,8 @@ def mock_context():
 async def test_start(mock_update, mock_context):
     await start(mock_update, mock_context)
     mock_update.message.reply_text.assert_called_once_with(
-        "🤖 Olá! Em que posso ajudar? 💫"
+        "🤖 Olá! Eu sou a Polaris, sua assistente privada.\n"
+        "Me mande uma mensagem de texto ou um áudio e eu te respondo com amor e inteligência. 💫"
     )
 
 
@@ -64,16 +64,17 @@ async def test_handle_message_no_response(mock_update, mock_context):
         )
 
 
+@patch("telegram_bot.main.gerar_audio")
 @patch("telegram_bot.main.model.transcribe")
 @patch("telegram_bot.main.requests.post")
-@patch("telegram_bot.main.Update")
-async def test_handle_audio_transcription_success(mock_update_class, mock_post, mock_transcribe, mock_context):
-    # Setup
+async def test_handle_audio_transcription_success(mock_post, mock_transcribe, mock_gerar_audio, mock_context):
+    # Mock transcrição e resposta da Polaris
     audio_text = "isto é um teste de áudio"
     mock_transcribe.return_value = {"text": audio_text}
     mock_post.return_value.json.return_value = {"resposta": "Resposta da Polaris"}
     mock_post.return_value.raise_for_status = lambda: None
 
+    # Simula uma mensagem com voz
     message = MagicMock(spec=Message)
     message.chat_id = 12345
     message.voice = MagicMock(spec=Voice, file_id="abc123")
@@ -83,15 +84,18 @@ async def test_handle_audio_transcription_success(mock_update_class, mock_post, 
     update = MagicMock(spec=Update)
     update.message = message
 
+    # Simula download do arquivo de áudio
     file_mock = AsyncMock()
     file_mock.download_to_drive = AsyncMock()
     mock_context.bot.get_file = AsyncMock(return_value=file_mock)
 
-    # Execução
-    await handle_audio(update, mock_context)
+    # Simula envio de áudio de resposta
+    with patch("builtins.open", mock_open(read_data=b"audio")):
+        await handle_audio(update, mock_context)
 
     # Verificações
     assert message.reply_text.call_count == 3
     message.reply_text.assert_any_call("🎧 Transcrevendo o áudio...")
     message.reply_text.assert_any_call(f"🗣️ Transcrição:\n\n{audio_text}")
     message.reply_text.assert_any_call("Resposta da Polaris")
+    mock_gerar_audio.assert_called_once_with("Resposta da Polaris", "audios/resposta_12345.wav")
