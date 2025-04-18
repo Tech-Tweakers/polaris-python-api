@@ -29,7 +29,9 @@ model = whisper.load_model("base")
 # Carrega modelo TTS
 log.info("🗣️ Carregando modelo de voz...")
 tts = TTS(
-    model_name="tts_models/pt/cv-corpus-6/espeak-ng", progress_bar=False, gpu=False
+    model_name="tts_models/pt/tacotron2-DDC/brazilian_portuguese",
+    progress_bar=False,
+    gpu=False,
 )
 
 
