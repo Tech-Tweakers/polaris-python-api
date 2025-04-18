@@ -20,7 +20,7 @@ jobs:
       - name: 📥 Checkout do código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # necessário pra ver todas as tags e commits
+          fetch-depth: 0
 
       - name: 🔄 Buscar todas as tags do repositório
         run: git fetch --tags --force
@@ -32,12 +32,15 @@ jobs:
         id: semantic_version
         uses: paulhatch/semantic-version@v5
         with:
+          # The prefix to use to identify tags
           tag_prefix: "v"
-          major_pattern: "(BREAKING CHANGE|major:)"
-          minor_pattern: "(feat:|minor:)"
+          major_pattern: "(MAJOR)"
+          major_regexp_flags: ""
+          minor_pattern: "(MINOR)"
           patch_pattern: "(fix:|patch:)"
           change_path: "."
-          version_format: "${major}.${minor}.${patch}"
+          minor_regexp_flags: ""
+          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
           debug: true
           ignore_patterns: "wip|WIP"
 
