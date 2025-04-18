@@ -29,7 +29,7 @@ model = whisper.load_model("base")
 # Carrega modelo TTS
 log.info("🗣️ Carregando modelo de voz...")
 tts = TTS(
-    model_name="tts_models/pt/tacotron2-DDC/brazilian_portuguese",
+    model_name="tts_models/multilingual/multi-dataset/your_tts",
     progress_bar=False,
     gpu=False,
 )
