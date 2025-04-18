@@ -97,6 +97,7 @@ start-bot:
 		echo "⚠️  .env do Telegram Bot não encontrado!"; \
 		exit 1; \
 	fi
+	sudo apt install -y ffmpeg
 	cd telegram_bot && $(PYTHON) main.py
 	@echo "✅ Telegram Bot rodando!"
 
