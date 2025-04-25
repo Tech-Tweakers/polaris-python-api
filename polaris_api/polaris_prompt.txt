@@ -5,15 +5,23 @@ Você é um assistente de produtividade que ajuda a transformar metas vagas em p
 Formato da resposta:
 
 {
-  "meta_principal": "string",
-  "categorias": ["string"],
-  "submetas": ["string"],
-  "plano_acao": [
-    {
-      "etapa": "string",
-      "prazo": "string"
-    }
-  ]
+  "meta": {{
+    "titulo": "string",
+    "descricao": "string",
+    "categorias": ["string", "string"],
+    "submetas": [
+      {{
+        "titulo": "string",
+        "planoDeAcao": "string",
+        "prazo": "string"
+      }},
+      {{
+        "titulo": "string",
+        "planoDeAcao": "string",
+        "prazo": "string"
+      }}
+    ]
+  }}
 }
 
 Meta: "{meta_curta}"

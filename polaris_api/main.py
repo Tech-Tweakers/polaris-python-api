@@ -126,42 +126,49 @@ class LlamaRunnable:
             self.llm = None
             log_success("Modelo LLaMA fechado com sucesso!")
 
+    
     def invoke(self, prompt: str):
         if self.llm is None:
             log_error("Erro: Modelo não carregado!")
             raise HTTPException(status_code=500, detail="Modelo não carregado!")
 
-        log_info(
-            f"📜 Enviando prompt ao modelo:\n{prompt[:500]}..."
-        )  # Evita logs longos
+        log_info(f"📜 Enviando prompt ao modelo...")
 
-        start_time = time.time()
-        response = self.llm(
-            prompt,
-            stop=["---"],
-            max_tokens=1024,
-            echo=False,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            top_k=TOP_K,
-            repeat_penalty=FREQUENCY_PENALTY,
-            seed=SEED,
-        )
-        end_time = time.time()
+        try:
+            start_time = time.time()
+            response = self.llm(
+                prompt,
+                stop=["<|eot_id|>", "---"],  # Adicionei mais stop tokens
+                max_tokens=1200,  # Aumentei um pouco para respostas completas
+                echo=False,
+                temperature=0.3,  # Valor moderado para equilibrar criatividade/estrutura
+                top_p=0.85,
+                top_k=40,
+                repeat_penalty=1.1,  # Reduzi um pouco para evitar repetição
+                seed=SEED,
+            )
+            
+            elapsed_time = time.time() - start_time
+            log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
 
-        elapsed_time = end_time - start_time
-        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
-
-        if "choices" in response and response["choices"]:
-            resposta = response["choices"][0]["text"].strip()
-            log_success(
-                f"✅ Resposta gerada: {resposta[:500]}..."
-            )  # Evita logs gigantes
-            return resposta
-
-        log_error("❌ Erro: Resposta vazia ou inválida!")
-        return "Erro ao gerar resposta."
-
+            if "choices" in response and response["choices"]:
+                resposta = response["choices"][0]["text"].strip()
+                # Verificação básica de estrutura
+                if "meta" in resposta and "submetas" in resposta:
+                    log_success("✅ Resposta válida gerada")
+                    return resposta
+                else:
+                    log_warning("⚠️ Resposta incompleta")
+                    return resposta  # Mesmo incompleta, deixamos o front tratar
+                    
+            raise ValueError("Resposta vazia ou inválida")
+            
+        except Exception as e:
+            log_error(f"❌ Erro na geração: {str(e)}")
+            return json.dumps({
+                "error": "Falha na geração",
+                "detail": str(e)
+            })
 
 llm = LlamaRunnable(model_path=MODEL_PATH)
 
@@ -370,54 +377,79 @@ async def inference(request: InferenceRequest):
 
     return {"resposta": resposta}
 
-from fastapi import FastAPI, Body, HTTPException
-from typing import Dict, Any
-import json
-import re  
-
+#inicio endpoint estruturar_meta
 @app.post("/estruturar-meta/")
 async def estruturar_meta(payload: Dict[str, Any] = Body(...)):
     meta_curta = payload.get("meta")
-    session_id = payload.get("session_id", "default_session")
-
     if not meta_curta:
         raise HTTPException(status_code=400, detail="Campo 'meta' é obrigatório.")
 
     log_info(f"🧩 Estruturando meta: {meta_curta}")
 
-    # Prompt simplificado e mais direto
+    # Prompt otimizado com instruções claras em português
     prompt_estrutura = f"""
-STRICT JSON OUTPUT REQUIRED - FOLLOW THIS EXACT FORMAT:
+Você é um especialista em planejamento e produtividade. Sua tarefa é transformar metas vagas em planos estruturados.
 
+❗ REGRAS ESTRITAS:
+1. Responda SOMENTE no formato JSON abaixo
+2. Use EXCLUSIVAMENTE português brasileiro
+3. Todos os campos devem ser preenchidos
+4. Nomes de campos devem seguir o padrão camelCase
+5. Sem comentários ou texto fora do JSON
+
+ESTRUTURA EXATA REQUERIDA:
 {{
-  "meta_principal": "string",
-  "categorias": ["string", "string"],
-  "submetas": [
-    {{
-      "descricao": "string",
-      "prazo": "string"
-    }}
-  ],
-  "plano_acao": [
-    {{
-      "acao": "string",
-      "prazo": "string",
-      "prioridade": "string"
-    }}
-  ]
+  "meta": {{
+    "titulo": "string (reformule a meta de forma SMART)",
+    "descricao": "string (descrição objetiva em 1 linha)",
+    "categorias": ["string", "string (máx 2 categorias)"],
+    "submetas": [
+      {{
+        "titulo": "string (submeta específica)",
+        "planoDeAcao": "string (ação concreta e mensurável)",
+        "prazo": "string (período realista)"
+      }},
+      {{
+        "titulo": "string",
+        "planoDeAcao": "string",
+        "prazo": "string"
+      }}
+    ]
+  }}
 }}
 
-Input: "{meta_curta}"
+EXEMPLO VÁLIDO PARA "Quero ser promovido":
+{{
+  "meta": {{
+    "titulo": "Alcançar posição de Gerente em 12 meses",
+    "descricao": "Desenvolver competências para promoção a Gerente",
+    "categorias": ["carreira", "desenvolvimento"],
+    "submetas": [
+      {{
+        "titulo": "Completar curso de liderança",
+        "planoDeAcao": "Finalizar certificação em gestão de equipes",
+        "prazo": "3 meses"
+      }},
+      {{
+        "titulo": "Aumentar visibilidade",
+        "planoDeAcao": "Apresentar 2 projetos estratégicos por trimestre",
+        "prazo": "6 meses"
+      }}
+    ]
+  }}
+}}
+
+Meta a ser estruturada: "{meta_curta}"
 """
 
     full_prompt = f"""<|start_header_id|>system<|end_header_id|>
-You are a strict JSON generator. You MUST:
-1. Return ONLY valid JSON
-2. Use double quotes
-3. Follow the EXACT structure provided
-4. No additional text or comments
-5. No trailing commas
-6. Escape special characters properly
+Você é um gerador de JSON perfeito. Siga À RISCA:
+1. Formato EXATO fornecido
+2. Apenas português brasileiro
+3. Sem campos vazios
+4. Sem texto fora do JSON
+5. Aspas duplas para strings
+6. Sem vírgulas extras
 <|eot_id|>
 <|start_header_id|>user<|end_header_id|>
 {prompt_estrutura}<|eot_id|>
@@ -425,13 +457,13 @@ You are a strict JSON generator. You MUST:
 """
 
     resposta_json = llm.invoke(full_prompt)
-    
-    # Retorna a resposta bruta para análise
+
     return {
         "resposta_bruta": resposta_json,
         "status": "raw_output"
     }
 
+#final do endpoint estruturar_meta
     
 
 app.add_middleware(

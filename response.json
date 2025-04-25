@@ -1,0 +1,22 @@
+{
+    "meta": {
+        "titulo": "Concluir a maratona de Harry Potter em 3 meses",
+        "descricao": "Aprender a ler todos os livros da série em sequência",
+        "categorias": [
+            "leitura",
+            "diversão"
+        ],
+        "submetas": [
+            {
+                "titulo": "Ler um livro por semana",
+                "planoDeAcao": "Reservar tempo para leitura e priorizar a série",
+                "prazo": "1 mês"
+            },
+            {
+                "titulo": "Revisitar os livros da série",
+                "planoDeAcao": "Releer os livros que não li há muito tempo",
+                "prazo": "2 meses"
+            }
+        ]
+    }
+}
