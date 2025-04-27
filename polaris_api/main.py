@@ -352,15 +352,14 @@ async def inference(request: InferenceRequest):
 
 @app.post("/upload-pdf/")
 async def upload_pdf(
-    file: UploadFile = File(...), 
-    session_id: str = Form("default_session")
+    file: UploadFile = File(...), session_id: str = Form("default_session")
 ):
     try:
         temp_pdf_path = f"temp_uploads/{file.filename}"
         os.makedirs(os.path.dirname(temp_pdf_path), exist_ok=True)
         with open(temp_pdf_path, "wb") as f:
             f.write(await file.read())
-        
+
         log_info(f"📂 PDF recebido para sessão {session_id}: {temp_pdf_path}")
 
         from langchain_community.document_loaders import PyMuPDFLoader
@@ -372,11 +371,12 @@ async def upload_pdf(
 
         for doc in documents:
             vectorstore.add_texts(
-                texts=[doc.page_content],
-                metadatas=[{"session_id": session_id}]
+                texts=[doc.page_content], metadatas=[{"session_id": session_id}]
             )
-        
-        log_success(f"✅ Conteúdo do PDF adicionado ao VectorStore para sessão '{session_id}'!")
+
+        log_success(
+            f"✅ Conteúdo do PDF adicionado ao VectorStore para sessão '{session_id}'!"
+        )
 
         os.remove(temp_pdf_path)
         log_info(f"🗑️ Arquivo temporário removido: {temp_pdf_path}")
