@@ -314,14 +314,31 @@ from langchain.schema import HumanMessage, AIMessage
 @app.post("/inference/")
 async def inference(request: InferenceRequest):
     session_id = request.session_id
+    user_prompt = request.prompt
     log_info(
-        f"📥 Nova solicitação de inferência para sessão {session_id}: {request.prompt}"
+        f"📥 Nova solicitação de inferência para sessão {session_id}: {user_prompt}"
     )
 
     keywords = load_keywords_from_file()
 
-    if any(kw in request.prompt.lower() for kw in keywords):
-        save_to_mongo(request.prompt, session_id)
+    if any(kw in user_prompt.lower() for kw in keywords):
+        save_to_mongo(user_prompt, session_id)
+
+    # 🔥 Novidade: Buscar documentos relevantes no Chroma!
+    try:
+        retrieved_docs = vectorstore.similarity_search(user_prompt, k=3)
+        docs_context = "\n".join([doc.page_content for doc in retrieved_docs])
+        if docs_context:
+            log_info(
+                f"📚 {len(retrieved_docs)} trechos relevantes encontrados no vectorstore."
+            )
+            docs_context = f"📚 Conteúdo relevante dos documentos:\n{docs_context}\n\n"
+        else:
+            docs_context = ""
+            log_info("📚 Nenhum documento relevante encontrado no vectorstore.")
+    except Exception as e:
+        log_error(f"Erro ao buscar no vectorstore: {e}")
+        docs_context = ""
 
     mongo_memories = get_memories(session_id)
     recent_memories = get_recent_memories(session_id)
@@ -332,20 +349,25 @@ async def inference(request: InferenceRequest):
     if recent_memories:
         context_pieces.append("📌 Conversa recente:\n" + recent_memories)
 
-    context = "\n".join(context_pieces)  # 🔥 Melhor formatação do contexto!
+    context = "\n".join(context_pieces)
 
     prompt_instrucoes = load_prompt_from_file()
 
+    # 🔥 Aqui juntamos TUDO
     full_prompt = f"""<|start_header_id|>system<|end_header_id|>
-    {prompt_instrucoes}
-    {context} <|eot_id|>
-    <|start_header_id|>user<|end_header_id|>
-    {request.prompt}<|eot_id|>
-    <|start_header_id|>assistant<|end_header_id|>
-    """
+{prompt_instrucoes}
+
+{docs_context}
+{context}
+
+<|eot_id|>
+<|start_header_id|>user<|end_header_id|>
+{user_prompt}<|eot_id|>
+<|start_header_id|>assistant<|end_header_id|>
+"""
 
     resposta = llm.invoke(full_prompt)
-    save_to_langchain_memory(request.prompt, resposta, session_id)
+    save_to_langchain_memory(user_prompt, resposta, session_id)
 
     return {"resposta": resposta}
 
