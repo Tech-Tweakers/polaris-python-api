@@ -4,9 +4,9 @@ import requests_mock
 from dotenv import load_dotenv
 from telegram import Update, Message, Voice
 from telegram.ext import CallbackContext
+from telegram.ext import MessageHandler, filters
 from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-
-from telegram_bot.main import start, handle_message, handle_audio
+from telegram_bot.main import start, handle_message, handle_audio, handle_pdf
 
 load_dotenv()
 POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://mocked-api/polaris")
@@ -62,6 +62,72 @@ async def test_handle_message_no_response(mock_update, mock_context):
         mock_update.message.reply_text.assert_called_once_with(
             "⚠️ Erro ao processar a resposta."
         )
+
+
+@patch("telegram_bot.main.requests.post")
+async def test_handle_pdf_success(mock_post, mock_context):
+    # Mock resposta da Polaris no upload
+    mock_post.return_value.json.return_value = {"message": "PDF processado com sucesso!"}
+    mock_post.return_value.raise_for_status = lambda: None
+
+    # Simula uma mensagem com documento
+    document = MagicMock()
+    document.file_id = "file123"
+    document.file_name = "teste.pdf"
+
+    message = MagicMock(spec=Message)
+    message.chat_id = 12345
+    message.document = document
+    message.reply_text = AsyncMock()
+
+    update = MagicMock(spec=Update)
+    update.message = message
+
+    # Simula download do arquivo
+    file_mock = AsyncMock()
+    file_mock.download_to_drive = AsyncMock()
+    mock_context.bot.get_file = AsyncMock(return_value=file_mock)
+
+    # Simula envio do arquivo de upload
+    with patch("builtins.open", mock_open(read_data=b"pdfcontent")):
+        await handle_pdf(update, mock_context)
+
+    # Verificações
+    message.reply_text.assert_any_call("📂 Processando o PDF, aguarde...")
+    message.reply_text.assert_any_call("✅ PDF processado com sucesso!")
+
+
+@patch("telegram_bot.main.requests.post")
+async def test_handle_pdf_success(mock_post, mock_context):
+    # Mock resposta da Polaris no upload
+    mock_post.return_value.json.return_value = {"message": "PDF processado com sucesso!"}
+    mock_post.return_value.raise_for_status = lambda: None
+
+    # Simula uma mensagem com documento
+    document = MagicMock()
+    document.file_id = "file123"
+    document.file_name = "teste.pdf"
+
+    message = MagicMock(spec=Message)
+    message.chat_id = 12345
+    message.document = document
+    message.reply_text = AsyncMock()
+
+    update = MagicMock(spec=Update)
+    update.message = message
+
+    # Simula download do arquivo
+    file_mock = AsyncMock()
+    file_mock.download_to_drive = AsyncMock()
+    mock_context.bot.get_file = AsyncMock(return_value=file_mock)
+
+    # Simula envio do arquivo de upload
+    with patch("builtins.open", mock_open(read_data=b"pdfcontent")):
+        await handle_pdf(update, mock_context)
+
+    # Verificações
+    message.reply_text.assert_any_call("📂 Processando o PDF, aguarde...")
+    message.reply_text.assert_any_call("✅ PDF processado com sucesso!")
 
 
 @patch("telegram_bot.main.gerar_audio")

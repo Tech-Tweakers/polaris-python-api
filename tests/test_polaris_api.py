@@ -95,3 +95,42 @@ async def test_inference_calls_trim_memory(mock_trim_memory):
 
         assert response.status_code == 200
         mock_trim_memory.assert_called_once_with("user_test")  # Confirma que foi chamado com o session_id correto
+
+@pytest.mark.asyncio
+async def test_upload_pdf_success(tmp_path):
+    """Testa upload de um PDF válido"""
+    pdf_path = tmp_path / "test.pdf"
+    pdf_path.write_bytes(b"%PDF-1.4 test file content")  # Conteúdo fake de um PDF
+
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        with open(pdf_path, "rb") as f:
+            files = {"file": ("test.pdf", f, "application/pdf")}
+            data = {"session_id": "user_pdf"}
+
+            response = await client.post("/upload-pdf/", files=files, data=data)
+
+    assert response.status_code == 200
+    assert response.json()["message"] == "PDF processado e indexado com sucesso para a sessão!"
+
+@pytest.mark.asyncio
+async def test_upload_pdf_error(monkeypatch, tmp_path):
+    """Testa erro no upload do PDF simulando falha de processamento"""
+
+    # Simula erro no loader
+    def fake_loader(*args, **kwargs):
+        raise Exception("Falha ao processar PDF")
+
+    monkeypatch.setattr("langchain_community.document_loaders.PyMuPDFLoader.load", fake_loader)
+
+    pdf_path = tmp_path / "test.pdf"
+    pdf_path.write_bytes(b"%PDF-1.4 erro proposital")
+
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        with open(pdf_path, "rb") as f:
+            files = {"file": ("test.pdf", f, "application/pdf")}
+            data = {"session_id": "user_pdf_error"}
+
+            response = await client.post("/upload-pdf/", files=files, data=data)
+
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Erro ao processar o PDF."

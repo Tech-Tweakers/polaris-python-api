@@ -125,6 +125,47 @@ async def handle_audio(update: Update, context: CallbackContext):
         await update.message.reply_text("⚠️ Erro ao processar o áudio.")
 
 
+async def handle_pdf(update: Update, context: CallbackContext):
+    chat_id = update.message.chat_id
+    document = update.message.document
+
+    if not document:
+        await update.message.reply_text("⚠️ Não consegui encontrar o arquivo.")
+        return
+
+    log.info(f"📄 Documento recebido de {chat_id}: {document.file_name}")
+
+    file_id = document.file_id
+    new_file = await context.bot.get_file(file_id)
+
+    os.makedirs("uploads", exist_ok=True)
+    file_path = f"uploads/{document.file_name}"
+    await new_file.download_to_drive(file_path)
+
+    log.info(f"📥 PDF salvo em {file_path}")
+    await update.message.reply_text("📂 Processando o PDF, aguarde...")
+
+    try:
+        with open(file_path, "rb") as f:
+            files = {"file": (document.file_name, f, "application/pdf")}
+            data = {"session_id": str(chat_id)}
+            response = requests.post(
+                POLARIS_API_URL.replace("/inference/", "/upload-pdf/"),
+                files=files,
+                data=data,
+                timeout=360,
+            )
+            response.raise_for_status()
+            result = response.json()
+
+        await update.message.reply_text(f"✅ PDF processado com sucesso!")
+        log.info(f"📤 Upload para Polaris OK: {result}")
+
+    except Exception as e:
+        log.error(f"Erro no upload do PDF: {e}")
+        await update.message.reply_text("⚠️ Erro ao processar o PDF.")
+
+
 def main():
     app = (
         Application.builder()
@@ -137,6 +178,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_audio))
+    app.add_handler(MessageHandler(filters.Document.PDF, handle_pdf))
 
     log.info("🚀 Polaris Bot com audição e fala ativadas!")
     app.run_polling()

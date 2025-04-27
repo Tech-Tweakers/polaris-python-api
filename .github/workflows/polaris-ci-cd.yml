@@ -37,7 +37,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r polaris_api/requirements.txt
-          pip install black pytest
+          pip install black pytest python-multipart
 
       - name: 🎨 Rodar Linter
         run: black --check polaris_api
