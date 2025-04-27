@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File, Form
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -347,6 +348,44 @@ async def inference(request: InferenceRequest):
     save_to_langchain_memory(request.prompt, resposta, session_id)
 
     return {"resposta": resposta}
+
+
+@app.post("/upload-pdf/")
+async def upload_pdf(
+    file: UploadFile = File(...), 
+    session_id: str = Form("default_session")
+):
+    try:
+        temp_pdf_path = f"temp_uploads/{file.filename}"
+        os.makedirs(os.path.dirname(temp_pdf_path), exist_ok=True)
+        with open(temp_pdf_path, "wb") as f:
+            f.write(await file.read())
+        
+        log_info(f"📂 PDF recebido para sessão {session_id}: {temp_pdf_path}")
+
+        from langchain_community.document_loaders import PyMuPDFLoader
+
+        loader = PyMuPDFLoader(temp_pdf_path)
+        documents = loader.load()
+
+        log_info(f"📖 {len(documents)} documentos carregados do PDF.")
+
+        for doc in documents:
+            vectorstore.add_texts(
+                texts=[doc.page_content],
+                metadatas=[{"session_id": session_id}]
+            )
+        
+        log_success(f"✅ Conteúdo do PDF adicionado ao VectorStore para sessão '{session_id}'!")
+
+        os.remove(temp_pdf_path)
+        log_info(f"🗑️ Arquivo temporário removido: {temp_pdf_path}")
+
+        return {"message": "PDF processado e indexado com sucesso para a sessão!"}
+
+    except Exception as e:
+        log_error(f"Erro ao processar o PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail="Erro ao processar o PDF.")
 
 
 app.add_middleware(
