@@ -12,7 +12,6 @@ from telegram.ext import (
     CallbackContext,
 )
 from TTS.api import TTS  # TTS da Coqui.ai
-from telegram_bot.main import start, handle_message, handle_audio, handle_pdf
 
 # Carrega .env
 load_dotenv()
