@@ -7,3 +7,5 @@ langchain-chroma
 langchain-huggingface
 langchain-community
 colorama
+pymupdf
+

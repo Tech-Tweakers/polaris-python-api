@@ -147,12 +147,13 @@ async def handle_pdf(update: Update, context: CallbackContext):
 
     try:
         with open(file_path, "rb") as f:
-            files = {"file": (document.file_name, f, "application/pdf")}
-            data = {"session_id": str(chat_id)}
+            files = {
+                "file": (document.file_name, f, "application/pdf"),
+                "session_id": (None, str(chat_id)),
+            }
             response = requests.post(
                 POLARIS_API_URL.replace("/inference/", "/upload-pdf/"),
                 files=files,
-                data=data,
                 timeout=360,
             )
             response.raise_for_status()
@@ -170,8 +171,10 @@ def main():
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
-        .read_timeout(240)
+        .read_timeout(240)  # já tá bom
         .write_timeout(240)
+        .connect_timeout(360)  # <<< ADICIONAR ISSO
+        .pool_timeout(360)  # <<< ADICIONAR ISSO também
         .build()
     )
 
@@ -180,7 +183,7 @@ def main():
     app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_audio))
     app.add_handler(MessageHandler(filters.Document.PDF, handle_pdf))
 
-    log.info("🚀 Polaris Bot com audição e fala ativadas!")
+    log.info("🚀 Polaris Bot com texto, áudio e PDF ativados!")
     app.run_polling()
 
 
