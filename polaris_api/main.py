@@ -153,9 +153,7 @@ class LlamaRunnable:
 
         if "choices" in response and response["choices"]:
             resposta = response["choices"][0]["text"].strip()
-            log_success(
-                f"✅ Resposta gerada: {resposta[:500]}..."
-            ) 
+            log_success(f"✅ Resposta gerada: {resposta[:500]}...")
             return resposta
 
         log_error("❌ Erro: Resposta vazia ou inválida!")
