@@ -59,6 +59,9 @@ def log_error(message: str):
 
 load_dotenv()
 
+CACHED_PROMPT = None
+CACHED_KEYWORDS = None
+
 MODEL_PATH = os.getenv("MODEL_PATH")
 NUM_CORES = int(os.getenv("NUM_CORES", 16))
 MODEL_CONTEXT_SIZE = int(os.getenv("MODEL_CONTEXT_SIZE", 512))
@@ -90,9 +93,6 @@ log_info("Configurando memória do LangChain...")
 embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
 
-history = ChatMessageHistory()
-memory = ConversationBufferMemory(chat_memory=history, return_messages=True)
-
 
 class LlamaRunnable:
     def __init__(self, model_path: str):
@@ -108,9 +108,10 @@ class LlamaRunnable:
                     n_threads=NUM_CORES,
                     n_ctx=MODEL_CONTEXT_SIZE,
                     batch_size=MODEL_BATCH_SIZE,
+                    n_gpu_layers=0,
                     verbose=False,
                     use_mlock=True,
-                    seed=42,
+                    seed=-1,
                 )
                 log_success("Modelo LLaMA carregado com sucesso!")
         except Exception as e:
@@ -152,9 +153,7 @@ class LlamaRunnable:
 
         if "choices" in response and response["choices"]:
             resposta = response["choices"][0]["text"].strip()
-            log_success(
-                f"✅ Resposta gerada: {resposta[:500]}..."
-            )  # Evita logs gigantes
+            log_success(f"✅ Resposta gerada: {resposta[:500]}...")
             return resposta
 
         log_error("❌ Erro: Resposta vazia ou inválida!")
@@ -230,17 +229,17 @@ def save_to_langchain_memory(user_input, response, session_id):
         memory_store[session_id].save_context(
             {"input": user_input}, {"output": response}
         )
-        history = memory.load_memory_variables({})["history"]
+        history = memory_store[session_id].load_memory_variables({})["history"]
 
         if len(history) > LANGCHAIN_HISTORY:
             log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
-            memory.clear()
-            for i in range(len(history) - LANGCHAIN_HISTORY, len(history)):
-                entry = history[i]
-                if isinstance(entry, HumanMessage):
-                    memory.save_context({"input": entry.content}, {"output": ""})
-                elif isinstance(entry, AIMessage):
-                    memory.save_context({"input": "", "output": entry.content})
+
+            trimmed_history = history[-LANGCHAIN_HISTORY:]
+            memory_store[session_id].chat_memory.messages = trimmed_history
+
+            log_info(
+                f"📂 Memória da sessão '{session_id}' ajustada para {LANGCHAIN_HISTORY} mensagens."
+            )
 
         log_success("Memória temporária do LangChain atualizada com sucesso!")
 
@@ -275,54 +274,37 @@ def save_to_mongo(user_input, session_id):
 
 
 def load_prompt_from_file(file_path="polaris_prompt.txt"):
+    global CACHED_PROMPT
+    if CACHED_PROMPT:
+        return CACHED_PROMPT
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            return file.read().strip()
+            CACHED_PROMPT = file.read().strip()
+            return CACHED_PROMPT
     except FileNotFoundError:
-        log_warning(f"Arquivo {file_path} não encontrado! Usando um prompt padrão.")
-        return """\
-        ### Instruções:
-        Você é Polaris, um assistente inteligente.
-        Responda de forma clara e objetiva, utilizando informações do histórico e memórias disponíveis.
-        Se não souber a resposta, seja honesto e não invente informações.
-
-        Agora, aqui está a conversa atual:
-        """
+        log_warning(f"Arquivo {file_path} não encontrado! Usando prompt padrão.")
+        return "### Instruções:\nVocê é Polaris, um assistente inteligente..."
 
 
 def load_keywords_from_file(file_path="keywords.txt"):
-    """Carrega a lista de palavras-chave do arquivo especificado."""
+    global CACHED_KEYWORDS
+    if CACHED_KEYWORDS:
+        return CACHED_KEYWORDS
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            keywords = [
+            CACHED_KEYWORDS = [
                 line.strip().lower() for line in file.readlines() if line.strip()
             ]
             log_info(
-                f"📂 Palavras-chave carregadas do arquivo ({len(keywords)} palavras)."
+                f"📂 Palavras-chave carregadas do arquivo ({len(CACHED_KEYWORDS)} palavras)."
             )
-            return keywords
+            return CACHED_KEYWORDS
     except FileNotFoundError:
         log_warning(
             f"Arquivo {file_path} não encontrado! Usando palavras-chave padrão."
         )
-        return ["meu nome é", "eu moro em", "eu gosto de"]
-
-
-def trim_langchain_memory():
-    try:
-        history = memory.load_memory_variables({})["history"]
-
-        if not isinstance(history, list):
-            return
-
-        if len(history) > LANGCHAIN_HISTORY:
-            log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
-            memory.chat_memory.messages = history[-LANGCHAIN_HISTORY:]
-
-        log_info("📂 Memória temporária ajustada sem perda de formato!")
-
-    except Exception as e:
-        log_error(f"Erro ao ajustar memória temporária do LangChain: {str(e)}")
+        CACHED_KEYWORDS = ["meu nome é", "eu moro em", "eu gosto de"]
+        return CACHED_KEYWORDS
 
 
 from langchain.schema import HumanMessage, AIMessage
@@ -339,8 +321,6 @@ async def inference(request: InferenceRequest):
 
     if any(kw in request.prompt.lower() for kw in keywords):
         save_to_mongo(request.prompt, session_id)
-
-    trim_langchain_memory()
 
     mongo_memories = get_memories(session_id)
     recent_memories = get_recent_memories(session_id)
