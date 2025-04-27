@@ -6,8 +6,7 @@ from telegram import Update, Message, Voice
 from telegram.ext import CallbackContext
 from telegram.ext import MessageHandler, filters
 from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-
-from telegram_bot.main import start, handle_message, handle_audio
+from telegram_bot.main import start, handle_message, handle_audio, handle_pdf
 
 load_dotenv()
 POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://mocked-api/polaris")
