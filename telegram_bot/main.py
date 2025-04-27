@@ -30,20 +30,27 @@ model = whisper.load_model("base")
 log.info("🗣️ Carregando modelo de voz...")
 tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/your_tts",
-    progress_bar=False,
+    progress_bar=True,
     gpu=False,
 )
+print("🔊 Vozes disponíveis:", tts.speakers)
 
 
 def gerar_audio(texto: str, path: str):
     """Gera arquivo de voz a partir de texto"""
-    tts.tts_to_file(text=texto, file_path=path)
+    tts.tts_to_file(
+        text=texto,
+        file_path=path,
+        speaker="female-pt-4\n",
+        language="pt-br",
+        speed=2,
+    )
 
 
 async def start(update: Update, context: CallbackContext):
     await update.message.reply_text(
-        "🤖 Olá! Eu sou a Polaris, sua assistente privada.\n"
-        "Me mande uma mensagem de texto ou um áudio e eu te respondo com amor e inteligência. 💫"
+        "🤖 Olá! Eu sou a Polaris, seja bem vinda(o)!\n"
+        "Me mande uma mensagem de texto ou um áudio e eu te respondo o quanto antes! 💫"
     )
 
 
@@ -88,14 +95,14 @@ async def handle_audio(update: Update, context: CallbackContext):
     await new_file.download_to_drive(file_path)
 
     log.info(f"📥 Áudio salvo em {file_path}")
-    await update.message.reply_text("🎧 Transcrevendo o áudio...")
+    # await update.message.reply_text("🎧 Transcrevendo o áudio...")
 
     try:
         result = model.transcribe(file_path)
         texto_transcrito = result["text"].strip()
         log.info(f"📝 Transcrição: {texto_transcrito}")
 
-        await update.message.reply_text(f"🗣️ Transcrição:\n\n{texto_transcrito}")
+        # await update.message.reply_text(f"🗣️ Transcrição:\n\n{texto_transcrito}")
 
         response = requests.post(
             POLARIS_API_URL,
@@ -106,7 +113,7 @@ async def handle_audio(update: Update, context: CallbackContext):
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
 
         log.info(f"📤 Resposta da Polaris: {resposta}")
-        await update.message.reply_text(resposta)
+        # await update.message.reply_text(resposta)
 
         # 🎧 Resposta em voz (só se veio áudio antes)
         audio_path = f"audios/resposta_{chat_id}.wav"
