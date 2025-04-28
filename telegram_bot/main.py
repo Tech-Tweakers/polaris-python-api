@@ -27,7 +27,7 @@ log.info("🧠 Carregando modelo Whisper...")
 model = whisper.load_model("tiny", in_memory=True)
 
 # Carrega modelo TTS
-log.info("🗣️ Carregando modelo de voz...")
+log.info("🗣️  Carregando modelo de voz...")
 tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/your_tts",
     progress_bar=True,
@@ -171,10 +171,10 @@ def main():
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
-        .read_timeout(240)  # já tá bom
-        .write_timeout(240)
-        .connect_timeout(720)  # <<< ADICIONAR ISSO
-        .pool_timeout(720)  # <<< ADICIONAR ISSO também
+        .read_timeout(2400)
+        .write_timeout(2400)
+        .connect_timeout(2400)
+        .pool_timeout(2400)
         .build()
     )
 

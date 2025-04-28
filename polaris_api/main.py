@@ -348,7 +348,8 @@ async def trim_langchain_memory(session_id):
         bloco_antigo = "\n".join(textos_antigos)
 
         # Cria o prompt de resumo
-        prompt_resumo = f"""Resuma a seguinte conversa em 5 linhas, mantendo o sentido e os fatos:
+        prompt_resumo = f"""<|start_header_id|>system<|end_header_id|>
+        Resuma a seguinte conversa em 5 linhas, mantendo o sentido e os fatos:
 
 {bloco_antigo}
 
