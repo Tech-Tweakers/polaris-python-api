@@ -186,7 +186,6 @@ Responda apenas 'ok'.
     llm.close()
 
 
-
 app = FastAPI(lifespan=lifespan)
 
 
@@ -252,7 +251,9 @@ async def save_to_langchain_memory(user_input, response, session_id):
             log_warning(f"🧹 Memória cheia para sessão '{session_id}', compactando...")
             await trim_langchain_memory(session_id)
 
-        log_success(f"✅ Memória temporária do LangChain atualizada para sessão '{session_id}'!")
+        log_success(
+            f"✅ Memória temporária do LangChain atualizada para sessão '{session_id}'!"
+        )
 
     except Exception as e:
         log_error(f"Erro ao salvar na memória temporária do LangChain: {str(e)}")
@@ -332,7 +333,9 @@ async def trim_langchain_memory(session_id):
         return
 
     try:
-        log_warning(f"✂️ Iniciando compactação da memória LangChain da sessão '{session_id}'...")
+        log_warning(
+            f"✂️ Iniciando compactação da memória LangChain da sessão '{session_id}'..."
+        )
 
         # Junta todas as mensagens antigas em um único texto
         textos_antigos = []
