@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 # Carrega modelo Whisper
 log.info("🧠 Carregando modelo Whisper...")
-model = whisper.load_model("base")
+model = whisper.load_model("tiny",in_memory=True)
 
 # Carrega modelo TTS
 log.info("🗣️ Carregando modelo de voz...")

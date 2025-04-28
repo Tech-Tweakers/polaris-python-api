@@ -167,8 +167,24 @@ llm = LlamaRunnable(model_path=MODEL_PATH)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     llm.load()
+    # Warmup
+    try:
+        log_info("🔥 Fazendo warmup da Polaris...")
+        llm.invoke(
+            f"""<|start_header_id|>system<|end_header_id|>
+Sistema Polaris iniciando. Apenas confirme "ok".
+<|eot_id|>
+<|start_header_id|>user<|end_header_id|>
+Responda apenas 'ok'.
+<|eot_id|>
+<|start_header_id|>assistant<|end_header_id|>
+"""
+        )
+    except Exception as e:
+        log_error(f"Erro no warmup: {str(e)}")
     yield
     llm.close()
+
 
 
 app = FastAPI(lifespan=lifespan)
@@ -220,7 +236,7 @@ def get_recent_memories(session_id):
     return recent_memories
 
 
-def save_to_langchain_memory(user_input, response, session_id):
+async def save_to_langchain_memory(user_input, response, session_id):
     try:
         if session_id not in memory_store:
             memory_store[session_id] = ConversationBufferMemory(
@@ -233,16 +249,10 @@ def save_to_langchain_memory(user_input, response, session_id):
         history = memory_store[session_id].load_memory_variables({})["history"]
 
         if len(history) > LANGCHAIN_HISTORY:
-            log_warning("Memória temporária cheia, removendo mensagens mais antigas...")
+            log_warning(f"🧹 Memória cheia para sessão '{session_id}', compactando...")
+            await trim_langchain_memory(session_id)
 
-            trimmed_history = history[-LANGCHAIN_HISTORY:]
-            memory_store[session_id].chat_memory.messages = trimmed_history
-
-            log_info(
-                f"📂 Memória da sessão '{session_id}' ajustada para {LANGCHAIN_HISTORY} mensagens."
-            )
-
-        log_success("Memória temporária do LangChain atualizada com sucesso!")
+        log_success(f"✅ Memória temporária do LangChain atualizada para sessão '{session_id}'!")
 
     except Exception as e:
         log_error(f"Erro ao salvar na memória temporária do LangChain: {str(e)}")
@@ -308,6 +318,55 @@ def load_keywords_from_file(file_path="keywords.txt"):
         return CACHED_KEYWORDS
 
 
+async def trim_langchain_memory(session_id):
+    """Compacta a memória do LangChain resumindo mensagens antigas."""
+
+    if session_id not in memory_store:
+        return
+
+    memory = memory_store[session_id]
+    history = memory.load_memory_variables({})["history"]
+
+    # Se não ultrapassou o limite, não faz nada
+    if len(history) <= LANGCHAIN_HISTORY:
+        return
+
+    try:
+        log_warning(f"✂️ Iniciando compactação da memória LangChain da sessão '{session_id}'...")
+
+        # Junta todas as mensagens antigas em um único texto
+        textos_antigos = []
+        for msg in history[:-LANGCHAIN_HISTORY]:  # pega tudo, exceto as mais recentes
+            if isinstance(msg, HumanMessage):
+                textos_antigos.append(f"Usuário: {msg.content}")
+            elif isinstance(msg, AIMessage):
+                textos_antigos.append(f"Polaris: {msg.content}")
+
+        bloco_antigo = "\n".join(textos_antigos)
+
+        # Cria o prompt de resumo
+        prompt_resumo = f"""Resuma a seguinte conversa em 5 linhas, mantendo o sentido e os fatos:
+
+{bloco_antigo}
+
+Resumo:"""
+
+        # Gera o resumo usando a própria Polaris
+        resumo = llm.invoke(prompt_resumo)
+
+        # Remove todas as mensagens antigas
+        memory.chat_memory.messages = memory.chat_memory.messages[-LANGCHAIN_HISTORY:]
+
+        # Insere o resumo como nova memória
+        memory.chat_memory.add_user_message("Resumo da conversa anterior:")
+        memory.chat_memory.add_ai_message(resumo.strip())
+
+        log_success(f"✅ Memória da sessão '{session_id}' compactada com sucesso!")
+
+    except Exception as e:
+        log_error(f"Erro ao resumir a memória do LangChain: {str(e)}")
+
+
 from langchain.schema import HumanMessage, AIMessage
 
 
@@ -367,7 +426,7 @@ async def inference(request: InferenceRequest):
 """
 
     resposta = llm.invoke(full_prompt)
-    save_to_langchain_memory(user_prompt, resposta, session_id)
+    await save_to_langchain_memory(user_prompt, resposta, session_id)
 
     return {"resposta": resposta}
 
