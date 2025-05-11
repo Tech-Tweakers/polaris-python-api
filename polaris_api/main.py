@@ -245,11 +245,13 @@ async def save_to_langchain_memory(user_input, response, session_id):
         memory_store[session_id].save_context(
             {"input": user_input}, {"output": response}
         )
-        history = memory_store[session_id].load_memory_variables({})["history"]
+        # history = memory_store[session_id].load_memory_variables({})["history"]
 
-        if len(history) > LANGCHAIN_HISTORY:
-            log_warning(f"🧹 Memória cheia para sessão '{session_id}', compactando...")
-            await trim_langchain_memory(session_id)
+        # if len(history) > LANGCHAIN_HISTORY:
+        #    log_warning(f"🧹 Memória cheia para sessão '{session_id}', compactando...")
+        #    await trim_langchain_memory(session_id)
+
+        trim_langchain_memory_fifo(session_id)
 
         log_success(
             f"✅ Memória temporária do LangChain atualizada para sessão '{session_id}'!"
@@ -317,6 +319,24 @@ def load_keywords_from_file(file_path="keywords.txt"):
         )
         CACHED_KEYWORDS = ["meu nome é", "eu moro em", "eu gosto de"]
         return CACHED_KEYWORDS
+
+def trim_langchain_memory_fifo(session_id):
+    """Mantém apenas as últimas N mensagens na memória do LangChain."""
+
+    if session_id not in memory_store:
+        return
+
+    memory = memory_store[session_id]
+    history = memory.chat_memory.messages
+
+    if len(history) <= LANGCHAIN_HISTORY:
+        return
+
+    # 🧹 Remove o excesso (mensagens mais antigas)
+    excesso = len(history) - LANGCHAIN_HISTORY
+    memory.chat_memory.messages = history[excesso:]
+
+    log_success(f"✅ FIFO aplicado na sessão '{session_id}', memória enxugada.")
 
 
 async def trim_langchain_memory(session_id):
@@ -387,7 +407,6 @@ async def inference(request: InferenceRequest):
     if any(kw in user_prompt.lower() for kw in keywords):
         save_to_mongo(user_prompt, session_id)
 
-    # 🔥 Novidade: Buscar documentos relevantes no Chroma!
     try:
         retrieved_docs = vectorstore.similarity_search(user_prompt, k=3)
         docs_context = "\n".join([doc.page_content for doc in retrieved_docs])
@@ -408,9 +427,9 @@ async def inference(request: InferenceRequest):
 
     context_pieces = []
     if mongo_memories:
-        context_pieces.append("📌 Memória do Usuário:\n" + "\n".join(mongo_memories))
+        context_pieces.append("Memória do Usuário:\n" + "\n".join(mongo_memories))
     if recent_memories:
-        context_pieces.append("📌 Conversa recente:\n" + recent_memories)
+        context_pieces.append("Conversa recente:\n" + recent_memories)
 
     context = "\n".join(context_pieces)
 
