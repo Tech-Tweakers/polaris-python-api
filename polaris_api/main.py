@@ -332,7 +332,6 @@ def trim_langchain_memory_fifo(session_id):
     if len(history) <= LANGCHAIN_HISTORY:
         return
 
-    # 🧹 Remove o excesso (mensagens mais antigas)
     excesso = len(history) - LANGCHAIN_HISTORY
     memory.chat_memory.messages = history[excesso:]
 
@@ -435,7 +434,6 @@ async def inference(request: InferenceRequest):
 
     prompt_instrucoes = load_prompt_from_file()
 
-    # 🔥 Aqui juntamos TUDO
     full_prompt = f"""<|start_header_id|>system<|end_header_id|>
 {prompt_instrucoes}
 
