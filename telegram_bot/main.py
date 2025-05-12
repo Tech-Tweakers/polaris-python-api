@@ -1,7 +1,7 @@
 import os
 import logging
 import requests
-import whisper
+from faster_whisper import WhisperModel
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import (
@@ -11,22 +11,18 @@ from telegram.ext import (
     filters,
     CallbackContext,
 )
-from TTS.api import TTS  # TTS da Coqui.ai
+from TTS.api import TTS
 
-# Carrega .env
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
-# Logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# Carrega modelo Whisper
-log.info("🧠 Carregando modelo Whisper...")
-model = whisper.load_model("tiny", in_memory=True)
+log.info("🧠 Carregando modelo Whisper (faster-whisper)...")
+model = WhisperModel("small", compute_type="int8")
 
-# Carrega modelo TTS
 log.info("🗣️  Carregando modelo de voz...")
 tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/your_tts",
@@ -63,7 +59,7 @@ async def handle_message(update: Update, context: CallbackContext):
         response = requests.post(
             POLARIS_API_URL,
             json={"prompt": text, "session_id": str(chat_id)},
-            timeout=360,
+            timeout=8000,
         )
         response.raise_for_status()
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
@@ -73,8 +69,6 @@ async def handle_message(update: Update, context: CallbackContext):
 
     log.info(f"📤 Resposta para {chat_id}: {resposta}")
     await update.message.reply_text(resposta)
-
-    # 🔇 Não envia áudio aqui — só texto mesmo.
 
 
 async def handle_audio(update: Update, context: CallbackContext):
@@ -98,8 +92,9 @@ async def handle_audio(update: Update, context: CallbackContext):
     # await update.message.reply_text("🎧 Transcrevendo o áudio...")
 
     try:
-        result = model.transcribe(file_path)
-        texto_transcrito = result["text"].strip()
+        segments, info = model.transcribe(file_path)
+        texto_transcrito = " ".join([seg.text for seg in segments]).strip()
+        log.info(f"📝 Idioma detectado: {info.language}")
         log.info(f"📝 Transcrição: {texto_transcrito}")
 
         # await update.message.reply_text(f"🗣️ Transcrição:\n\n{texto_transcrito}")
@@ -107,7 +102,7 @@ async def handle_audio(update: Update, context: CallbackContext):
         response = requests.post(
             POLARIS_API_URL,
             json={"prompt": texto_transcrito, "session_id": str(chat_id)},
-            timeout=360,
+            timeout=8000,
         )
         response.raise_for_status()
         resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
@@ -115,7 +110,6 @@ async def handle_audio(update: Update, context: CallbackContext):
         log.info(f"📤 Resposta da Polaris: {resposta}")
         # await update.message.reply_text(resposta)
 
-        # 🎧 Resposta em voz (só se veio áudio antes)
         audio_path = f"audios/resposta_{chat_id}.wav"
         gerar_audio(resposta, audio_path)
         await update.message.reply_voice(voice=open(audio_path, "rb"))
@@ -154,7 +148,7 @@ async def handle_pdf(update: Update, context: CallbackContext):
             response = requests.post(
                 POLARIS_API_URL.replace("/inference/", "/upload-pdf/"),
                 files=files,
-                timeout=360,
+                timeout=8000,
             )
             response.raise_for_status()
             result = response.json()
@@ -171,10 +165,10 @@ def main():
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
-        .read_timeout(2400)
-        .write_timeout(2400)
-        .connect_timeout(2400)
-        .pool_timeout(2400)
+        .read_timeout(8000)
+        .write_timeout(8000)
+        .connect_timeout(8000)
+        .pool_timeout(8000)
         .build()
     )
 

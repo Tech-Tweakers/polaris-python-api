@@ -1,6 +1,5 @@
-python-telegram-bot
-requests
-python-dotenv
-openai-whisper
-ffmpeg-python
-tts
+faster-whisper==0.10.0
+TTS==0.22.0
+python-dotenv==1.0.1
+python-telegram-bot==20.8
+requests==2.31.0
