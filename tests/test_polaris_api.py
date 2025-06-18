@@ -85,6 +85,7 @@ async def test_model_not_loaded():
 
     llm.load()
 
+
 @pytest.mark.asyncio
 @patch("polaris_api.main.trim_langchain_memory")
 async def test_inference_calls_trim_memory(mock_trim_memory):
@@ -94,7 +95,10 @@ async def test_inference_calls_trim_memory(mock_trim_memory):
         response = await client.post("/inference/", json=payload)
 
         assert response.status_code == 200
-        mock_trim_memory.assert_called_once_with("user_test")  # Confirma que foi chamado com o session_id correto
+        mock_trim_memory.assert_called_once_with(
+            "user_test"
+        )  # Confirma que foi chamado com o session_id correto
+
 
 @pytest.mark.asyncio
 async def test_upload_pdf_success(tmp_path):
@@ -110,7 +114,11 @@ async def test_upload_pdf_success(tmp_path):
             response = await client.post("/upload-pdf/", files=files, data=data)
 
     assert response.status_code == 200
-    assert response.json()["message"] == "PDF processado e indexado com sucesso para a sessão!"
+    assert (
+        response.json()["message"]
+        == "PDF processado e indexado com sucesso para a sessão!"
+    )
+
 
 @pytest.mark.asyncio
 async def test_upload_pdf_error(monkeypatch, tmp_path):
@@ -120,7 +128,9 @@ async def test_upload_pdf_error(monkeypatch, tmp_path):
     def fake_loader(*args, **kwargs):
         raise Exception("Falha ao processar PDF")
 
-    monkeypatch.setattr("langchain_community.document_loaders.PyMuPDFLoader.load", fake_loader)
+    monkeypatch.setattr(
+        "langchain_community.document_loaders.PyMuPDFLoader.load", fake_loader
+    )
 
     pdf_path = tmp_path / "test.pdf"
     pdf_path.write_bytes(b"%PDF-1.4 erro proposital")

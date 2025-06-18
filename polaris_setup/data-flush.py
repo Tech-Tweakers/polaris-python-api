@@ -14,10 +14,12 @@ client = MongoClient(MONGO_URI)
 db = client["polaris_db"]
 collection = db["user_memory"]
 
+
 def flush_mongo():
     """Apaga todos os documentos do MongoDB"""
     result = collection.delete_many({})
     print(f"🗑️  MongoDB limpo! {result.deleted_count} documentos apagados.")
+
 
 def flush_chroma():
     """Apaga toda a pasta de vetores"""
@@ -27,20 +29,24 @@ def flush_chroma():
     else:
         print("ℹ️  Nenhuma pasta chroma_db encontrada.")
 
+
 def flush_geral():
     """Flush geral: MongoDB + Chroma"""
     flush_mongo()
     flush_chroma()
     print("✅ Polaris zerada e pronta pra nova jornada!")
 
+
 if __name__ == "__main__":
-    print("""
+    print(
+        """
 ==== Polaris Flush Tool ====
 
 [1] Limpar apenas conversas (MongoDB)
 [2] Limpar apenas vetores (ChromaDB)
 [3] Limpar tudo (Mongo + Chroma)
-""")
+"""
+    )
     opcao = input("Escolha a opção: ").strip()
 
     if opcao == "1":

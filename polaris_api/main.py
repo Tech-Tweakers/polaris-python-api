@@ -27,7 +27,7 @@ LOGO = f"""
        {STAR_COLOR}*{Style.RESET_ALL}        .       *    .  
     .      *       .        .
        {STAR_COLOR}*{Style.RESET_ALL}        .       .   *    .
-  .        .  {TEXT_COLOR}POLARIS AI v2{Style.RESET_ALL}        .
+  .        .  {TEXT_COLOR}POLARIS AI v2.1{Style.RESET_ALL}        .
        {STAR_COLOR}*{Style.RESET_ALL}        .        *     .  
     .       *        .        .
  {STAR_COLOR}*{Style.RESET_ALL}      .     *         .     
@@ -96,7 +96,7 @@ embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
 
 
-#class LlamaRunnable:
+# class LlamaRunnable:
 #    def __init__(self, model_path: str):
 #        self.model_path = model_path
 #        self.llm = None
@@ -162,10 +162,11 @@ vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedde
 #        return "Erro ao gerar resposta."
 #
 #
-#llm = LlamaRunnable(model_path=MODEL_PATH)
+# llm = LlamaRunnable(model_path=MODEL_PATH)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 llm = GroqLLM(api_key=GROQ_API_KEY)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -323,6 +324,7 @@ def load_keywords_from_file(file_path="keywords.txt"):
         CACHED_KEYWORDS = ["meu nome é", "eu moro em", "eu gosto de"]
         return CACHED_KEYWORDS
 
+
 def trim_langchain_memory_fifo(session_id):
     """Mantém apenas as últimas N mensagens na memória do LangChain."""
 
@@ -410,7 +412,11 @@ async def inference(request: InferenceRequest):
         save_to_mongo(user_prompt, session_id)
 
     try:
-        retrieved_docs = vectorstore.similarity_search(user_prompt, k=3)
+        retrieved_docs = vectorstore.similarity_search(
+            user_prompt,
+            k=3,
+            filter={"session_id": session_id}
+        )
         docs_context = "\n".join([doc.page_content for doc in retrieved_docs])
         if docs_context:
             log_info(

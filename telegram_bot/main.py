@@ -1,6 +1,8 @@
 import os
 import logging
 import requests
+import time
+import subprocess
 from faster_whisper import WhisperModel
 from dotenv import load_dotenv
 from telegram import Update
@@ -40,40 +42,93 @@ tts = TTS(
     gpu=False,
 )
 
+log = logging.getLogger(__name__)
+
+
+def limpar_texto_para_tts(texto: str) -> str:
+    texto = texto.replace("...", ".")
+    texto = texto.replace("—", "")
+    texto = texto.replace("“", "").replace("”", "")
+    return texto.strip()
+
+
+def cortar_silencios(input_wav: str, output_wav: str):
+    try:
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                input_wav,
+                "-af",
+                "silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=-60dB",
+                output_wav,
+            ],
+            check=True,
+        )
+        return output_wav
+    except subprocess.CalledProcessError:
+        log.warning("⚠️ Não foi possível cortar silêncios com ffmpeg.")
+        return input_wav
+
+
 def gerar_audio_com_referencia(texto: str, output_path: str = "voz_final.mp3") -> str:
     log.info("🗣️ [Polaris TTS] Gerando áudio com voz personalizada...")
 
-    os.environ["COQUI_TOS_AGREED"] = "1"
+    texto = limpar_texto_para_tts(texto)
     wav_temp = output_path.replace(".mp3", ".wav")
+    wav_clean = output_path.replace(".mp3", "_clean.wav")
+
+    os.environ["COQUI_TOS_AGREED"] = "1"
+
+    start_time = time.time()
 
     tts.tts_to_file(
         text=texto,
         speaker_wav=COQUI_SPEAKER_WAV,
         language="pt",
         file_path=wav_temp,
-        speed=1.0,
+        speed=1.5,  # ⏩ Mais velocidade (limite do natural)
+        split_sentences=False,  # 🚫 Evita múltiplos encodings
     )
 
-    log.info("🎼 Convertendo WAV para MP3...")
-    audio = AudioFileClip(wav_temp)
-    audio.write_audiofile(output_path, codec="libmp3lame")
+    tempo = time.time() - start_time
+    log.info(f"⏱️ WAV gerado em: {tempo:.2f}s")
 
-    if os.path.exists(wav_temp):
-        os.remove(wav_temp)
+    # 💥 Remoção de silêncios
+    try:
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                wav_temp,
+                "-af",
+                "silenceremove=stop_periods=-1:stop_duration=0.8:stop_threshold=-45dB",
+                wav_clean,
+            ],
+            check=True,
+        )
+        wav_final = wav_clean
+    except Exception:
+        log.warning("⚠️ Não foi possível cortar silêncios. Usando WAV original.")
+        wav_final = wav_temp
 
-    log.info(f"✅ Áudio final salvo em: {output_path}")
+    # 🎧 MP3 com bitrate e sample rate reduzidos
+    audio = AudioFileClip(wav_final)
+    audio.write_audiofile(
+        output_path,
+        codec="libmp3lame",
+        bitrate="48k",  # 🎚️ Menor, mais leve, ainda audível
+        fps=16000,  # 🎧 Amostras por segundo reduzidas (mobile-friendly)
+    )
+
+    for f in [wav_temp, wav_clean]:
+        if os.path.exists(f):
+            os.remove(f)
+
+    log.info(f"✅ Áudio final salvo: {output_path}")
     return output_path
-
-
-def gerar_audio(texto: str, path: str):
-    """Gera arquivo de voz a partir de texto"""
-    tts.tts_to_file(
-        text=texto,
-        file_path=path,
-        speaker="female-pt-4\n",
-        language="pt-br",
-        speed=2,
-    )
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -125,7 +180,7 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # await update.message.reply_text("🎧 Transcrevendo o áudio...")
 
     try:
-        segments, info = model.transcribe(file_path)
+        segments, info = model.transcribe(file_path, language="pt")
         texto_transcrito = " ".join([seg.text for seg in segments]).strip()
         log.info(f"📝 Idioma detectado: {info.language}")
         log.info(f"📝 Transcrição: {texto_transcrito}")

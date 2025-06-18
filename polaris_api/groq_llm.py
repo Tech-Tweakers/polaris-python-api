@@ -6,15 +6,19 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
+
 # Logging igual ao main
 def log_info(message: str):
     logging.info(f"🔹 {message}")
 
+
 def log_success(message: str):
     logging.info(f"✅ {message}")
 
+
 def log_warning(message: str):
     logging.warning(f"⚠️ {message}")
+
 
 def log_error(message: str):
     logging.error(f"❌ {message}")
@@ -41,13 +45,17 @@ class GroqLLM:
         body = {
             "model": self.model,
             "messages": [
-                {"role": "system", "content": "Você é Polaris, um assistente inteligente."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "Você é Polaris, um assistente inteligente.",
+                },
+                {"role": "user", "content": prompt},
             ],
-            "temperature": float(os.getenv("TEMPERATURE", 0.2)),
-            "top_p": float(os.getenv("TOP_P", 0.7)),
+            "temperature": 0.5,
+            "top_p": 0.85,
             "max_tokens": 1024,
-            "stop": ["<|eot_id|>"]
+            "stop": ["<|eot_id|>"],
+            "frequency_penalty": 1.4,
         }
 
         try:

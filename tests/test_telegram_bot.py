@@ -67,7 +67,9 @@ async def test_handle_message_no_response(mock_update, mock_context):
 @patch("telegram_bot.main.requests.post")
 async def test_handle_pdf_success(mock_post, mock_context):
     # Mock resposta da Polaris no upload
-    mock_post.return_value.json.return_value = {"message": "PDF processado com sucesso!"}
+    mock_post.return_value.json.return_value = {
+        "message": "PDF processado com sucesso!"
+    }
     mock_post.return_value.raise_for_status = lambda: None
 
     # Simula uma mensagem com documento
@@ -100,7 +102,9 @@ async def test_handle_pdf_success(mock_post, mock_context):
 @patch("telegram_bot.main.requests.post")
 async def test_handle_pdf_success(mock_post, mock_context):
     # Mock resposta da Polaris no upload
-    mock_post.return_value.json.return_value = {"message": "PDF processado com sucesso!"}
+    mock_post.return_value.json.return_value = {
+        "message": "PDF processado com sucesso!"
+    }
     mock_post.return_value.raise_for_status = lambda: None
 
     # Simula uma mensagem com documento
@@ -133,7 +137,9 @@ async def test_handle_pdf_success(mock_post, mock_context):
 @patch("telegram_bot.main.gerar_audio")
 @patch("telegram_bot.main.model.transcribe")
 @patch("telegram_bot.main.requests.post")
-async def test_handle_audio_transcription_success(mock_post, mock_transcribe, mock_gerar_audio, mock_context):
+async def test_handle_audio_transcription_success(
+    mock_post, mock_transcribe, mock_gerar_audio, mock_context
+):
     # Mock transcrição e resposta da Polaris
     audio_text = "isto é um teste de áudio"
     mock_transcribe.return_value = {"text": audio_text}
@@ -164,4 +170,6 @@ async def test_handle_audio_transcription_success(mock_post, mock_transcribe, mo
     message.reply_text.assert_any_call("🎧 Transcrevendo o áudio...")
     message.reply_text.assert_any_call(f"🗣️ Transcrição:\n\n{audio_text}")
     message.reply_text.assert_any_call("Resposta da Polaris")
-    mock_gerar_audio.assert_called_once_with("Resposta da Polaris", "audios/resposta_12345.wav")
+    mock_gerar_audio.assert_called_once_with(
+        "Resposta da Polaris", "audios/resposta_12345.wav"
+    )
