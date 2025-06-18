@@ -8,12 +8,22 @@ from telegram.ext import (
     Application,
     CommandHandler,
     MessageHandler,
+    ContextTypes,
     filters,
-    CallbackContext,
 )
+from moviepy import AudioFileClip
 from TTS.api import TTS
+from torch.serialization import add_safe_globals
+from TTS.tts.configs.xtts_config import XttsConfig
+from TTS.tts.models.xtts import XttsAudioConfig
+from TTS.tts.models.xtts import XttsArgs
+from TTS.config.shared_configs import BaseDatasetConfig
+
+add_safe_globals([XttsConfig, XttsAudioConfig, BaseDatasetConfig, XttsArgs])
 
 load_dotenv()
+
+COQUI_SPEAKER_WAV = os.getenv("COQUI_SPEAKER_WAV")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 POLARIS_API_URL = os.getenv("POLARIS_API_URL")
 
@@ -25,11 +35,34 @@ model = WhisperModel("small", compute_type="int8")
 
 log.info("🗣️  Carregando modelo de voz...")
 tts = TTS(
-    model_name="tts_models/multilingual/multi-dataset/your_tts",
-    progress_bar=True,
+    model_name="tts_models/multilingual/multi-dataset/xtts_v2",
+    progress_bar=False,
     gpu=False,
 )
-print("🔊 Vozes disponíveis:", tts.speakers)
+
+def gerar_audio_com_referencia(texto: str, output_path: str = "voz_final.mp3") -> str:
+    log.info("🗣️ [Polaris TTS] Gerando áudio com voz personalizada...")
+
+    os.environ["COQUI_TOS_AGREED"] = "1"
+    wav_temp = output_path.replace(".mp3", ".wav")
+
+    tts.tts_to_file(
+        text=texto,
+        speaker_wav=COQUI_SPEAKER_WAV,
+        language="pt",
+        file_path=wav_temp,
+        speed=1.0,
+    )
+
+    log.info("🎼 Convertendo WAV para MP3...")
+    audio = AudioFileClip(wav_temp)
+    audio.write_audiofile(output_path, codec="libmp3lame")
+
+    if os.path.exists(wav_temp):
+        os.remove(wav_temp)
+
+    log.info(f"✅ Áudio final salvo em: {output_path}")
+    return output_path
 
 
 def gerar_audio(texto: str, path: str):
@@ -43,14 +76,14 @@ def gerar_audio(texto: str, path: str):
     )
 
 
-async def start(update: Update, context: CallbackContext):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "🤖 Olá! Eu sou a Polaris, seja bem vinda(o)!\n"
         "Me mande uma mensagem de texto ou um áudio e eu te respondo o quanto antes! 💫"
     )
 
 
-async def handle_message(update: Update, context: CallbackContext):
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     text = update.message.text
     log.info(f"📩 Texto recebido de {chat_id}: {text}")
@@ -71,7 +104,7 @@ async def handle_message(update: Update, context: CallbackContext):
     await update.message.reply_text(resposta)
 
 
-async def handle_audio(update: Update, context: CallbackContext):
+async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     file = update.message.voice or update.message.audio
 
@@ -110,8 +143,8 @@ async def handle_audio(update: Update, context: CallbackContext):
         log.info(f"📤 Resposta da Polaris: {resposta}")
         # await update.message.reply_text(resposta)
 
-        audio_path = f"audios/resposta_{chat_id}.wav"
-        gerar_audio(resposta, audio_path)
+        audio_path = f"audios/resposta_{chat_id}.mp3"
+        gerar_audio_com_referencia(resposta, audio_path)
         await update.message.reply_voice(voice=open(audio_path, "rb"))
 
     except Exception as e:
@@ -119,7 +152,7 @@ async def handle_audio(update: Update, context: CallbackContext):
         await update.message.reply_text("⚠️ Erro ao processar o áudio.")
 
 
-async def handle_pdf(update: Update, context: CallbackContext):
+async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     document = update.message.document
 

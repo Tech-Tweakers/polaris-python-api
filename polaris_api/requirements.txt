@@ -6,6 +6,7 @@ llama-cpp-python==0.3.6
 langchain-chroma
 langchain-huggingface
 langchain-community
+sentence-transformers
 colorama
 pymupdf
 

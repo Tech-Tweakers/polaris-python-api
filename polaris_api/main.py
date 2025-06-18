@@ -17,6 +17,7 @@ from pymongo import MongoClient
 import uvicorn
 import os
 from colorama import Fore, Style, init
+from groq_llm import GroqLLM
 
 init(autoreset=True)
 TEXT_COLOR = Fore.LIGHTCYAN_EX
@@ -95,74 +96,76 @@ embedder = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6
 vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embedder)
 
 
-class LlamaRunnable:
-    def __init__(self, model_path: str):
-        self.model_path = model_path
-        self.llm = None
+#class LlamaRunnable:
+#    def __init__(self, model_path: str):
+#        self.model_path = model_path
+#        self.llm = None
+#
+#    def load(self):
+#        try:
+#            if self.llm is None:
+#                log_info("Carregando modelo LLaMA...")
+#                self.llm = Llama(
+#                    model_path=self.model_path,
+#                    n_threads=NUM_CORES,
+#                    n_ctx=MODEL_CONTEXT_SIZE,
+#                    batch_size=MODEL_BATCH_SIZE,
+#                    n_gpu_layers=0,
+#                    verbose=False,
+#                    use_mlock=True,
+#                    seed=-1,
+#                )
+#                log_success("Modelo LLaMA carregado com sucesso!")
+#        except Exception as e:
+#            log_error(f"Erro ao carregar o modelo LLaMA: {str(e)}")
+#            raise e
+#
+#    def close(self):
+#        if self.llm is not None:
+#            log_info("Fechando o modelo LLaMA...")
+#            del self.llm
+#            self.llm = None
+#            log_success("Modelo LLaMA fechado com sucesso!")
+#
+#    def invoke(self, prompt: str):
+#        if self.llm is None:
+#            log_error("Erro: Modelo não carregado!")
+#            raise HTTPException(status_code=500, detail="Modelo não carregado!")
+#
+#        log_info(
+#            f"📜 Enviando prompt ao modelo:\n{prompt[:500]}..."
+#        )  # Evita logs longos
+#
+#        start_time = time.time()
+#        response = self.llm(
+#            prompt,
+#            stop=["---"],
+#            max_tokens=1024,
+#            echo=False,
+#            temperature=TEMPERATURE,
+#            top_p=TOP_P,
+#            top_k=TOP_K,
+#            repeat_penalty=FREQUENCY_PENALTY,
+#            seed=SEED,
+#        )
+#        end_time = time.time()
+#
+#        elapsed_time = end_time - start_time
+#        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
+#
+#        if "choices" in response and response["choices"]:
+#            resposta = response["choices"][0]["text"].strip()
+#            log_success(f"✅ Resposta gerada: {resposta[:500]}...")
+#            return resposta
+#
+#        log_error("❌ Erro: Resposta vazia ou inválida!")
+#        return "Erro ao gerar resposta."
+#
+#
+#llm = LlamaRunnable(model_path=MODEL_PATH)
 
-    def load(self):
-        try:
-            if self.llm is None:
-                log_info("Carregando modelo LLaMA...")
-                self.llm = Llama(
-                    model_path=self.model_path,
-                    n_threads=NUM_CORES,
-                    n_ctx=MODEL_CONTEXT_SIZE,
-                    batch_size=MODEL_BATCH_SIZE,
-                    n_gpu_layers=0,
-                    verbose=False,
-                    use_mlock=True,
-                    seed=-1,
-                )
-                log_success("Modelo LLaMA carregado com sucesso!")
-        except Exception as e:
-            log_error(f"Erro ao carregar o modelo LLaMA: {str(e)}")
-            raise e
-
-    def close(self):
-        if self.llm is not None:
-            log_info("Fechando o modelo LLaMA...")
-            del self.llm
-            self.llm = None
-            log_success("Modelo LLaMA fechado com sucesso!")
-
-    def invoke(self, prompt: str):
-        if self.llm is None:
-            log_error("Erro: Modelo não carregado!")
-            raise HTTPException(status_code=500, detail="Modelo não carregado!")
-
-        log_info(
-            f"📜 Enviando prompt ao modelo:\n{prompt[:500]}..."
-        )  # Evita logs longos
-
-        start_time = time.time()
-        response = self.llm(
-            prompt,
-            stop=["---"],
-            max_tokens=1024,
-            echo=False,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            top_k=TOP_K,
-            repeat_penalty=FREQUENCY_PENALTY,
-            seed=SEED,
-        )
-        end_time = time.time()
-
-        elapsed_time = end_time - start_time
-        log_info(f"⚡ Tempo de inferência: {elapsed_time:.3f} segundos")
-
-        if "choices" in response and response["choices"]:
-            resposta = response["choices"][0]["text"].strip()
-            log_success(f"✅ Resposta gerada: {resposta[:500]}...")
-            return resposta
-
-        log_error("❌ Erro: Resposta vazia ou inválida!")
-        return "Erro ao gerar resposta."
-
-
-llm = LlamaRunnable(model_path=MODEL_PATH)
-
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+llm = GroqLLM(api_key=GROQ_API_KEY)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
