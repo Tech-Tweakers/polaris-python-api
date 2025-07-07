@@ -1,8 +1,11 @@
 import os
+import uuid
+import shutil
 import logging
 import requests
-import time
 import subprocess
+import threading
+
 from faster_whisper import WhisperModel
 from dotenv import load_dotenv
 from telegram import Update
@@ -13,7 +16,6 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-from moviepy import AudioFileClip
 from TTS.api import TTS
 from torch.serialization import add_safe_globals
 from TTS.tts.configs.xtts_config import XttsConfig
@@ -21,242 +23,165 @@ from TTS.tts.models.xtts import XttsAudioConfig
 from TTS.tts.models.xtts import XttsArgs
 from TTS.config.shared_configs import BaseDatasetConfig
 
-add_safe_globals([XttsConfig, XttsAudioConfig, BaseDatasetConfig, XttsArgs])
+from fastapi import FastAPI, UploadFile, Form
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from tts_router import gerar_audio
 
+# Segurança de unpickling
+add_safe_globals([XttsConfig, XttsAudioConfig, BaseDatasetConfig, XttsArgs])
 load_dotenv()
 
-COQUI_SPEAKER_WAV = os.getenv("COQUI_SPEAKER_WAV")
+# Variáveis de ambiente
+COQUI_SPEAKER_WAV = os.getenv("COQUI_SPEAKER_WAV", "polaris-voice.wav")
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-POLARIS_API_URL = os.getenv("POLARIS_API_URL")
+POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://192.168.1.104:8000/inference/")
 
+# Logs
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-log.info("🧠 Carregando modelo Whisper (faster-whisper)...")
-model = WhisperModel("small", compute_type="int8")
+# Inicialização dos modelos
+log.info("🧠 Carregando modelo Whisper...")
+whisper = WhisperModel("small", compute_type="int8")
 
-log.info("🗣️  Carregando modelo de voz...")
+log.info("🗣️  Carregando modelo TTS...")
 tts = TTS(
     model_name="tts_models/multilingual/multi-dataset/xtts_v2",
     progress_bar=False,
     gpu=False,
 )
 
-log = logging.getLogger(__name__)
+os.makedirs("audios", exist_ok=True)
 
+# Utilitários de TTS
+def limpar_texto(texto: str) -> str:
+    return texto.replace("...", ".").replace("—", "").replace("“", "").replace("”", "").strip()
 
-def limpar_texto_para_tts(texto: str) -> str:
-    texto = texto.replace("...", ".")
-    texto = texto.replace("—", "")
-    texto = texto.replace("“", "").replace("”", "")
-    return texto.strip()
-
-
-def cortar_silencios(input_wav: str, output_wav: str):
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-                "-i",
-                input_wav,
-                "-af",
-                "silenceremove=stop_periods=-1:stop_duration=1:stop_threshold=-60dB",
-                output_wav,
-            ],
-            check=True,
-        )
-        return output_wav
-    except subprocess.CalledProcessError:
-        log.warning("⚠️ Não foi possível cortar silêncios com ffmpeg.")
-        return input_wav
-
-
-def gerar_audio_com_referencia(texto: str, output_path: str = "voz_final.mp3") -> str:
-    log.info("🗣️ [Polaris TTS] Gerando áudio com voz personalizada...")
-
-    texto = limpar_texto_para_tts(texto)
-    wav_temp = output_path.replace(".mp3", ".wav")
-    wav_clean = output_path.replace(".mp3", "_clean.wav")
-
-    os.environ["COQUI_TOS_AGREED"] = "1"
-
-    start_time = time.time()
-
-    tts.tts_to_file(
-        text=texto,
-        speaker_wav=COQUI_SPEAKER_WAV,
-        language="pt",
-        file_path=wav_temp,
-        speed=1.5,  # ⏩ Mais velocidade (limite do natural)
-        split_sentences=False,  # 🚫 Evita múltiplos encodings
-    )
-
-    tempo = time.time() - start_time
-    log.info(f"⏱️ WAV gerado em: {tempo:.2f}s")
-
-    # 💥 Remoção de silêncios
-    try:
-        subprocess.run(
-            [
-                "ffmpeg",
-                "-y",
-                "-i",
-                wav_temp,
-                "-af",
-                "silenceremove=stop_periods=-1:stop_duration=0.8:stop_threshold=-45dB",
-                wav_clean,
-            ],
-            check=True,
-        )
-        wav_final = wav_clean
-    except Exception:
-        log.warning("⚠️ Não foi possível cortar silêncios. Usando WAV original.")
-        wav_final = wav_temp
-
-    # 🎧 MP3 com bitrate e sample rate reduzidos
-    audio = AudioFileClip(wav_final)
-    audio.write_audiofile(
-        output_path,
-        codec="libmp3lame",
-        bitrate="48k",  # 🎚️ Menor, mais leve, ainda audível
-        fps=16000,  # 🎧 Amostras por segundo reduzidas (mobile-friendly)
-    )
-
-    for f in [wav_temp, wav_clean]:
-        if os.path.exists(f):
-            os.remove(f)
-
-    log.info(f"✅ Áudio final salvo: {output_path}")
-    return output_path
-
-
+# Handlers Telegram
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 Olá! Eu sou a Polaris, seja bem vinda(o)!\n"
-        "Me mande uma mensagem de texto ou um áudio e eu te respondo o quanto antes! 💫"
-    )
-
+    await update.message.reply_text("🤖 Olá! Me mande texto, áudio ou PDF que eu te respondo!")
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     text = update.message.text
-    log.info(f"📩 Texto recebido de {chat_id}: {text}")
+    log.info(f"📩 Texto de {chat_id}: {text}")
 
     try:
-        response = requests.post(
-            POLARIS_API_URL,
-            json={"prompt": text, "session_id": str(chat_id)},
-            timeout=8000,
-        )
-        response.raise_for_status()
-        resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
-    except requests.exceptions.RequestException as e:
-        log.error(f"Erro na requisição: {e}")
+        response = requests.post(POLARIS_API_URL, json={"prompt": text, "session_id": str(chat_id)}, timeout=10)
+        resposta = response.json().get("resposta", "⚠️ Erro ao processar resposta.")
+    except Exception as e:
+        log.error(f"Erro: {e}")
         resposta = "⚠️ Erro ao se comunicar com a Polaris."
 
-    log.info(f"📤 Resposta para {chat_id}: {resposta}")
     await update.message.reply_text(resposta)
-
 
 async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     file = update.message.voice or update.message.audio
 
     if not file:
-        await update.message.reply_text("⚠️ Não consegui encontrar o áudio.")
+        await update.message.reply_text("⚠️ Áudio não encontrado.")
         return
 
-    log.info(f"🎙️ Áudio recebido de {chat_id}")
-
-    file_id = file.file_id
-    new_file = await context.bot.get_file(file_id)
-
-    os.makedirs("audios", exist_ok=True)
-    file_path = f"audios/audio_{chat_id}_{file_id}.ogg"
+    new_file = await context.bot.get_file(file.file_id)
+    file_path = f"audios/audio_{chat_id}_{file.file_id}.ogg"
     await new_file.download_to_drive(file_path)
 
-    log.info(f"📥 Áudio salvo em {file_path}")
-    # await update.message.reply_text("🎧 Transcrevendo o áudio...")
-
     try:
-        segments, info = model.transcribe(file_path, language="pt")
-        texto_transcrito = " ".join([seg.text for seg in segments]).strip()
-        log.info(f"📝 Idioma detectado: {info.language}")
-        log.info(f"📝 Transcrição: {texto_transcrito}")
+        segments, _ = whisper.transcribe(file_path, language="pt")
+        texto = " ".join([seg.text for seg in segments]).strip()
 
-        # await update.message.reply_text(f"🗣️ Transcrição:\n\n{texto_transcrito}")
+        response = requests.post(POLARIS_API_URL, json={"prompt": texto, "session_id": str(chat_id)}, timeout=10)
+        resposta = response.json().get("resposta", "⚠️ Erro ao processar resposta.")
 
-        response = requests.post(
-            POLARIS_API_URL,
-            json={"prompt": texto_transcrito, "session_id": str(chat_id)},
-            timeout=8000,
-        )
-        response.raise_for_status()
-        resposta = response.json().get("resposta", "⚠️ Erro ao processar a resposta.")
-
-        log.info(f"📤 Resposta da Polaris: {resposta}")
-        # await update.message.reply_text(resposta)
-
-        audio_path = f"audios/resposta_{chat_id}.mp3"
-        gerar_audio_com_referencia(resposta, audio_path)
-        await update.message.reply_voice(voice=open(audio_path, "rb"))
-
+        output_audio = f"audios/resposta_{chat_id}.mp3"
+        gerar_audio(resposta, output_audio)
+        await update.message.reply_voice(voice=open(output_audio, "rb"))
     except Exception as e:
-        log.error(f"Erro no fluxo de áudio: {e}")
+        log.error(f"Erro: {e}")
         await update.message.reply_text("⚠️ Erro ao processar o áudio.")
-
 
 async def handle_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
-    document = update.message.document
-
-    if not document:
-        await update.message.reply_text("⚠️ Não consegui encontrar o arquivo.")
+    doc = update.message.document
+    if not doc:
+        await update.message.reply_text("⚠️ Arquivo não encontrado.")
         return
 
-    log.info(f"📄 Documento recebido de {chat_id}: {document.file_name}")
-
-    file_id = document.file_id
-    new_file = await context.bot.get_file(file_id)
-
+    file_path = f"uploads/{doc.file_name}"
     os.makedirs("uploads", exist_ok=True)
-    file_path = f"uploads/{document.file_name}"
+    new_file = await context.bot.get_file(doc.file_id)
     await new_file.download_to_drive(file_path)
 
-    log.info(f"📥 PDF salvo em {file_path}")
-    await update.message.reply_text("📂 Processando o PDF, aguarde...")
+    with open(file_path, "rb") as f:
+        files = {"file": (doc.file_name, f, "application/pdf"), "session_id": (None, str(chat_id))}
+        r = requests.post(POLARIS_API_URL.replace("/inference/", "/upload-pdf/"), files=files)
+
+    if r.status_code == 200:
+        await update.message.reply_text("✅ PDF processado com sucesso!")
+    else:
+        await update.message.reply_text("⚠️ Erro ao processar PDF.")
+
+# FastAPI Microserviço Local (para o frontend)
+api = FastAPI()
+api.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=False, allow_methods=["*"], allow_headers=["*"])
+
+@api.post("/audio-inference/")
+async def audio_inference(audio: UploadFile, session_id: str = Form(...)):
+    uid = str(uuid.uuid4())
+    user_audio_name = f"user_{uid}.webm"
+    input_path = os.path.join("audios", user_audio_name)
+    wav_path = f"temp_{uid}.wav"
+    mp3_path = f"audios/resposta_{uid}.mp3"
 
     try:
-        with open(file_path, "rb") as f:
-            files = {
-                "file": (document.file_name, f, "application/pdf"),
-                "session_id": (None, str(chat_id)),
-            }
-            response = requests.post(
-                POLARIS_API_URL.replace("/inference/", "/upload-pdf/"),
-                files=files,
-                timeout=8000,
-            )
-            response.raise_for_status()
-            result = response.json()
+        with open(input_path, "wb") as f:
+            shutil.copyfileobj(audio.file, f)
 
-        await update.message.reply_text(f"✅ PDF processado com sucesso!")
-        log.info(f"📤 Upload para Polaris OK: {result}")
+        subprocess.run(["ffmpeg", "-y", "-i", input_path, wav_path], check=True)
+        segments, _ = whisper.transcribe(wav_path, language="pt")
+        texto = " ".join([seg.text for seg in segments]).strip()
 
+        res = requests.post(POLARIS_API_URL, json={"prompt": texto, "session_id": session_id})
+        resposta = res.json().get("resposta", "Erro na Polaris")
+
+        gerar_audio(resposta, mp3_path)
+        PUBLIC_URL = os.getenv("PUBLIC_URL", "https://fixtures-respective-condo-width.trycloudflare.com")
+        return {
+            "resposta": resposta,
+            "tts_audio_url": f"{PUBLIC_URL}/audio/{os.path.basename(mp3_path)}",
+            "user_audio_url": f"{PUBLIC_URL}/audio/{user_audio_name}"
+        }
     except Exception as e:
-        log.error(f"Erro no upload do PDF: {e}")
-        await update.message.reply_text("⚠️ Erro ao processar o PDF.")
+        return JSONResponse(status_code=500, content={"erro": str(e)})
+    finally:
+        pass
 
+from mimetypes import guess_type
+
+@api.get("/audio/{filename}")
+def get_audio(filename: str):
+    path = os.path.join("audios", filename)
+    if os.path.exists(path):
+        media_type, _ = guess_type(path)
+        return FileResponse(path, media_type=media_type or "application/octet-stream")
+    return JSONResponse(status_code=404, content={"erro": "Arquivo não encontrado"})
+
+def rodar_api():
+    uvicorn.run(api, host="0.0.0.0", port=8010)
 
 def main():
+    threading.Thread(target=rodar_api, daemon=True).start()
+
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
-        .read_timeout(8000)
-        .write_timeout(8000)
-        .connect_timeout(8000)
-        .pool_timeout(8000)
+        .read_timeout(10)
+        .write_timeout(10)
+        .connect_timeout(10)
+        .pool_timeout(10)
         .build()
     )
 
@@ -265,9 +190,8 @@ def main():
     app.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_audio))
     app.add_handler(MessageHandler(filters.Document.PDF, handle_pdf))
 
-    log.info("🚀 Polaris Bot com texto, áudio e PDF ativados!")
+    log.info("🚀 Polaris Telegram e API /audio-inference/ ativados!")
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
