@@ -31,11 +31,11 @@ class GroqLLM:
         self.endpoint = "https://api.groq.com/openai/v1/chat/completions"
 
     def load(self):
-        log_info("🔌 Polaris conectado ao motor Groq.")
+        log_info("🔌 Polaris conectado ao backend remoto.")
         log_success(f"✅ Modelo configurado: {self.model}")
 
     def close(self):
-        log_info("🛑 Encerrando conexão simbólica com a Groq.")
+        log_info("🛑 Encerrando conexão simbólica com o backend remoto.")
 
     def invoke(self, prompt: str) -> str:
         headers = {
@@ -59,13 +59,13 @@ class GroqLLM:
         }
 
         try:
-            log_info(f"📤 Enviando prompt para Groq...")
+            log_info(f"📤 Enviando prompt para o backend remoto...")
             response = requests.post(self.endpoint, headers=headers, json=body)
             response.raise_for_status()
             data = response.json()
             content = data["choices"][0]["message"]["content"].strip()
-            log_success(f"🧠 Resposta Groq recebida com sucesso.")
+            log_success(f"🧠 Resposta remota recebida com sucesso.")
             return content
         except Exception as e:
-            log_error(f"❌ Erro na inferência via Groq: {e}")
-            return "Erro ao consultar o modelo Groq."
+            log_error(f"❌ Erro na inferência via backend remoto: {e}")
+            return "Erro ao consultar o modelo remoto. Tente novamente em alguns instantes."
