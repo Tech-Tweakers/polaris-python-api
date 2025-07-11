@@ -18,6 +18,13 @@ import uvicorn
 import os
 from colorama import Fore, Style, init
 from groq_llm import GroqLLM
+from prometheus_client import (
+    CollectorRegistry,
+    Gauge,
+    Counter,
+    Summary,
+    push_to_gateway,
+)
 
 init(autoreset=True)
 TEXT_COLOR = Fore.LIGHTCYAN_EX
@@ -34,6 +41,29 @@ LOGO = f"""
      .     .        .    *    
 """
 print(LOGO)
+
+registry = CollectorRegistry()
+
+inference_duration = Summary(
+    "inference_duration_seconds",
+    "Tempo de resposta da inferência em segundos",
+    ["session_id"],
+    registry=registry,
+)
+
+inference_total = Counter(
+    "inference_total",
+    "Número total de inferências processadas",
+    ["session_id"],
+    registry=registry,
+)
+
+inference_failures = Counter(
+    "inference_failures_total",
+    "Número total de falhas de inferência",
+    ["session_id"],
+    registry=registry,
+)
 
 LOG_FILE = "polaris.log"
 logging.basicConfig(
@@ -406,6 +436,10 @@ async def inference(request: InferenceRequest):
         f"📥 Nova solicitação de inferência para sessão {session_id}: {user_prompt}"
     )
 
+    inference_total.labels(session_id=session_id).inc()
+    start_time = time.time()
+    erro = False
+
     keywords = load_keywords_from_file()
 
     if any(kw in user_prompt.lower() for kw in keywords):
@@ -413,9 +447,7 @@ async def inference(request: InferenceRequest):
 
     try:
         retrieved_docs = vectorstore.similarity_search(
-            user_prompt,
-            k=3,
-            filter={"session_id": session_id}
+            user_prompt, k=3, filter={"session_id": session_id}
         )
         docs_context = "\n".join([doc.page_content for doc in retrieved_docs])
         if docs_context:
@@ -455,8 +487,28 @@ async def inference(request: InferenceRequest):
 <|start_header_id|>assistant<|end_header_id|>
 """
 
-    resposta = llm.invoke(full_prompt)
-    await save_to_langchain_memory(user_prompt, resposta, session_id)
+    try:
+        resposta = llm.invoke(full_prompt)
+        await save_to_langchain_memory(user_prompt, resposta, session_id)
+    except Exception as e:
+        erro = True
+        inference_failures.labels(session_id=session_id).inc()
+        log_error(f"Erro ao gerar resposta: {e}")
+        raise HTTPException(status_code=500, detail="Erro na inferência")
+
+    finally:
+        elapsed = time.time() - start_time
+        inference_duration.labels(session_id=session_id).observe(elapsed)
+
+        try:
+            push_to_gateway(
+                "http://10.10.10.20:9091",  # ajuste pro IP real do Pushgateway
+                job="polaris-api",
+                registry=registry,
+            )
+            log_success("📊 Métricas enviadas ao Pushgateway com sucesso!")
+        except Exception as push_error:
+            log_warning(f"Falha ao enviar métricas para o Pushgateway: {push_error}")
 
     return {"resposta": resposta}
 

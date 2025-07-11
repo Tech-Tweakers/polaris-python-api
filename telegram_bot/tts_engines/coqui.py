@@ -20,8 +20,16 @@ tts = TTS(
     gpu=False,
 )
 
+
 def limpar_texto(texto: str) -> str:
-    return texto.replace("...", ".").replace("—", "").replace("“", "").replace("”", "").strip()
+    return (
+        texto.replace("...", ".")
+        .replace("—", "")
+        .replace("“", "")
+        .replace("”", "")
+        .strip()
+    )
+
 
 def tts_coqui(texto: str, output_path: str) -> str:
     wav_temp = output_path.replace(".mp3", ".wav")
@@ -41,8 +49,10 @@ def tts_coqui(texto: str, output_path: str) -> str:
             [
                 "ffmpeg",
                 "-y",
-                "-i", wav_temp,
-                "-af", "silenceremove=stop_periods=-1:stop_duration=0.8:stop_threshold=-45dB",
+                "-i",
+                wav_temp,
+                "-af",
+                "silenceremove=stop_periods=-1:stop_duration=0.8:stop_threshold=-45dB",
                 wav_clean,
             ],
             check=True,

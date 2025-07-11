@@ -1,6 +1,7 @@
 import os
 import requests
 
+
 def tts_eleven(texto: str, output_path: str) -> str:
     api_key = os.getenv("ELEVEN_API_KEY")
     voice_id = os.getenv("ELEVEN_VOICE_ID", "default")
@@ -20,8 +21,8 @@ def tts_eleven(texto: str, output_path: str) -> str:
             "stability": 0.5,
             "similarity_boost": 0.75,
             "style": 0.3,
-            "use_speaker_boost": True
-        }
+            "use_speaker_boost": True,
+        },
     }
 
     response = requests.post(url, headers=headers, json=payload)

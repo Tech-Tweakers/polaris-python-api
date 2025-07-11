@@ -2,6 +2,7 @@ import os
 from tts_engines.eleven import tts_eleven
 from tts_engines.coqui import tts_coqui
 
+
 def gerar_audio(texto: str, path: str) -> str:
     engine = os.getenv("TTS_ENGINE", "coqui").lower()
     if engine == "eleven":
