@@ -5,6 +5,7 @@ import logging
 import requests
 import subprocess
 import threading
+import time
 
 from faster_whisper import WhisperModel
 from dotenv import load_dotenv
@@ -28,6 +29,17 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from tts_router import gerar_audio
+from prometheus_client import (
+    CollectorRegistry,
+    Gauge,
+    Counter,
+    Summary,
+    push_to_gateway,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+)
+from fastapi.responses import Response
+
 
 # Segurança de unpickling
 add_safe_globals([XttsConfig, XttsAudioConfig, BaseDatasetConfig, XttsArgs])
@@ -42,16 +54,46 @@ POLARIS_API_URL = os.getenv("POLARIS_API_URL", "http://192.168.1.104:8000/infere
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+registry = CollectorRegistry()
+
+integration_total = Counter(
+    "integration_requests_total",
+    "Número total de requisições de integração processadas",
+    ["endpoint", "session_id"],
+    registry=registry,
+)
+
+integration_failures = Counter(
+    "integration_failures_total",
+    "Número total de falhas nas integrações",
+    ["endpoint", "session_id"],
+    registry=registry,
+)
+
+integration_duration = Summary(
+    "integration_duration_seconds",
+    "Duração da requisição da integração em segundos",
+    ["endpoint", "session_id"],
+    registry=registry,
+)
+
 # Inicialização dos modelos
 log.info("🧠 Carregando modelo Whisper...")
 whisper = WhisperModel("small", compute_type="int8")
 
-log.info("🗣️  Carregando modelo TTS...")
-tts = TTS(
-    model_name="tts_models/multilingual/multi-dataset/xtts_v2",
-    progress_bar=False,
-    gpu=False,
-)
+TTS_ENGINE = os.getenv("TTS_ENGINE", "coqui").lower()
+tts = None
+
+if TTS_ENGINE == "coqui":
+    log.info("🗣️  Carregando modelo TTS local (Coqui XTTS)...")
+    tts = TTS(
+        model_name="tts_models/multilingual/multi-dataset/xtts_v2",
+        progress_bar=False,
+        gpu=False,
+    )
+else:
+    log.info(f"🗣️  TTS local desativado. Engine selecionada: {TTS_ENGINE.upper()}")
+
 
 os.makedirs("audios", exist_ok=True)
 
@@ -164,6 +206,11 @@ api.add_middleware(
 
 @api.post("/audio-inference/")
 async def audio_inference(audio: UploadFile, session_id: str = Form(...)):
+    endpoint = "/audio-inference/"
+    integration_total.labels(endpoint=endpoint, session_id=session_id).inc()
+    erro = False
+    start_time = time.time()
+
     uid = str(uuid.uuid4())
     user_audio_name = f"user_{uid}.webm"
     input_path = os.path.join("audios", user_audio_name)
@@ -184,6 +231,7 @@ async def audio_inference(audio: UploadFile, session_id: str = Form(...)):
         resposta = res.json().get("resposta", "Erro na Polaris")
 
         gerar_audio(resposta, mp3_path)
+
         PUBLIC_URL = os.getenv(
             "PUBLIC_URL", "https://fixtures-respective-condo-width.trycloudflare.com"
         )
@@ -192,10 +240,35 @@ async def audio_inference(audio: UploadFile, session_id: str = Form(...)):
             "tts_audio_url": f"{PUBLIC_URL}/audio/{os.path.basename(mp3_path)}",
             "user_audio_url": f"{PUBLIC_URL}/audio/{user_audio_name}",
         }
+
     except Exception as e:
+        erro = True
+        integration_failures.labels(endpoint=endpoint, session_id=session_id).inc()
         return JSONResponse(status_code=500, content={"erro": str(e)})
+
     finally:
-        pass
+        elapsed = time.time() - start_time
+        integration_duration.labels(endpoint=endpoint, session_id=session_id).observe(elapsed)
+        try:
+            push_to_gateway(
+                "http://10.10.10.20:9091",  # ajuste conforme seu pushgateway real
+                job="polaris-integrations",
+                registry=registry,
+            )
+            log.info("📊 Métricas da integração enviadas com sucesso!")
+        except Exception as push_error:
+            log.warning(f"⚠️ Falha ao enviar métricas: {push_error}")
+
+from fastapi.responses import Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
+@api.get("/metrics")
+def metrics():
+    try:
+        return Response(generate_latest(registry), media_type=CONTENT_TYPE_LATEST)
+    except Exception as e:
+        log_error(f"Erro ao expor métricas: {e}")
+        raise HTTPException(status_code=500, detail="Erro ao gerar métricas Prometheus")
 
 
 from mimetypes import guess_type
